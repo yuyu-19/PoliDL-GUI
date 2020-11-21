@@ -29,7 +29,7 @@ Questo significa che, ad esempio, se un professore avesse una struttura di carte
 
 Scaricare (cliccando "scarica cartella") e dare al programma il file zip di "Lezioni online" funzionerebbe.
 
-###Locale
+### Locale
 Questa funzionalità è un po' complessa:
   -Prende in input il calendario delle lezioni (servizi online > orario delle lezioni > tasto destro e scarica come solo HTML) come input.
   -Ti chiederà quindi di selezionare quali professori faranno quale lezione (può essere modificato successivamente)
