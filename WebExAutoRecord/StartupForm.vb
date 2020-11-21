@@ -16,12 +16,11 @@ Public Class StartupForm
     Public Shared IsItalian As Boolean = (Thread.CurrentThread.CurrentCulture.IetfLanguageTag = "it-IT")
 
     Private Sub StartupForm_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-
         'It was originally built with code, so I'm still going to adjust the size of everything with it, rather than re-doing it in the designer.
 
         Dim CFont As New Font(Question.Font.FontFamily, 10, Question.Font.Style)
         Question.Font = CFont
-
+        CreditLabel.Font = CFont
         localmode.Name = "recbutton"
         downloadmode.Name = "dlbutton"
         localmode.AutoSize = True
@@ -62,6 +61,9 @@ Public Class StartupForm
 
         downloadmode.Enabled = False
         localmode.Enabled = False
+        p.X = Me.ClientSize.Width / 2 - CreditLabel.Width / 2
+        p.Y = Me.ClientSize.Height - CreditLabel.Height - 2
+        CreditLabel.Location = p
         'Unzip it all to a folder And use that as the root directory for everything else
         Dim appData As String = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) & "\WebExRec"
         RootFolder = appData

@@ -25,6 +25,7 @@ Partial Class StartupForm
         Me.Question = New System.Windows.Forms.Label()
         Me.localmode = New System.Windows.Forms.Button()
         Me.downloadmode = New System.Windows.Forms.Button()
+        Me.CreditLabel = New System.Windows.Forms.Label()
         Me.SuspendLayout()
         '
         'Question
@@ -54,11 +55,22 @@ Partial Class StartupForm
         Me.downloadmode.Text = "Button2"
         Me.downloadmode.UseVisualStyleBackColor = True
         '
+        'CreditLabel
+        '
+        Me.CreditLabel.AutoSize = True
+        Me.CreditLabel.Font = New System.Drawing.Font("Microsoft Sans Serif", 11.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.CreditLabel.Location = New System.Drawing.Point(500, 67)
+        Me.CreditLabel.Name = "CreditLabel"
+        Me.CreditLabel.Size = New System.Drawing.Size(173, 18)
+        Me.CreditLabel.TabIndex = 3
+        Me.CreditLabel.Text = "PoliWebex by @sup3rgiu"
+        '
         'StartupForm
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(800, 89)
+        Me.Controls.Add(Me.CreditLabel)
         Me.Controls.Add(Me.downloadmode)
         Me.Controls.Add(Me.localmode)
         Me.Controls.Add(Me.Question)
@@ -72,4 +84,5 @@ Partial Class StartupForm
     Friend WithEvents Question As Label
     Friend WithEvents localmode As Button
     Friend WithEvents downloadmode As Button
+    Friend WithEvents CreditLabel As Label
 End Class
