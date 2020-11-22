@@ -67,6 +67,15 @@ Public Class StartupForm
         'Unzip it all to a folder And use that as the root directory for everything else
         Dim appData As String = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) & "\WebExRec"
         RootFolder = appData
+
+        If Directory.Exists(appData) AndAlso Not File.Exists(appData & "\version.txt") Then
+            File.WriteAllText(appData & "\version.txt", "1")  'We don't have a version number, so that means the version unpacked must've been v1
+        End If
+
+        If My.Resources.Version <> File.ReadAllText(appData & "\version.txt") Then
+            Directory.Delete(appData, True) 'Version mismatch - the internal data is newer than the stored one
+        End If
+
         If Not Directory.Exists(appData) Or File.Exists(appData & "\temp.zip") Or Not File.Exists(appData & "\StartRec.exe") Then
 
             If IsItalian Then
@@ -76,8 +85,13 @@ Public Class StartupForm
             End If
             Me.Cursor = Cursors.WaitCursor
 
-            If File.Exists(appData & "\temp.zip") Then File.Delete(appData & "\temp.zip")   'We don't know if it was done saving it to disk. Play it safe.
+            If File.Exists(appData & "\temp.zip") Then
+                File.Delete(appData & "\temp.zip")   'We don't know if it was done saving it to disk. Play it safe.
+                Directory.Delete(appData, True)
+            End If
+
             Directory.CreateDirectory(appData)
+
             Try
                 System.IO.File.WriteAllBytes(appData & "\temp.zip", My.Resources.Data)
             Catch ex As Exception

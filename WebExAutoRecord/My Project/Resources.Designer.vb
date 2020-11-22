@@ -61,21 +61,21 @@ Namespace My.Resources
         End Property
         
         '''<summary>
-        '''  Looks up a localized string similar to .
-        '''</summary>
-        Friend ReadOnly Property a() As String
-            Get
-                Return ResourceManager.GetString("a", resourceCulture)
-            End Get
-        End Property
-        
-        '''<summary>
         '''  Looks up a localized resource of type System.Byte[].
         '''</summary>
         Friend ReadOnly Property Data() As Byte()
             Get
                 Dim obj As Object = ResourceManager.GetObject("Data", resourceCulture)
                 Return CType(obj,Byte())
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to 1.
+        '''</summary>
+        Friend ReadOnly Property Version() As String
+            Get
+                Return ResourceManager.GetString("Version", resourceCulture)
             End Get
         End Property
     End Module
