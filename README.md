@@ -5,7 +5,7 @@ Un grande grazie a @sup3rgiu per PoliWebex (su cui si basa l'intera funzionalit√
 
 PoliWebex: https://github.com/sup3rgiu/PoliWebex
 
-## Italian
+## Italiano
 
 Questo programma ha due funzionalit√† principali:
   - Scaricare molteplici lezioni da Webex (Download)
