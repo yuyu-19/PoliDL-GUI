@@ -1,5 +1,9 @@
 # PoliWebex-GUI
-English version below!
+### English version below!
+
+Un grande grazie a @sup3rgiu per PoliWebex (su cui si basa l'intera funzionalità di download) e per avermi aiutato con le modifiche necessarie.
+
+PoliWebex: https://github.com/sup3rgiu/PoliWebex
 
 ## Italian
 
@@ -53,6 +57,10 @@ Questa funzionalità è un po' complessa:
 
 
 ## English
+
+A huge thank you to @sup3rgiu for PoliWebex (on which the entire download functionality is based on) and for helping me make the necessary changes.
+
+PoliWebex: https://github.com/sup3rgiu/PoliWebex
 
 This tool has two main functions:
   - Downloading lessons from Webex in bulk   (Download)
