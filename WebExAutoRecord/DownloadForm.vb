@@ -479,6 +479,7 @@ Public Class DownloadForm
             End If
             'MessageBox.Show(outLine.Data)
 
+
             If outLine.Data.Contains("Done!") Then
                 If IsItalian Then
                     CurrentSpeed = "Finito."

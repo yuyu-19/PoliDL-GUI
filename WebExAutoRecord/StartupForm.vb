@@ -72,8 +72,37 @@ Public Class StartupForm
             File.WriteAllText(appData & "\version.txt", "1")  'We don't have a version number, so that means the version unpacked must've been v1
         End If
 
+        'Kill every process that is currently using the folder.
         If My.Resources.Version <> File.ReadAllText(appData & "\version.txt") Then
-            Directory.Delete(appData, True) 'Version mismatch - the internal data is newer than the stored one
+            For Each proc In Process.GetProcessesByName("chrome")
+                MessageBox.Show("Process: " & proc.MainModule.FileName)
+                If proc.MainModule.FileName.Contains(RootFolder) Then
+                    MessageBox.Show("Killing process: " & proc.ProcessName)
+                    proc.Kill()
+                    proc.Dispose()
+                End If
+            Next
+
+            For Each proc In Process.GetProcessesByName("poliwebex")
+                MessageBox.Show("Process: " & proc.MainModule.FileName)
+                If proc.MainModule.FileName.Contains(RootFolder) Then
+                    MessageBox.Show("Killing process: " & proc.ProcessName)
+                    proc.Kill()
+                    proc.Dispose()
+                End If
+            Next
+
+            Try
+                Directory.Delete(appData, True) 'Version mismatch - the internal data is newer than the stored one
+            Catch ex As Exception
+                MessageBox.Show(ex.Message)
+                If IsItalian Then
+                    MessageBox.Show("Per favore elimina la cartella in %appdata%\WebExRec manualmente.")
+                Else
+                    MessageBox.Show("Please manually delete the %appdata%\WebExRec folder.")
+                End If
+                Application.Exit()
+            End Try
         End If
 
         If Not Directory.Exists(appData) Or File.Exists(appData & "\temp.zip") Or Not File.Exists(appData & "\StartRec.exe") Then
