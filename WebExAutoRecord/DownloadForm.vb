@@ -419,9 +419,7 @@ Public Class DownloadForm
                     MessageBox.Show("Bad credentials. Please try again, you will be prompted to input them.")
                 End If
                 If IsItalian Then
-                    CurrentSpeed =
-                        
-                    "Finito."
+                    CurrentSpeed = "Finito."
                 Else
                     CurrentSpeed = "Finished."
                 End If
