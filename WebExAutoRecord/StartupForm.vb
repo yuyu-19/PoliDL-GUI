@@ -73,20 +73,20 @@ Public Class StartupForm
         End If
 
         'Kill every process that is currently using the folder.
-        If My.Resources.Version <> File.ReadAllText(appData & "\version.txt") Then
+        If Directory.Exists(appData) AndAlso My.Resources.Version <> File.ReadAllText(appData & "\version.txt") Then
             For Each proc In Process.GetProcessesByName("chrome")
-                MessageBox.Show("Process: " & proc.MainModule.FileName)
+                'MessageBox.Show("Process: " & proc.MainModule.FileName)
                 If proc.MainModule.FileName.Contains(RootFolder) Then
-                    MessageBox.Show("Killing process: " & proc.ProcessName)
+                    'MessageBox.Show("Killing process: " & proc.ProcessName)
                     proc.Kill()
                     proc.Dispose()
                 End If
             Next
 
             For Each proc In Process.GetProcessesByName("poliwebex")
-                MessageBox.Show("Process: " & proc.MainModule.FileName)
+                'MessageBox.Show("Process: " & proc.MainModule.FileName)
                 If proc.MainModule.FileName.Contains(RootFolder) Then
-                    MessageBox.Show("Killing process: " & proc.ProcessName)
+                    'MessageBox.Show("Killing process: " & proc.ProcessName)
                     proc.Kill()
                     proc.Dispose()
                 End If
@@ -119,7 +119,13 @@ Public Class StartupForm
                 Directory.Delete(appData, True)
             End If
 
-            Directory.CreateDirectory(appData)
+            Try
+                Directory.CreateDirectory(appData)
+            Catch ex As Exception
+                MessageBox.Show(ex.Message)
+                Application.Exit()
+            End Try
+
 
             Try
                 System.IO.File.WriteAllBytes(appData & "\temp.zip", My.Resources.Data)
@@ -136,7 +142,13 @@ Public Class StartupForm
                 Application.Exit()
             End Try
             ZFile.Dispose()
-            File.Delete(appData & "\temp.zip")
+            Try
+                File.Delete(appData & "\temp.zip")
+                File.WriteAllText(appData & "\version.txt", My.Resources.Version)
+            Catch ex As Exception
+                MessageBox.Show(ex.Message)
+            End Try
+
             Me.Cursor = Cursors.Default
         End If
 
