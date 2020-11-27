@@ -378,7 +378,6 @@ Public Class DownloadForm
         oProcess.StartInfo = oStartInfo
 
         AddHandler oProcess.OutputDataReceived, AddressOf OutputHandler
-        AddHandler oProcess.Exited, AddressOf HandleEnd
         AddHandler oProcess.ErrorDataReceived, AddressOf OutputHandler
 
         Try
@@ -446,68 +445,68 @@ Public Class DownloadForm
 
 
             If outLine.Data.Contains("Downloading") And outLine.Data.Contains("item(s)") And segmented Then
-                    currentsegmenttotal = outLine.Data.Substring(
+                currentsegmenttotal = outLine.Data.Substring(
                 outLine.Data.IndexOf("Downloading") + "Downloading".Length,
                 outLine.Data.IndexOf("item(s)") - (outLine.Data.IndexOf("Downloading") + "Downloading".Length)).Trim()
+            End If
+
+            If outLine.Data.Contains("0B CN") And Not segmented Then
+                'Means it's an update. We can get the speed from here.
+                CurrentSpeed = outLine.Data.Substring(outLine.Data.IndexOf("DL:") + "DL:".Length, outLine.Data.Length - 1 - (outLine.Data.IndexOf("DL:") + "DL:".Length)) & "/s"
+            End If
+
+            If outLine.Data.Contains("[DL:") And segmented Then
+                CurrentSpeed = outLine.Data.Substring("[DL:".Length, outLine.Data.IndexOf("]") - "[DL:".Length) & "/s"
+                If IsItalian Then
+                    If CurrentSpeed = "0B/s" Then CurrentSpeed = "Sto leggendo dal disco..."
+                Else
+                    If CurrentSpeed = "0B/s" Then CurrentSpeed = "Reading from disk..."
                 End If
 
-                If outLine.Data.Contains("0B CN") And Not segmented Then
-                    'Means it's an update. We can get the speed from here.
-                    CurrentSpeed = outLine.Data.Substring(outLine.Data.IndexOf("DL:") + "DL:".Length, outLine.Data.Length - 1 - (outLine.Data.IndexOf("DL:") + "DL:".Length)) & "/s"
+            End If
+
+            If outLine.Data.Contains("Download complete:") Then
+                If segmented Then
+                    'MessageBox.Show(1 & "/" & currentfiletotal & "/" & currentsegmenttotal & "=" & (currentfile / currentfiletotal) / currentsegmenttotal * 100)
+                    currentprogress += (1 / currentfiletotal) / currentsegmenttotal * 100
+                Else
+                    'MessageBox.Show(ProgressTracker.OverallProgress.Value)
+                    'MessageBox.Show(currentfile & "-" & currentfiletotal)
+                    currentprogress += 1 / currentfiletotal * 100
+                End If
+            End If
+
+            If outLine.Data.Contains("Download has already completed:") And segmented Then
+                'Hey, as long as it works.
+                currentprogress -= (1 / currentfiletotal) / currentsegmenttotal * 100
+            End If
+            'MessageBox.Show(outLine.Data)
+
+
+            If outLine.Data.Contains("Done!") Then
+                If IsItalian Then
+                    CurrentSpeed = "Finito."
+                Else
+                    CurrentSpeed = "Finished."
                 End If
 
-                If outLine.Data.Contains("[DL:") And segmented Then
-                    CurrentSpeed = outLine.Data.Substring("[DL:".Length, outLine.Data.IndexOf("]") - "[DL:".Length) & "/s"
+                If Not DLError Then currentfile += 1
+                If currentfile < currentfiletotal Then
                     If IsItalian Then
-                        If CurrentSpeed = "0B/s" Then CurrentSpeed = "Sto leggendo dal disco..."
-                    Else
-                        If CurrentSpeed = "0B/s" Then CurrentSpeed = "Reading from disk..."
-                    End If
-
-                End If
-
-                If outLine.Data.Contains("Download complete:") Then
-                    If segmented Then
-                        'MessageBox.Show(1 & "/" & currentfiletotal & "/" & currentsegmenttotal & "=" & (currentfile / currentfiletotal) / currentsegmenttotal * 100)
-                        currentprogress += (1 / currentfiletotal) / currentsegmenttotal * 100
-                    Else
-                        'MessageBox.Show(ProgressTracker.OverallProgress.Value)
-                        'MessageBox.Show(currentfile & "-" & currentfiletotal)
-                        currentprogress += 1 / currentfiletotal * 100
-                    End If
-                End If
-
-                If outLine.Data.Contains("Download has already completed:") And segmented Then
-                    'Hey, as long as it works.
-                    currentprogress -= (1 / currentfiletotal) / currentsegmenttotal * 100
-                End If
-                'MessageBox.Show(outLine.Data)
-
-
-                If outLine.Data.Contains("Done!") Then
-                    If IsItalian Then
-                        CurrentSpeed = "Finito."
-                    Else
-                        CurrentSpeed = "Finished."
-                    End If
-
-                    If Not DLError Then currentfile += 1
-                    If currentfile < currentfiletotal Then
-                        If IsItalian Then
                         MessageBox.Show("È fallito il download di " & currentfiletotal - currentfile + 1 & " video. Riprova più tardi.")
                     Else
                         MessageBox.Show("Could not download " & currentfiletotal - currentfile + 1 & " videos. Please try again later.")
                     End If
 
-                    Else
+                Else
                     If IsItalian Then
                         MessageBox.Show("Finito!")
                     Else
                         MessageBox.Show("All done!")
-                        End If
-
                     End If
+
                 End If
+            End If
 
             If outLine.Data.Contains("Going to the next one") Then
                 DLError = True
@@ -516,46 +515,47 @@ Public Class DownloadForm
             'Add stuff for the password protected videos
 
             If outLine.Data.Contains("This video is password protected") Or outLine.Data.Contains("Wrong password!") Then
-                    If outLine.Data.Contains("Wrong password!") Then MessageBox.Show("Previous password was incorrect. Please try again.")
-                    Dim Password As String
-                    If IsItalian Then
-                        Password = InputForm.AskForInput("Inserisci la password per questo video: " & vbCrLf & outLine.Data.Substring(outLine.Data.LastIndexOf("/") + 1))
-                    Else
-                        Password = InputForm.AskForInput("Please input the password for this video: " & vbCrLf & outLine.Data.Substring(outLine.Data.LastIndexOf("/") + 1))
-                    End If
-                    process.StandardInput.WriteLine(Password)
-                    'MessageBox.Show("Input Sent!")
+                If outLine.Data.Contains("Wrong password!") Then MessageBox.Show("Previous password was incorrect. Please try again.")
+                Dim Password As String
+                If IsItalian Then
+                    Password = InputForm.AskForInput("Inserisci la password per questo video: " & vbCrLf & outLine.Data.Substring(outLine.Data.LastIndexOf("/") + 1))
+                Else
+                    Password = InputForm.AskForInput("Please input the password for this video: " & vbCrLf & outLine.Data.Substring(outLine.Data.LastIndexOf("/") + 1))
                 End If
+                process.StandardInput.WriteLine(Password)
+                'MessageBox.Show("Input Sent!")
+            End If
 
 
-                If outLine.Data.Contains("ffmpeg version") And CurrentSpeed <> "Setting up..." And CurrentSpeed <> "Sto avviando..." Then
-                    If IsItalian Then
-                        CurrentSpeed = "Sto elaborando il file..."
-                    Else
-                        CurrentSpeed = "Processing file..."
-                    End If
-
+            If outLine.Data.Contains("ffmpeg version") And CurrentSpeed <> "Setting up..." And CurrentSpeed <> "Sto avviando..." Then
+                If IsItalian Then
+                    CurrentSpeed = "Sto elaborando il file..."
+                Else
+                    CurrentSpeed = "Processing file..."
                 End If
-
-                File.AppendAllText(StartupForm.RootFolder & "\WBDLlogs.txt", outLine.Data & vbCrLf)
-
 
             End If
-    End Sub
 
-    Sub HandleEnd(Sender As Object, e As EventArgs)
-        Dim process As Process = Sender
-        'MessageBox.Show(process.ExitCode)
-        If process.ExitCode = 3 Then
-            RunCommandH(process.StartInfo.FileName, process.StartInfo.Arguments & " -l false -i 10")
-            'We're gonna try in non-headless mode, with the max timeout.
-        ElseIf process.ExitCode = 4 Then
-            MessageBox.Show("Something went wrong! Please file a github issue, and attach the WBDLlogs.txt file you can find in " & StartupForm.RootFolder)
+            If outLine.Data.Contains("Try in non-headless mode") Then
+                DownloadForm.RunCommandH(process.StartInfo.FileName, process.StartInfo.Arguments & " -l false -i 10")
+                process.Close()
+                process.Dispose()
+            End If
+
+            If outLine.Data.Contains("We're already in non-headless mode") Then
+                If IsItalian Then
+                    MessageBox.Show("Qualcosa è andato storto! Per favore crea un issue su github, e allega il file WBDLlogs.txt che puoi trovare in " & StartupForm.RootFolder)
+                    Application.Exit()
+                Else
+                    MessageBox.Show("Something went wrong! Please file a github issue, and attach the WBDLlogs.txt file you can find in " & StartupForm.RootFolder)
+                    Application.Exit()
+                End If
+            End If
+
+            File.AppendAllText(StartupForm.RootFolder & "\WBDLlogs.txt", outLine.Data & vbCrLf)
+
+
         End If
-
-        process.Close()
-
-        process.Dispose()
     End Sub
 
     Private Sub CheckSegmented_CheckedChanged(sender As Object, e As EventArgs) Handles CheckSegmented.CheckedChanged
