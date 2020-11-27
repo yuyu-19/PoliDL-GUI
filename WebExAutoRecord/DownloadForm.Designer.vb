@@ -84,7 +84,6 @@ Partial Class DownloadForm
         '
         Me.URLlist.AcceptsReturn = True
         Me.URLlist.AllowDrop = True
-        Me.URLlist.CharacterCasing = System.Windows.Forms.CharacterCasing.Lower
         Me.URLlist.Location = New System.Drawing.Point(16, 67)
         Me.URLlist.Multiline = True
         Me.URLlist.Name = "URLlist"

@@ -494,16 +494,16 @@ Public Class DownloadForm
                     If Not DLError Then currentfile += 1
                     If currentfile < currentfiletotal Then
                         If IsItalian Then
-                            MessageBox.Show("È fallito il download di " & currentfiletotal - currentfile & " video. Riprova più tardi.")
-                        Else
-                            MessageBox.Show("Could not download " & currentfiletotal - currentfile & " videos. Please try again later.")
-                        End If
+                        MessageBox.Show("È fallito il download di " & currentfiletotal - currentfile + 1 & " video. Riprova più tardi.")
+                    Else
+                        MessageBox.Show("Could not download " & currentfiletotal - currentfile + 1 & " videos. Please try again later.")
+                    End If
 
                     Else
-                        If IsItalian Then
-                            MessageBox.Show("Finito!")
-                        Else
-                            MessageBox.Show("All done!")
+                    If IsItalian Then
+                        MessageBox.Show("Finito!")
+                    Else
+                        MessageBox.Show("All done!")
                         End If
 
                     End If
