@@ -376,6 +376,7 @@ Public Class DownloadForm
         End If
         oProcess.EnableRaisingEvents = True
         oProcess.StartInfo = oStartInfo
+        currentprogress = 0
 
         AddHandler oProcess.OutputDataReceived, AddressOf OutputHandler
         AddHandler oProcess.ErrorDataReceived, AddressOf OutputHandler
