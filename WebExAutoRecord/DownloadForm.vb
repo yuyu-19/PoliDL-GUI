@@ -539,8 +539,13 @@ Public Class DownloadForm
 
             If outLine.Data.Contains("Try in non-headless mode") Then
                 DownloadForm.RunCommandH(process.StartInfo.FileName, process.StartInfo.Arguments & " -l false -i 10")
-                process.Close()
-                process.Dispose()
+                Try
+                    process.Close()
+                    process.Dispose()
+                Catch ex As Exception
+
+                End Try
+
             End If
 
             If outLine.Data.Contains("We're already in non-headless mode") Then

@@ -45,8 +45,13 @@
 
             End If
             If ans = DialogResult.Yes Then
-                DownloadForm.GlobalProcess.Kill()
-                DownloadForm.GlobalProcess.Dispose()
+                Try
+                    DownloadForm.GlobalProcess.Kill()
+                    DownloadForm.GlobalProcess.Dispose()
+                Catch ex As Exception
+
+                End Try
+
             Else
                 e.Cancel = True
             End If
