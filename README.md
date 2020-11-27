@@ -7,6 +7,8 @@ PoliWebex: https://github.com/sup3rgiu/PoliWebex
 
 ## Italiano
 
+Richiede .NET framework v4.6
+
 Questo programma ha due funzionalità principali:
   - Scaricare molteplici lezioni da Webex (Download)
   - Registrare lezioni in locale automaticamente (Locale)
@@ -57,6 +59,8 @@ Questa funzionalità è un po' complessa:
 
 
 ## English
+
+Requires .NET framework v4.6
 
 A huge thank you to @sup3rgiu for PoliWebex (on which the entire download functionality is based on) and for helping me make the necessary changes.
 
