@@ -27,15 +27,15 @@ Public Class DownloadForm
             COPF.IsFolderPicker = False
             COPF.EnsureFileExists = True
             If IsItalian Then
-                COPF.Filters.Add(New CommonFileDialogFilter("File HTML", ".html,.htm"))
-                COPF.Filters.Add(New CommonFileDialogFilter("File Excel", ".xlsx"))
-                COPF.Filters.Add(New CommonFileDialogFilter("File Word", ".docx"))
-                COPF.Filters.Add(New CommonFileDialogFilter("Zip (di file docx/xlsx/html)", ".zip"))
+                COPF.Filters.Add(New CommonFileDialogFilter("File HTML", "html,htm"))
+                COPF.Filters.Add(New CommonFileDialogFilter("File Excel", "xlsx"))
+                COPF.Filters.Add(New CommonFileDialogFilter("File Word", "docx"))
+                COPF.Filters.Add(New CommonFileDialogFilter("Zip (di file docx/xlsx/html)", "zip"))
             Else
-                COPF.Filters.Add(New CommonFileDialogFilter("HTML file", ".html,.htm"))
-                COPF.Filters.Add(New CommonFileDialogFilter("Excel file", ".xlsx"))
-                COPF.Filters.Add(New CommonFileDialogFilter("Word file", ".docx"))
-                COPF.Filters.Add(New CommonFileDialogFilter("Zip (of docx/xlsx/html files)", ".zip"))
+                COPF.Filters.Add(New CommonFileDialogFilter("HTML file", "html,htm"))
+                COPF.Filters.Add(New CommonFileDialogFilter("Excel file", "xlsx"))
+                COPF.Filters.Add(New CommonFileDialogFilter("Word file", "docx"))
+                COPF.Filters.Add(New CommonFileDialogFilter("Zip (of docx/xlsx/html files)", "zip"))
             End If
 
         Else
