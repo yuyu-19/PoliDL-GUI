@@ -311,7 +311,6 @@ Public Class DownloadForm
             Dim NewURL As String = ""
             NewURL = AllText.Substring(i, r.Match(AllText, i).Index - i).Trim
             NewURL = "https://" & NewURL
-            MessageBox.Show(NewURL)
             If Not URLs.Contains(NewURL) Then URLs.Add(NewURL)
 
             'CourseLine.Substring(startindex, CourseLine.IndexOf("-", startindex) - startindex).Trim()
