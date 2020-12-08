@@ -305,41 +305,63 @@ Public Class DownloadForm
     End Sub
 
     Sub GetAllRecordingLinks(AllText As String, ByRef URLs As List(Of String)) 'This just takes a big ol string (file) as input and a list, and adds all links to the list.
-        Dim i As Integer = AllText.IndexOf("politecnicomilano.webex.com/recordingservice/")
+        Dim i As Integer = AllText.IndexOf("politecnicomilano.webex.com/")
         'It may seem like a waste of resources to just check every time, but we can't be sure if the links are hyperlinks or not, so we'll just grab everything and see
         Do Until i = -1
             'We're going to use regex to check for the index of the first non-alphanumerical after the /playback/ in the link
             'This (SHOULD) let us handle most if not all cases? Since I'm assuming there'll at least be a space or something.
 
-            Dim r As New Regex("([^a-zA-Z0-9]+)|$")
+            Dim r As New Regex("([^a-zA-Z0-9\/.?=:]+)|$|\n")
             Dim NewURL As String = ""
-            If AllText.IndexOf("/playback/", i) = -1 Then
-                NewURL = AllText.Substring(i, r.Match(AllText, AllText.IndexOf("/play/", i) + "/play/".Length).Index - i).Trim
-            Else
-                NewURL = AllText.Substring(i, r.Match(AllText, AllText.IndexOf("/playback/", i) + "/playback/".Length).Index - i).Trim
-            End If
-
+            NewURL = AllText.Substring(i, r.Match(AllText, i).Index - i).Trim
             NewURL = "https://" & NewURL
-
+            MessageBox.Show(NewURL)
             If Not URLs.Contains(NewURL) Then URLs.Add(NewURL)
 
             'CourseLine.Substring(startindex, CourseLine.IndexOf("-", startindex) - startindex).Trim()
-            i = AllText.IndexOf("politecnicomilano.webex.com/recordingservice/", i + 1)
+            i = AllText.IndexOf("politecnicomilano.webex.com/", i + 1)
         Loop
+
+        'I just wound up unifying everything and praying that they don't fucking end the URL with another forwardslash (if anyone actually does that I will personally choke them).
+        'Or a semicolon. Or a question mark. Or an equals sign.
+        'LOOK IT WAS EITHER THIS OR ACTUAL MULTIPLE CASE HELL.
+
+
+        'This was it should just keep working no matter the link format.
+        'Why did I do this you ask? Because I've stumbled across a fourth goddamn URL format, and with the way I've been doing I would've had to add support for each fucking URL scheme
+        'And I've just about had it with this thing
+
+        'Also if you're actually reading these comments god bless your soul and I apologize for the profanity (not really, bugger off)
+        'I've also been experiencing a bug which seems to be related to the virtual desktop program I'm using so whatever
+
 
         'Second loop, for the RCID type links.
-        i = AllText.IndexOf("politecnicomilano.webex.com/politecnicomilano/")
+        'i = AllText.IndexOf("politecnicomilano.webex.com/politecnicomilano/")
 
-        Do Until i = -1
-            Dim r As New Regex("([^a-zA-Z0-9]+)|$")
-            Dim NewURL As String = AllText.Substring(i, r.Match(AllText, AllText.IndexOf("RCID=", i) + "RCID=".Length).Index - i).Trim
+        'Do Until i = -1
+        '    Dim r As New Regex("([^a-zA-Z0-9]+)|$")
+        '    Dim NewURL As String = AllText.Substring(i, r.Match(AllText, AllText.IndexOf("RCID=", i) + "RCID=".Length).Index - i).Trim
 
-            NewURL = "https://" & NewURL
-            If Not URLs.Contains(NewURL) Then URLs.Add(NewURL)
+        '    NewURL = "https://" & NewURL
+        '    If Not URLs.Contains(NewURL) Then URLs.Add(NewURL)
 
-            'CourseLine.Substring(startindex, CourseLine.IndexOf("-", startindex) - startindex).Trim()
-            i = AllText.IndexOf("politecnicomilano.webex.com/politecnicomilano/", i + 1)
-        Loop
+        '    'CourseLine.Substring(startindex, CourseLine.IndexOf("-", startindex) - startindex).Trim()
+        '    i = AllText.IndexOf("politecnicomilano.webex.com/politecnicomilano/", i + 1)
+        'Loop
+
+        'i = AllText.IndexOf("politecnicomilano.webex.com/webappng/")
+
+        'Do Until i = -1
+        '    Dim r As New Regex("([^a-zA-Z0-9]+)|$")
+        '    Dim NewURL As String = AllText.Substring(i, r.Match(AllText, AllText.IndexOf("/recording/", i) + "RCID=".Length).Index - i).Trim
+
+        '    NewURL = "https://" & NewURL
+        '    If Not URLs.Contains(NewURL) Then URLs.Add(NewURL)
+
+        '    'CourseLine.Substring(startindex, CourseLine.IndexOf("-", startindex) - startindex).Trim()
+        '    i = AllText.IndexOf("politecnicomilano.webex.com/politecnicomilano/", i + 1)
+        'Loop
+
     End Sub
 
 
@@ -538,7 +560,7 @@ Public Class DownloadForm
             End If
 
             If outLine.Data.Contains("Try in non-headless mode") Then
-                DownloadForm.RunCommandH(process.StartInfo.FileName, process.StartInfo.Arguments & " -l false -i 10")
+                DownloadForm.RunCommandH(StartupForm.RootFolder & "\PoliWebex-pkg\dist\poliwebex.exe", process.StartInfo.Arguments & " -l false -i 10")
                 Try
                     process.Close()
                     process.Dispose()
