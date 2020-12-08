@@ -450,10 +450,7 @@ Public Class DownloadForm
 
                 'I'm just going to completely erase the config.json file and kick the user back to the form.
             End If
-            If outLine.Data.Contains("non-headless mode") Then
-                'This is just for testing purposes
-                'MessageBox.Show("The bug happened. Running in non-headless mode now.")
-            End If
+
 
             If outLine.Data.Contains("Start downloading video") Then
                 If DLError Then
@@ -567,6 +564,23 @@ Public Class DownloadForm
                 Catch ex As Exception
 
                 End Try
+
+            End If
+
+            If outLine.Data.Contains("You need aria2c in $PATH for this to work") Then
+                'This is a weird bug that just kinda...popped up. I'm not sure if it's an issue with my multiple desktops program, but juuuuuust to be on the safe side
+                'If this happens, let's just ask the user to try again.
+                'I can't really fix this as it doesn't really make any sense? And I really don't have enough info.
+                If IsItalian Then
+                    MessageBox.Show("Qualcosa è andato storto. Per favore riprova.")
+                Else
+                    MessageBox.Show("Something went wrong. Please try again.")
+                End If
+                If IsItalian Then
+                    CurrentSpeed = "Finito."
+                Else
+                    CurrentSpeed = "Finished."
+                End If
 
             End If
 
