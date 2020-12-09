@@ -510,12 +510,13 @@ Public Class DownloadForm
                     CurrentSpeed = "Finished."
                 End If
 
-                If Not DLError Then currentfile += 1
+                If DLError Then currentfile -= 1
+
                 If currentfile < currentfiletotal Then
                     If IsItalian Then
-                        MessageBox.Show("È fallito il download di " & currentfiletotal - currentfile + 1 & " video. Riprova più tardi.")
+                        MessageBox.Show("È fallito il download di " & currentfiletotal - currentfile & " video. Riprova più tardi.")
                     Else
-                        MessageBox.Show("Could not download " & currentfiletotal - currentfile + 1 & " videos. Please try again later.")
+                        MessageBox.Show("Could not download " & currentfiletotal - currentfile & " videos. Please try again later.")
                     End If
 
                 Else
