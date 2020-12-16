@@ -48,6 +48,13 @@
                 Try
                     DownloadForm.GlobalProcess.Kill()
                     DownloadForm.GlobalProcess.Dispose()
+
+                    For Each proc In Process.GetProcessesByName("aria2c")   'Stop the download.
+                        If proc.MainModule.FileName.Contains(StartupForm.RootFolder) Then
+                            proc.Kill()
+                            proc.Dispose()
+                        End If
+                    Next
                 Catch ex As Exception
 
                 End Try
