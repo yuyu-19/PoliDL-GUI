@@ -1,6 +1,6 @@
 # PoliWebex-GUI
 
-Download: https://github.com/yuyu-19/PoliWebex-GUI/releases/latest
+Download: https://github.com/yuyu-19/PoliWebex-GUI/releases
 
 ### English version below!
 
