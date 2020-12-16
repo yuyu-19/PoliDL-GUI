@@ -1,4 +1,7 @@
 # PoliWebex-GUI
+
+Download: https://github.com/yuyu-19/PoliWebex-GUI/releases
+
 ### English version below!
 
 Un grande grazie a @sup3rgiu per PoliWebex (su cui si basa l'intera funzionalità di download) e per avermi aiutato con le modifiche necessarie.
