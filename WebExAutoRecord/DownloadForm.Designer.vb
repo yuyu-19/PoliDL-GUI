@@ -49,7 +49,7 @@ Partial Class DownloadForm
         '
         Me.ModeSelect.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
         Me.ModeSelect.FormattingEnabled = True
-        Me.ModeSelect.Items.AddRange(New Object() {"File", "URL List", "Folder"})
+        Me.ModeSelect.Items.AddRange(New Object() {"File", "Text", "Folder"})
         Me.ModeSelect.Location = New System.Drawing.Point(82, 35)
         Me.ModeSelect.Name = "ModeSelect"
         Me.ModeSelect.Size = New System.Drawing.Size(91, 21)

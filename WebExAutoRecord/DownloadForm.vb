@@ -76,7 +76,7 @@ Public Class DownloadForm
             ExtensionInfo.Text = "Tipi di file supportati: html, xlsx, docx, zip (degli altri file)"
             ModeSelect.Items.Clear()
             ModeSelect.Items.Add("File")
-            ModeSelect.Items.Add("Elenco di URL")
+            ModeSelect.Items.Add("Testo")
             ModeSelect.Items.Add("Cartella")
         End If
 
@@ -127,7 +127,7 @@ Public Class DownloadForm
 
         Dim URLs As New List(Of String)
         If ModeSelect.SelectedIndex = 1 Then
-            URLs = URLlist.Lines.ToList
+            GetAllRecordingLinks(URLlist.Text, URLs)
         Else
 
             If FilePath.Text = "" And ModeSelect.SelectedIndex = 0 Then
