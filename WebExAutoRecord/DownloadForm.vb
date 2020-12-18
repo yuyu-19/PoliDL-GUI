@@ -19,6 +19,7 @@ Public Class DownloadForm
     Public Shared CurrentSpeed As String = ""
     Public Shared GlobalProcess As Process
     Public Shared DLError As Boolean
+    Public Shared NotDownloaded As Integer = -1
     Private Sub Browse_Click(sender As Object, e As EventArgs) Handles Browse.Click
 
         Dim COPF As New CommonOpenFileDialog
@@ -373,7 +374,8 @@ Public Class DownloadForm
         Dim oProcess As New Process()
         Dim Debug As Boolean = False
         Dim oStartInfo As ProcessStartInfo
-
+        DLError = False
+        NotDownloaded = -1
 
         If Debug Then
             oStartInfo = New ProcessStartInfo(Command, Arguments) With {
@@ -414,7 +416,11 @@ Public Class DownloadForm
             Else
                 MessageBox.Show("Error starting the process. Exception info saved in crashreport.txt")
             End If
-
+            If IsItalian Then
+                CurrentSpeed = "Finito."
+            Else
+                CurrentSpeed = "Finished."
+            End If
         End Try
 
         GlobalProcess = oProcess
@@ -502,6 +508,21 @@ Public Class DownloadForm
             End If
             'MessageBox.Show(outLine.Data)
 
+            If outLine.Data.Contains("These videos have not been downloaded:") Then
+                NotDownloaded = 0
+                If outLine.Data.Contains("https://") Then
+                    NotDownloaded += 1
+                End If
+            End If
+
+            If outLine.Data.Contains("https://") And NotDownloaded <> -1 Then
+                Dim tempi As Integer = -1
+                Do
+                    tempi = outLine.Data.IndexOf("https://", tempi + 1)
+                    NotDownloaded += 1
+                Loop Until tempi = -1
+                NotDownloaded -= 1  'THe above loop always counts one extra and I'm too lazy to figure out a good alternative method.
+            End If
 
             If outLine.Data.Contains("Done!") Then
                 If IsItalian Then
@@ -512,11 +533,11 @@ Public Class DownloadForm
 
                 If DLError Then currentfile -= 1
 
-                If currentfile < currentfiletotal Then
+                If NotDownloaded <> -1 Then
                     If IsItalian Then
-                        MessageBox.Show("È fallito il download di " & currentfiletotal - currentfile & " video. Riprova più tardi, oppure prova in modalità unsegmented.")
+                        MessageBox.Show("È fallito il download di " & NotDownloaded & " video. Riprova più tardi, oppure prova in modalità unsegmented.")
                     Else
-                        MessageBox.Show("Could not download " & currentfiletotal - currentfile & " videos. Please try again later, or try unsegmented mode.")
+                        MessageBox.Show("Could not download " & NotDownloaded & " videos. Please try again later, or try unsegmented mode.")
                     End If
 
                 Else
