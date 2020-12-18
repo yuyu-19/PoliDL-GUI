@@ -6,9 +6,9 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{4AA1D199-DB8F-4D6B-9541-991B99926E7E}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <StartupObject>WebExAutoRecord.My.MyApplication</StartupObject>
-    <RootNamespace>WebExAutoRecord</RootNamespace>
-    <AssemblyName>WebExAutoRecord</AssemblyName>
+    <StartupObject>PoliwebexGUI.My.MyApplication</StartupObject>
+    <RootNamespace>PoliwebexGUI</RootNamespace>
+    <AssemblyName>Poliwebex-GUI</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <MyType>WindowsForms</MyType>
     <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
@@ -38,7 +38,7 @@
     <DefineDebug>true</DefineDebug>
     <DefineTrace>true</DefineTrace>
     <OutputPath>bin\Debug\</OutputPath>
-    <DocumentationFile>WebExAutoRecord.xml</DocumentationFile>
+    <DocumentationFile>Poliwebex-GUI.xml</DocumentationFile>
     <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
@@ -49,7 +49,7 @@
     <DefineTrace>true</DefineTrace>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DocumentationFile>WebExAutoRecord.xml</DocumentationFile>
+    <DocumentationFile>Poliwebex-GUI.xml</DocumentationFile>
     <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>

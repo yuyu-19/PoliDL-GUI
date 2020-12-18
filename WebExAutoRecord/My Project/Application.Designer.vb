@@ -32,7 +32,7 @@ Namespace My
         
         <Global.System.Diagnostics.DebuggerStepThroughAttribute()>  _
         Protected Overrides Sub OnCreateMainForm()
-            Me.MainForm = Global.WebExAutoRecord.StartupForm
+            Me.MainForm = Global.PoliwebexGUI.StartupForm
         End Sub
     End Class
 End Namespace

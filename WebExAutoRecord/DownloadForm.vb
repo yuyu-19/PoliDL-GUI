@@ -8,7 +8,7 @@ Imports Microsoft.Win32.TaskScheduler
 Imports Microsoft.WindowsAPICodePack.Dialogs
 Imports System.Net
 Imports System.Text
-Imports WebExAutoRecord.StartupForm
+Imports PoliwebexGUI.StartupForm
 
 Public Class DownloadForm
 
@@ -514,9 +514,9 @@ Public Class DownloadForm
 
                 If currentfile < currentfiletotal Then
                     If IsItalian Then
-                        MessageBox.Show("È fallito il download di " & currentfiletotal - currentfile & " video. Riprova più tardi.")
+                        MessageBox.Show("È fallito il download di " & currentfiletotal - currentfile & " video. Riprova più tardi, oppure prova in modalità unsegmented.")
                     Else
-                        MessageBox.Show("Could not download " & currentfiletotal - currentfile & " videos. Please try again later.")
+                        MessageBox.Show("Could not download " & currentfiletotal - currentfile & " videos. Please try again later, or try unsegmented mode.")
                     End If
 
                 Else
