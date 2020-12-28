@@ -534,10 +534,18 @@ Public Class DownloadForm
                 If DLError Then currentfile -= 1
 
                 If NotDownloaded <> -1 Then
-                    If IsItalian Then
-                        MessageBox.Show("È fallito il download di " & NotDownloaded & " video. Riprova più tardi, oppure prova in modalità unsegmented.")
+                    If segmented Then
+                        If IsItalian Then
+                            MessageBox.Show("È fallito il download di " & NotDownloaded & " video. Riprova più tardi, oppure prova in modalità unsegmented.")
+                        Else
+                            MessageBox.Show("Could not download " & NotDownloaded & " videos. Please try again later, or try unsegmented mode.")
+                        End If
                     Else
-                        MessageBox.Show("Could not download " & NotDownloaded & " videos. Please try again later, or try unsegmented mode.")
+                        If IsItalian Then
+                            MessageBox.Show("È fallito il download di " & NotDownloaded & " video. Riprova più tardi.")
+                        Else
+                            MessageBox.Show("Could not download " & NotDownloaded & " videos. Please try again later.")
+                        End If
                     End If
 
                 Else
