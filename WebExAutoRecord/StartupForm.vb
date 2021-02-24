@@ -10,7 +10,7 @@ Imports System.Net
 
 Public Class StartupForm
 
-    Public RootFolder As String = Environment.CurrentDirectory
+    Public RootFolder As String = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) & "\WebExRec"
 
     Dim Courses As New List(Of CourseData)
     Public Shared IsItalian As Boolean = (Thread.CurrentThread.CurrentCulture.IetfLanguageTag = "it-IT")
@@ -43,8 +43,9 @@ Public Class StartupForm
         Dim size As Size = TextRenderer.MeasureText(Question.Text, CFont)
         Question.Width = size.Width
         Question.Height = size.Height
+        Question.TextAlign = ContentAlignment.MiddleCenter
         Dim p As Point = Question.Location
-        p.X = 10
+        p.X = (Me.ClientSize.Width - Question.Width) / 2
         p.Y = 5
         Question.Location = p
 
@@ -114,6 +115,15 @@ Public Class StartupForm
                 End If
             Next
 
+            For Each proc In Process.GetProcessesByName("polidown")
+                'MessageBox.Show("Process: " & proc.MainModule.FileName)
+                If proc.MainModule.FileName.Contains(RootFolder) Then
+                    'MessageBox.Show("Killing process: " & proc.ProcessName)
+                    proc.Kill()
+                    proc.Dispose()
+                End If
+            Next
+
             Try
                 Directory.Delete(appData, True) 'Version mismatch - the internal data is newer than the stored one
             Catch ex As Exception
@@ -170,13 +180,12 @@ Public Class StartupForm
             Catch ex As Exception
                 MessageBox.Show(ex.Message)
             End Try
-
             Me.Cursor = Cursors.Default
         End If
 
-        Question.Text = "Would you like to manage the local recordings or download them from webex?"
+        Question.Text = "Would you like to manage the local recordings or download them?"
         If IsItalian Then
-            Question.Text = "Vuoi gestire le registrazioni locali o scaricare delle registrazioni da webex?"
+            Question.Text = "Vuoi gestire le registrazioni locali o scaricare delle registrazioni?"
         End If
         downloadmode.Enabled = True
         localmode.Enabled = True

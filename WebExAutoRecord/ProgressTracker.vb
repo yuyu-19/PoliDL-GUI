@@ -31,13 +31,13 @@
         If DownloadForm.CurrentSpeed <> "Finished." And DownloadForm.CurrentSpeed <> "Finito." Then
             Dim ans As Integer
             If StartupForm.IsItalian Then
-                If Not DownloadForm.GlobalProcess.StartInfo.Arguments.Contains(" -s") Then
+                If Not DownloadForm.GlobalProcess.StartInfo.Arguments.Contains(" -s") And Not DownloadForm.GlobalProcess.StartInfo.FileName.Contains("polidown.exe") Then
                     ans = MsgBox("Sei sicuro? Interromperà il download corrente e dovrai ricominciare da capo, dato che sei in modalità unsegmented.", MsgBoxStyle.YesNo, "Exit?")
                 Else
                     ans = MsgBox("Sei sicuro? Interromperà il download corrente.", MsgBoxStyle.YesNo, "Exit?")
                 End If
             Else
-                If Not DownloadForm.GlobalProcess.StartInfo.Arguments.Contains(" -s") Then
+                If Not DownloadForm.GlobalProcess.StartInfo.Arguments.Contains(" -s") And Not DownloadForm.GlobalProcess.StartInfo.FileName.Contains("polidown.exe") Then
                     ans = MsgBox("Are you sure? This will stop the current download and you will have to start from scratch, since you're in unsegmented mode.", MsgBoxStyle.YesNo, "Exit?")
                 Else
                     ans = MsgBox("Are you sure? This will stop the current download.", MsgBoxStyle.YesNo, "Exit?")

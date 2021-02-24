@@ -1,25 +1,24 @@
-﻿Imports System.Threading
-Imports System.Globalization
-Imports System.Drawing
-Imports System.IO
+﻿Imports System.IO
 Imports System.IO.Compression
 Imports System.Text.RegularExpressions
-Imports Microsoft.Win32.TaskScheduler
 Imports Microsoft.WindowsAPICodePack.Dialogs
-Imports System.Net
-Imports System.Text
 Imports PoliwebexGUI.StartupForm
 
 Public Class DownloadForm
 
     Public Shared currentsegmenttotal As Integer
+    Public Shared currentfiletotalS As Integer
     Public Shared currentfiletotal As Integer
+    Public Shared StreamIsVideo As Boolean
     Public Shared currentfile As Integer
     Public Shared currentprogress As Double = 0
     Public Shared CurrentSpeed As String = ""
     Public Shared GlobalProcess As Process
     Public Shared DLError As Boolean
+    Public Shared WebexProgress As Double = 0
     Public Shared NotDownloaded As Integer = -1
+    Public Shared StreamArgs As String  'Why? Because I need to access it from outside where it was declared. Sue me. I'm tired of working on this godforsaken program.
+    Private Shared Debug As Boolean = True
     Private Sub Browse_Click(sender As Object, e As EventArgs) Handles Browse.Click
 
         Dim COPF As New CommonOpenFileDialog
@@ -126,9 +125,9 @@ Public Class DownloadForm
             Return
         End If
 
-        Dim URLs As New List(Of String)
+        Dim WebexURLs, StreamURLs As New List(Of String)
         If ModeSelect.SelectedIndex = 1 Then
-            GetAllRecordingLinks(URLlist.Text, URLs)
+            GetAllRecordingLinks(URLlist.Text, WebexURLs, StreamURLs)
         Else
 
             If FilePath.Text = "" And ModeSelect.SelectedIndex = 0 Then
@@ -161,7 +160,7 @@ Public Class DownloadForm
 
             Select Case extension
                 Case "html", "htm"
-                    GetAllRecordingLinks(File.ReadAllText(FilePath.Text), URLs)
+                    GetAllRecordingLinks(File.ReadAllText(FilePath.Text), WebexURLs, StreamURLs)
 
                 Case "xlsx", "docx", "zip"
                     'We're going to treat them as zip archives, and just read the xml files directly. It's simpler that way.
@@ -174,7 +173,7 @@ Public Class DownloadForm
                         Return
                     End Try
 
-                    GetAllLinksFromZip(XFile, URLs)
+                    GetAllLinksFromZip(XFile, WebexURLs, StreamURLs)
                     XFile.Dispose()
 
                 Case Else
@@ -192,7 +191,7 @@ Public Class DownloadForm
             File.Delete(FilePath.Text)
         End If
 
-        If URLs.Count = 0 Then
+        If WebexURLs.Count = 0 And StreamURLs.Count = 0 Then
             If IsItalian Then
                 MessageBox.Show("Nessun URL trovato.")
             Else
@@ -210,70 +209,110 @@ Public Class DownloadForm
         'Check if config.json exists. If it does, get the email and ID from it, as well as if the password is saved or not.
 
 
-        Dim arguments As String = "-t -i 3 -o """ & FolderPath.Text & """"
-        If File.Exists(StartupForm.RootFolder & "\PoliWebex-pkg\dist\config.json") Then
-            Dim AllText As String = File.ReadAllText(StartupForm.RootFolder & "\PoliWebex-pkg\dist\config.json")
-            If IsItalian Then
-                If Not AllText.Contains("codicePersona") Then arguments &= " -u " & InputForm.AskForInput("Inserisci il tuo codice persona")
-                If Not AllText.Contains("email") Then arguments &= " -e " & InputForm.AskForInput("Inserisci la tua email (nome.cognome@mail.polimi.it)")
-            Else
-                If Not AllText.Contains("codicePersona") Then arguments &= " -u " & InputForm.AskForInput("Please input your person code")
-                If Not AllText.Contains("email") Then arguments &= " -e " & InputForm.AskForInput("Please input your email (name.surname@mail.polimi.it)")
+        Dim WebexArgs As String = "-t -i 3 -o """ & FolderPath.Text & """"
+        StreamArgs = "-t -q 5 -i 3 -o """ & FolderPath.Text & """"
+        Dim TempString As String
+
+        If File.Exists(StartupForm.RootFolder & "\Poli-pkg\dist\config.json") Then
+            Dim Config As String = File.ReadAllText(StartupForm.RootFolder & "\Poli-pkg\dist\config.json")
+
+            If Not Config.Contains("codicePersona") Then
+                If IsItalian Then
+                    TempString = InputForm.AskForInput("Inserisci il tuo codice persona")
+                Else
+                    TempString = InputForm.AskForInput("Please input your person code")
+                End If
+                WebexArgs &= " -u " & TempString
+                StreamArgs &= " -u " & TempString
             End If
 
-
-            If Not AllText.Contains("passwordSaved") OrElse Not (AllText.IndexOf("true", AllText.IndexOf("passwordSaved")) = AllText.IndexOf("passwordSaved") + "passwordSaved"": ".Length) Then
-                'Does the passwordsaved value exist?
-                'Is the true right after the passwordSaved keyword?
-                '(Checking the position in this way also checks wheter or not it's set to true.
+            If Not Config.Contains("email") Then
                 If IsItalian Then
-                    arguments &= " -p " & InputForm.AskForInput("Inserisci la tua password")
+                    WebexArgs &= " -e " & InputForm.AskForInput("Inserisci la tua email (nome.cognome@mail.polimi.it)")
                 Else
-                    arguments &= " -p " & InputForm.AskForInput("Please input your password")
+                    WebexArgs &= " -e " & InputForm.AskForInput("Please input your email (name.surname@mail.polimi.it)")
                 End If
             End If
 
-        Else    'Nothing is saved, ask everything
-            If IsItalian Then
-                arguments &= " -u " & InputForm.AskForInput("Inserisci il tuo codice persona") &
-                " -e " & InputForm.AskForInput("Inserisci la tua email (name.surname@mail.polimi.it)") &
-                " -p " & InputForm.AskForInput("Inserisci la tua password")
-            Else
-                arguments &= " -u " & InputForm.AskForInput("Please input your person code") &
-                " -e " & InputForm.AskForInput("Please input your email (name.surname@mail.polimi.it)") &
-                " -p " & InputForm.AskForInput("Please input your password")
+
+            If Not Config.Contains("passwordSaved") OrElse
+            Not (Config.IndexOf("true", Config.IndexOf("passwordSaved")) = Config.IndexOf("passwordSaved") + "passwordSaved"": ".Length) Then
+                'Does the passwordsaved value exist?
+                'Is the true right after the passwordSaved keyword?
+                'Checking the position in this way also checks wheter or not it's set to true.
+                If IsItalian Then
+                    TempString = InputForm.AskForInput("Inserisci la tua password")
+                Else
+                    TempString = InputForm.AskForInput("Please input your password")
+                End If
+                WebexArgs &= " -p " & TempString
+                StreamArgs &= " -p " & TempString
             End If
 
+        Else    'Nothing is saved, ask everything to make sure.
+            If IsItalian Then
+                TempString = InputForm.AskForInput("Inserisci il tuo codice persona")
+            Else
+                TempString = InputForm.AskForInput("Please input your person code")
+            End If
+            WebexArgs &= " -u " & TempString
+            StreamArgs &= " -u " & TempString
+
+            If IsItalian Then
+                TempString = InputForm.AskForInput("Inserisci la tua password")
+            Else
+                TempString = InputForm.AskForInput("Please input your password")
+            End If
+            WebexArgs &= " -p " & TempString
+            StreamArgs &= " -p " & TempString
+
+            If IsItalian Then
+                TempString = InputForm.AskForInput("Inserisci la tua email (nome.cognome@mail.polimi.it)")
+            Else
+                TempString = InputForm.AskForInput("Please input your email (name.surname@mail.polimi.it)")
+            End If
+            WebexArgs &= " -e " & TempString
         End If
 
-        arguments &= " -v"
-        For Each URL As String In URLs
-            arguments &= " """ & URL & """"
+        WebexArgs &= " -v"
+        StreamArgs &= " -v"
+        For Each URL As String In WebexURLs
+            WebexArgs &= " """ & URL & """"
+        Next
+
+        For Each URL As String In StreamURLs
+            StreamArgs &= " """ & URL & """"
         Next
 
         'Time to boot up poliwebex.
-        'Need to implement the italian translation for all this UI shit.
 
-        If Not CheckSegmented.Checked Then arguments &= " -s"
+        If Not CheckSegmented.Checked Then WebexArgs &= " -s"
 
-
-        ProgressTracker.OverallProgress.Value = 0
-        ProgressTracker.FileNum.Text = "File 0/" & URLs.Count
         currentfile = 0
-        currentfiletotal = URLs.Count
+        currentfiletotalS = StreamURLs.Count
+        currentfiletotal = WebexURLs.Count + StreamURLs.Count
+        ProgressTracker.OverallProgress.Value = 0
+        ProgressTracker.FileNum.Text = "File 0/" & currentfiletotal
+
         If IsItalian Then
             CurrentSpeed = "Sto avviando..."
         Else
             CurrentSpeed = "Setting up..."
         End If
 
-        File.Delete(StartupForm.RootFolder & "\WBDLlogs.txt")
-        RunCommandH(StartupForm.RootFolder & "\PoliWebex-pkg\dist\poliwebex.exe", arguments)
+        File.Delete(Environment.CurrentDirectory & "\WBDLlogs.txt")
+        StreamIsVideo = False
+        WebexProgress = 0
+        If WebexURLs.Count <> 0 Then
+            RunCommandH(StartupForm.RootFolder & "\Poli-pkg\dist\poliwebex.exe", WebexArgs)
+        Else
+            RunCommandH(StartupForm.RootFolder & "\Poli-pkg\dist\polidown.exe", StreamArgs)
+        End If
         ProgressTracker.ShowDialog()
 
     End Sub
 
-    Sub GetAllLinksFromZip(AFile As ZipArchive, ByRef URLs As List(Of String))
+    Sub GetAllLinksFromZip(AFile As ZipArchive, ByRef WebexURLs As List(Of String), ByRef StreamURLs As List(Of String))
 
         For Each Entry In AFile.Entries
             Dim FileName As String = Entry.Name
@@ -294,25 +333,25 @@ Public Class DownloadForm
                     Return
                 End Try
 
-                GetAllLinksFromZip(XFile, URLs)
+                GetAllLinksFromZip(XFile, WebexURLs, StreamURLs)
 
                 XFile.Dispose()
             Else
-                GetAllRecordingLinks(File.ReadAllText(Entry.Name), URLs)
+                GetAllRecordingLinks(File.ReadAllText(Entry.Name), WebexURLs, StreamURLs)
             End If
 
             File.Delete(FileName)
         Next
     End Sub
 
-    Sub GetAllRecordingLinks(AllText As String, ByRef URLs As List(Of String)) 'This just takes a big ol string (file) as input and a list, and adds all links to the list.
+    Sub GetAllRecordingLinks(AllText As String, ByRef WebexURLs As List(Of String), ByRef StreamURLs As List(Of String)) 'This just takes a big ol string (file) as input and a list, and adds all links to the list.
         Dim i As Integer = AllText.IndexOf("politecnicomilano.webex.com/")
         Do Until i = -1
             Dim r As New Regex("([^a-zA-Z0-9\/.?=:]+)|$|\n")
             Dim NewURL As String = ""
             NewURL = AllText.Substring(i, r.Match(AllText, i).Index - i).Trim
             NewURL = "https://" & NewURL
-            If Not URLs.Contains(NewURL) Then URLs.Add(NewURL)
+            If Not WebexURLs.Contains(NewURL) Then WebexURLs.Add(NewURL)
 
             'CourseLine.Substring(startindex, CourseLine.IndexOf("-", startindex) - startindex).Trim()
             i = AllText.IndexOf("politecnicomilano.webex.com/", i + 1)
@@ -324,8 +363,8 @@ Public Class DownloadForm
 
         'Also if you're actually reading these comments god bless your soul and I apologize for the profanity (not really, bugger off)
         'I've also been experiencing a bug which seems to be related to the virtual desktop program I'm using so whatever
-        'I'm keeping the following parts (even if they're theoretically not necessary) JUST IN CASE SOMEONE IS BRIGHT ENOUGH TO FOLLOW A LINK UP WITH ONE OF THE SYMBOLS I EXCLUDED.
-        'JUST IN CASE. Nothing could surprise me at this point. I saw a link that had https spelt wrong, which is why I'm no longer looking for https://politecnico. 
+        'I'm keeping the following parts (even if they're theoretically not necessary) JUST IN CASE SOMEONE IS BRIGHT ENOUGH TO FOLLOW A LINK UP WITH ONE OF THE ADDITIONAL SYMBOLS I EXCLUDED.
+        'JUST IN CASE. Nothing could surprise me at this point. I saw a link that had https spelt wrong, which is why I'm no longer looking for "https://politecnico." 
 
 
         i = AllText.IndexOf("politecnicomilano.webex.com/recordingservice/")
@@ -336,7 +375,7 @@ Public Class DownloadForm
 
             Dim r As New Regex("([^a-zA-Z0-9]+)|$")
             Dim NewURL As String = ""
-            If AllText.IndexOf("/playback/", i) = -1 Then
+            If AllText.IndexOf("/playback/", i) = -1 Or (AllText.IndexOf("/play/", i) < AllText.IndexOf("/playback/", i)) Then
                 NewURL = AllText.Substring(i, r.Match(AllText, AllText.IndexOf("/play/", i) + "/play/".Length).Index - i).Trim
             Else
                 NewURL = AllText.Substring(i, r.Match(AllText, AllText.IndexOf("/playback/", i) + "/playback/".Length).Index - i).Trim
@@ -344,7 +383,7 @@ Public Class DownloadForm
 
             NewURL = "https://" & NewURL
 
-            If Not URLs.Contains(NewURL) Then URLs.Add(NewURL)
+            If Not WebexURLs.Contains(NewURL) Then WebexURLs.Add(NewURL)
 
             'CourseLine.Substring(startindex, CourseLine.IndexOf("-", startindex) - startindex).Trim()
             i = AllText.IndexOf("politecnicomilano.webex.com/recordingservice/", i + 1)
@@ -358,26 +397,41 @@ Public Class DownloadForm
             Dim NewURL As String = AllText.Substring(i, r.Match(AllText, AllText.IndexOf("RCID=", i) + "RCID=".Length).Index - i).Trim
 
             NewURL = "https://" & NewURL
-            If Not URLs.Contains(NewURL) Then URLs.Add(NewURL)
+            If Not WebexURLs.Contains(NewURL) Then WebexURLs.Add(NewURL)
 
             'CourseLine.Substring(startindex, CourseLine.IndexOf("-", startindex) - startindex).Trim()
             i = AllText.IndexOf("politecnicomilano.webex.com/politecnicomilano/", i + 1)
+        Loop
+
+
+        'Another loop, this time for msstream links
+        i = AllText.IndexOf("web.microsoftstream.com")
+
+        Do Until i = -1
+            Dim r As New Regex("([^a-zA-Z0-9-]+)|$")    'This one excludes the - character from the match
+            Dim NewURL As String = AllText.Substring(i, r.Match(AllText, AllText.IndexOf("/video/", i) + "/video/".Length).Index - i).Trim
+
+            NewURL = "https://" & NewURL
+            If Not StreamURLs.Contains(NewURL) Then StreamURLs.Add(NewURL)
+
+            'CourseLine.Substring(startindex, CourseLine.IndexOf("-", startindex) - startindex).Trim()
+            i = AllText.IndexOf("web.microsoftstream.com", i + 1)
         Loop
     End Sub
 
 
 
-    Sub RunCommandH(Command As String, Arguments As String)
+    Shared Sub RunCommandH(Command As String, Arguments As String)
         'Console.WriteLine(Command)
         'Console.ReadLine()
 
         Dim oProcess As New Process()
-        Dim Debug As Boolean = False
+        Dim NoOutputRedirect As Boolean = False
         Dim oStartInfo As ProcessStartInfo
         DLError = False
         NotDownloaded = -1
 
-        If Debug Then
+        If NoOutputRedirect Then
             oStartInfo = New ProcessStartInfo(Command, Arguments) With {
             .RedirectStandardOutput = False,
             .RedirectStandardError = False,
@@ -385,7 +439,7 @@ Public Class DownloadForm
             .UseShellExecute = True,
             .WindowStyle = ProcessWindowStyle.Normal,
             .CreateNoWindow = False,
-            .WorkingDirectory = StartupForm.RootFolder & "\PoliWebex-pkg\dist\"
+            .WorkingDirectory = Command.Substring(0, Command.LastIndexOf("\"))
             }
         Else
             oStartInfo = New ProcessStartInfo(Command, Arguments) With {
@@ -395,20 +449,22 @@ Public Class DownloadForm
             .UseShellExecute = False,
             .WindowStyle = ProcessWindowStyle.Normal,
             .CreateNoWindow = True,
-            .WorkingDirectory = StartupForm.RootFolder & "\PoliWebex-pkg\dist\"
+            .WorkingDirectory = Command.Substring(0, Command.LastIndexOf("\", Command.Length - 3))
             }
         End If
+
+
         oProcess.EnableRaisingEvents = True
         oProcess.StartInfo = oStartInfo
-        currentprogress = 0
+        currentprogress = WebexProgress
 
         AddHandler oProcess.OutputDataReceived, AddressOf OutputHandler
         AddHandler oProcess.ErrorDataReceived, AddressOf OutputHandler
 
         Try
             oProcess.Start()
-            If Not Debug Then oProcess.BeginOutputReadLine()
-            If Not Debug Then oProcess.BeginErrorReadLine()
+            If Not NoOutputRedirect Then oProcess.BeginOutputReadLine()
+            If Not NoOutputRedirect Then oProcess.BeginErrorReadLine()
         Catch ex As Exception
             File.WriteAllText(StartupForm.RootFolder & "\crashreport.txt", ex.ToString)
             If IsItalian Then
@@ -433,21 +489,28 @@ Public Class DownloadForm
         Dim process As Process = sendingProcess
 
         Dim segmented As Boolean = process.StartInfo.Arguments.Contains(" -s")
+        If process.StartInfo.FileName.Contains("polidown.exe") Then segmented = True    'polidown is always in segmented mode
 
-        'IMPORTANT: Handle closing the program properly if the form closes (kill poliwebex)
-        'Add a warning using form.close
-
-
-        'Need to properly implement the "Done!" prompt etc. in process.exited
 
         If Not String.IsNullOrEmpty(outLine.Data) Then
-            If outLine.Data.Contains("Bad credentials.") Then
-                File.Delete(StartupForm.RootFolder & "\PoliWebex-pkg\dist\config.json")
-                If IsItalian Then
-                    MessageBox.Show("Credenziali errate. Riprova, ti verrà chiesto di reinserirle.")
-                Else
-                    MessageBox.Show("Bad credentials. Please try again, you will be prompted to input them.")
-                End If
+            If outLine.Data.Contains("Bad credentials.") Then   'Output is same on both.
+                Try
+                    File.Delete(StartupForm.RootFolder & "\Poli-pkg\dist\config.json")
+                    If IsItalian Then
+                        MessageBox.Show("Credenziali errate. Riprova, ti verrà chiesto di reinserirle.")
+                    Else
+                        MessageBox.Show("Bad credentials. Please try again, you will be prompted to input them. If that didn't happen, please delete the file at %APPDATA%\WebExRec\Poli-pkg\dist\config.json")
+                    End If
+                Catch ex As Exception
+                    If IsItalian Then
+                        MessageBox.Show("Credenziali errate. Non è stato possibile cancellare il file %APPDATA%\WebExRec\Poli-pkg\dist\config.json, per favore fallo manualmente")
+                    Else
+                        MessageBox.Show("Bad credentials. We could not delete the file at %APPDATA%\WebExRec\Poli-pkg\dist\config.json, please do so manually")
+                    End If
+                End Try
+
+                'Might as well stay on the safe side - if one of them is outdated, it's likely the other one is as well.
+
                 If IsItalian Then
                     CurrentSpeed = "Finito."
                 Else
@@ -458,7 +521,7 @@ Public Class DownloadForm
             End If
 
 
-            If outLine.Data.Contains("Start downloading video") Then
+            If outLine.Data.Contains("Start downloading video") Then    'Output is same on both
                 If DLError Then
                     DLError = False
                 Else
@@ -470,18 +533,27 @@ Public Class DownloadForm
             'JANK IT UP
 
 
-            If outLine.Data.Contains("Downloading") And outLine.Data.Contains("item(s)") And segmented Then
-                currentsegmenttotal = outLine.Data.Substring(
+            If outLine.Data.Contains("Downloading") And outLine.Data.Contains("item(s)") And segmented Then 'aria2c output - differs slightly with polidown.
+                Dim Temp As Integer = outLine.Data.Substring(
                 outLine.Data.IndexOf("Downloading") + "Downloading".Length,
                 outLine.Data.IndexOf("item(s)") - (outLine.Data.IndexOf("Downloading") + "Downloading".Length)).Trim()
+                If process.StartInfo.FileName.Contains("polidown.exe") Then
+                    StreamIsVideo = Not (StreamIsVideo)
+                    If StreamIsVideo Then
+                        currentsegmenttotal = Temp * 2 + 10 'polidown has to download audio and video separately. 
+                    End If 'So I multiply it by two and add 10 for safety in case there's a mismatch between the two
+                Else
+                    currentsegmenttotal = Temp
+                End If
+
             End If
 
-            If outLine.Data.Contains("0B CN") And Not segmented Then
+            If outLine.Data.Contains("0B CN") And Not segmented Then    'aria2c output
                 'Means it's an update. We can get the speed from here.
                 CurrentSpeed = outLine.Data.Substring(outLine.Data.IndexOf("DL:") + "DL:".Length, outLine.Data.Length - 1 - (outLine.Data.IndexOf("DL:") + "DL:".Length)) & "/s"
             End If
 
-            If outLine.Data.Contains("[DL:") And segmented Then
+            If outLine.Data.Contains("[DL:") And segmented Then     'aria2c output
                 CurrentSpeed = outLine.Data.Substring("[DL:".Length, outLine.Data.IndexOf("]") - "[DL:".Length) & "/s"
                 If IsItalian Then
                     If CurrentSpeed = "0B/s" Then CurrentSpeed = "Sto leggendo dal disco..."
@@ -491,7 +563,7 @@ Public Class DownloadForm
 
             End If
 
-            If outLine.Data.Contains("Download complete:") Then
+            If outLine.Data.Contains("Download complete:") Then 'aria2c output
                 If segmented Then
                     'MessageBox.Show(1 & "/" & currentfiletotal & "/" & currentsegmenttotal & "=" & (currentfile / currentfiletotal) / currentsegmenttotal * 100)
                     currentprogress += (1 / currentfiletotal) / currentsegmenttotal * 100
@@ -502,10 +574,11 @@ Public Class DownloadForm
                 End If
             End If
 
-            If outLine.Data.Contains("Download has already completed:") And segmented Then
+            If outLine.Data.Contains("Download has already completed:") And segmented Then   'aria2c output
                 'Hey, as long as it works.
                 currentprogress -= (1 / currentfiletotal) / currentsegmenttotal * 100
             End If
+
             'MessageBox.Show(outLine.Data)
 
             If outLine.Data.Contains("These videos have not been downloaded:") Then
@@ -515,7 +588,7 @@ Public Class DownloadForm
                 End If
             End If
 
-            If outLine.Data.Contains("https://") And NotDownloaded <> -1 Then
+            If outLine.Data.Contains("https://") And NotDownloaded <> -1 Then    '
                 Dim tempi As Integer = -1
                 Do
                     tempi = outLine.Data.IndexOf("https://", tempi + 1)
@@ -524,47 +597,82 @@ Public Class DownloadForm
                 NotDownloaded -= 1  'THe above loop always counts one extra and I'm too lazy to figure out a good alternative method.
             End If
 
-            If outLine.Data.Contains("Done!") Then
-                If IsItalian Then
-                    CurrentSpeed = "Finito."
-                Else
-                    CurrentSpeed = "Finished."
-                End If
-
+            If outLine.Data.Contains("Done!") Then  'Shared output. 
                 If DLError Then currentfile -= 1
 
-                If NotDownloaded <> -1 Then
-                    If segmented Then
-                        If IsItalian Then
-                            MessageBox.Show("È fallito il download di " & NotDownloaded & " video. Riprova più tardi, oppure prova in modalità unsegmented.")
+                currentprogress = currentfile / currentfiletotal * 100  'Let's ensure we're at the correct progress.
+                If process.StartInfo.FileName.Contains("polidown.exe") Or currentfiletotalS = 0 Then
+                    'Either we've finished polidown, or there's no msstream links to download.
+                    If IsItalian Then
+                        CurrentSpeed = "Finito."
+                    Else
+                        CurrentSpeed = "Finished."
+                    End If
+
+                    If NotDownloaded <> -1 Then
+                        If segmented Then
+                            If IsItalian Then
+                                MessageBox.Show("È fallito il download di " & NotDownloaded & " video. Riprova più tardi, oppure prova in modalità unsegmented.")
+                            Else
+                                MessageBox.Show("Could not download " & NotDownloaded & " videos. Please try again later, or try unsegmented mode.")
+                            End If
                         Else
-                            MessageBox.Show("Could not download " & NotDownloaded & " videos. Please try again later, or try unsegmented mode.")
+                            If IsItalian Then
+                                MessageBox.Show("È fallito il download di " & NotDownloaded & " video. Riprova più tardi.")
+                            Else
+                                MessageBox.Show("Could not download " & NotDownloaded & " videos. Please try again later.")
+                            End If
                         End If
+
                     Else
                         If IsItalian Then
-                            MessageBox.Show("È fallito il download di " & NotDownloaded & " video. Riprova più tardi.")
+                            MessageBox.Show("Finito!")
                         Else
-                            MessageBox.Show("Could not download " & NotDownloaded & " videos. Please try again later.")
+                            MessageBox.Show("All done!")
                         End If
+
                     End If
 
                 Else
-                    If IsItalian Then
-                        MessageBox.Show("Finito!")
-                    Else
-                        MessageBox.Show("All done!")
-                    End If
+                    WebexProgress = currentprogress
+                    If NotDownloaded <> -1 Then
+                        If segmented Then
+                            If IsItalian Then
+                                MessageBox.Show("È fallito il download di " & NotDownloaded & " video da Webex. Riprova più tardi in modalità non-segmented. Ora scarichiamo i video da microsoft stream.")
+                            Else
+                                MessageBox.Show("Could not download " & NotDownloaded & " videos from Webex. Try again later in unsegmented mode. We will now download the microsoft stream videos.")
+                            End If
+                        Else
+                            If IsItalian Then
+                                MessageBox.Show("È fallito il download di " & NotDownloaded & " video da Webex. Riprova più tardi. Ora scarichiamo i video da microsoft stream.")
+                            Else
+                                MessageBox.Show("Could not download " & NotDownloaded & " videos from Webex. Please try again later. We will now download the microsoft stream videos.")
+                            End If
+                        End If
 
+                    Else
+                        If IsItalian Then
+                            MessageBox.Show("Abbiamo scaricato tutti i video da Webex. Ora scarichiamo quelli da microsoft stream.")
+                        Else
+                            MessageBox.Show("We downloaded all videos from Webex. We will now download the ones from microsoft stream.")
+                        End If
+                    End If
+                    'We have some polidown links to download.
+                    RunCommandH(StartupForm.RootFolder & "\Poli-pkg\dist\polidown.exe", StreamArgs)
                 End If
+
+
+
+
+
             End If
 
-            If outLine.Data.Contains("Going to the next one") Then
+            If outLine.Data.Contains("Going to the next one") Then  'Shared output
                 DLError = True
             End If
 
-            'Add stuff for the password protected videos
 
-            If outLine.Data.Contains("This video is password protected") Or outLine.Data.Contains("Wrong password!") Then
+            If outLine.Data.Contains("This video is password protected") Or outLine.Data.Contains("Wrong password!") Then   'Never occurs for polidown
                 If outLine.Data.Contains("Wrong password!") Then MessageBox.Show("Previous password was incorrect. Please try again.")
                 Dim Password As String
                 If IsItalian Then
@@ -577,7 +685,7 @@ Public Class DownloadForm
             End If
 
 
-            If outLine.Data.Contains("ffmpeg version") And CurrentSpeed <> "Setting up..." And CurrentSpeed <> "Sto avviando..." Then
+            If outLine.Data.Contains("ffmpeg version") And CurrentSpeed <> "Setting up..." And CurrentSpeed <> "Sto avviando..." Then   'ffmpeg output
                 If IsItalian Then
                     CurrentSpeed = "Sto elaborando il file..."
                 Else
@@ -586,8 +694,9 @@ Public Class DownloadForm
 
             End If
 
-            If outLine.Data.Contains("Try in non-headless mode") Then
-                DownloadForm.RunCommandH(StartupForm.RootFolder & "\PoliWebex-pkg\dist\poliwebex.exe", process.StartInfo.Arguments & " -l false -i 10")
+            If outLine.Data.Contains("Try in non-headless mode") Or outLine.Data.Contains("this is not an exact science") Then   'shared output
+                If process.StartInfo.FileName.Contains("poliwebex.exe") Then WebexProgress = 0
+                DownloadForm.RunCommandH(process.StartInfo.FileName, process.StartInfo.Arguments.Replace("-i 3", "-i 10") & " -l false")
                 Try
                     process.Close()
                     process.Dispose()
@@ -597,7 +706,7 @@ Public Class DownloadForm
 
             End If
 
-            If outLine.Data.Contains("You need aria2c in $PATH for this to work") Then
+            If outLine.Data.Contains("You need aria2c in $PATH for this to work") Then  'Shared output
                 'This is a weird bug that just kinda...popped up. I'm not sure if it's an issue with my multiple desktops program, but juuuuuust to be on the safe side
                 'If this happens, let's just ask the user to try again.
                 'I can't really fix this as it doesn't really make any sense? And I really don't have enough info.
@@ -614,7 +723,7 @@ Public Class DownloadForm
 
             End If
 
-            If outLine.Data.Contains("We're already in non-headless mode") Then
+            If outLine.Data.Contains("We're already in non-headless mode") Then 'Shared output
                 If IsItalian Then
                     MessageBox.Show("Qualcosa è andato storto! Per favore crea un issue su github, e allega il file WBDLlogs.txt che puoi trovare in " & StartupForm.RootFolder)
                     Application.Exit()
@@ -624,7 +733,7 @@ Public Class DownloadForm
                 End If
             End If
 
-            File.AppendAllText(StartupForm.RootFolder & "\WBDLlogs.txt", outLine.Data & vbCrLf)
+            File.AppendAllText(Environment.CurrentDirectory & "\WBDLlogs.txt", outLine.Data & vbCrLf)
 
 
         End If
