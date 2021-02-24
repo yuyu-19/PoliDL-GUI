@@ -32,10 +32,10 @@ Public Class StartupForm
 
 
         If IsItalian Then
-            Question.Text = "Vuoi gestire le registrazioni locali o scaricare delle registrazioni da webex?"
+            Question.Text = "Vuoi gestire le registrazioni locali o scaricare delle registrazioni?"
             localmode.Text = "Locale"
         Else
-            Question.Text = "Would you like to manage the local recordings or download them from webex?"
+            Question.Text = "Would you like to manage the local recordings or download some?"
             localmode.Text = "Local"
         End If
         downloadmode.Text = "Download"
@@ -43,14 +43,14 @@ Public Class StartupForm
         Dim size As Size = TextRenderer.MeasureText(Question.Text, CFont)
         Question.Width = size.Width
         Question.Height = size.Height
-        Question.TextAlign = ContentAlignment.MiddleCenter
+
+        Me.Height = Question.Height + localmode.Height + 60
+        Me.Width = Question.Width + 60
         Dim p As Point = Question.Location
-        p.X = (Me.ClientSize.Width - Question.Width) / 2
+        p.X = Me.ClientSize.Width / 2 - Question.Width / 2
         p.Y = 5
         Question.Location = p
 
-        Me.Height = Question.Height + localmode.Height + 60
-        Me.Width = Question.Width + 30
 
         p = localmode.Location
         p.Y = Question.Height + 10
@@ -138,7 +138,7 @@ Public Class StartupForm
         End If
 
         If Not Directory.Exists(appData) Or File.Exists(appData & "\temp.zip") Or Not File.Exists(appData & "\StartRec.exe") Then
-
+            Dim OldQuestion As String = Question.Text
             If IsItalian Then
                 Question.Text = "Setup iniziale, potrebbe richiedere qualche minuto..."
             Else
@@ -181,12 +181,9 @@ Public Class StartupForm
                 MessageBox.Show(ex.Message)
             End Try
             Me.Cursor = Cursors.Default
+            Question.Text = OldQuestion
         End If
 
-        Question.Text = "Would you like to manage the local recordings or download them?"
-        If IsItalian Then
-            Question.Text = "Vuoi gestire le registrazioni locali o scaricare delle registrazioni?"
-        End If
         downloadmode.Enabled = True
         localmode.Enabled = True
     End Sub

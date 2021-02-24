@@ -30,12 +30,11 @@ Partial Class StartupForm
         '
         'Question
         '
-        Me.Question.AutoSize = True
-        Me.Question.Location = New System.Drawing.Point(343, 19)
+        Me.Question.Location = New System.Drawing.Point(324, 19)
         Me.Question.Name = "Question"
         Me.Question.Size = New System.Drawing.Size(39, 13)
         Me.Question.TabIndex = 0
-        Me.Question.Text = "Label1"
+        Me.Question.Text = "This is a test to see how the text displays"
         '
         'localmode
         '
