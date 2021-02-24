@@ -2,6 +2,8 @@
 
 Download: https://github.com/yuyu-19/PoliWebex-GUI/releases
 
+Note: A couple of antiviruses on VirusTotal incorrectly flag this as malware. As far as I can tell, this is due to the program extracting the required DLLs in the folder it's running in. You can check the source code yourself and build it to make sure.
+
 ### English version below!
 
 Un grande grazie a @sup3rgiu per PoliWebex (su cui si basa l'intera funzionalità di download) e per avermi aiutato con le modifiche necessarie.
