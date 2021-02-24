@@ -45,7 +45,7 @@ Public Class StartupForm
         Question.Height = size.Height
 
         Me.Height = Question.Height + localmode.Height + 60
-        Me.Width = Question.Width + 60
+        Me.Width = Question.Width + 80
         Dim p As Point = Question.Location
         p.X = Me.ClientSize.Width / 2 - Question.Width / 2
         p.Y = 5
