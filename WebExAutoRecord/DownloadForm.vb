@@ -2,7 +2,7 @@
 Imports System.IO.Compression
 Imports System.Text.RegularExpressions
 Imports Microsoft.WindowsAPICodePack.Dialogs
-Imports PoliwebexGUI.StartupForm
+Imports PoliDLGUI.StartupForm
 
 Public Class DownloadForm
 
@@ -10,6 +10,7 @@ Public Class DownloadForm
     Public Shared currentfiletotalS As Integer
     Public Shared currentfiletotal As Integer
     Public Shared StreamIsVideo As Boolean
+    Public Shared NotDownloadedW As Integer
     Public Shared currentfile As Integer
     Public Shared currentprogress As Double = 0
     Public Shared CurrentSpeed As String = ""
@@ -303,6 +304,7 @@ Public Class DownloadForm
         File.Delete(Environment.CurrentDirectory & "\WBDLlogs.txt")
         StreamIsVideo = False
         WebexProgress = 0
+        NotDownloadedW = -1
         If WebexURLs.Count <> 0 Then
             RunCommandH(StartupForm.RootFolder & "\Poli-pkg\dist\poliwebex.exe", WebexArgs)
         Else
@@ -429,7 +431,7 @@ Public Class DownloadForm
         Dim NoOutputRedirect As Boolean = False
         Dim oStartInfo As ProcessStartInfo
         DLError = False
-        NotDownloaded = -1
+
 
         If NoOutputRedirect Then
             oStartInfo = New ProcessStartInfo(Command, Arguments) With {
@@ -457,6 +459,7 @@ Public Class DownloadForm
         oProcess.EnableRaisingEvents = True
         oProcess.StartInfo = oStartInfo
         currentprogress = WebexProgress
+        NotDownloaded = -1
 
         AddHandler oProcess.OutputDataReceived, AddressOf OutputHandler
         AddHandler oProcess.ErrorDataReceived, AddressOf OutputHandler
@@ -609,11 +612,12 @@ Public Class DownloadForm
                         CurrentSpeed = "Finished."
                     End If
 
-                    If NotDownloaded <> -1 Then
+                    If NotDownloaded <> -1 Or NotDownloadedW <> -1 Then
+                        NotDownloaded = Math.Min(NotDownloaded, 0) + Math.Min(NotDownloadedW, 0)
                         If segmented Then
                             If IsItalian Then
-                                MessageBox.Show("È fallito il download di " & NotDownloaded & " video. Riprova più tardi, oppure prova in modalità unsegmented.")
-                            Else
+                            MessageBox.Show("È fallito il download di " & NotDownloaded & " video. Riprova più tardi, oppure prova in modalità unsegmented.")
+                        Else
                                 MessageBox.Show("Could not download " & NotDownloaded & " videos. Please try again later, or try unsegmented mode.")
                             End If
                         Else
@@ -636,26 +640,7 @@ Public Class DownloadForm
                 Else
                     WebexProgress = currentprogress
                     If NotDownloaded <> -1 Then
-                        If segmented Then
-                            If IsItalian Then
-                                MessageBox.Show("È fallito il download di " & NotDownloaded & " video da Webex. Riprova più tardi in modalità non-segmented. Ora scarichiamo i video da microsoft stream.")
-                            Else
-                                MessageBox.Show("Could not download " & NotDownloaded & " videos from Webex. Try again later in unsegmented mode. We will now download the microsoft stream videos.")
-                            End If
-                        Else
-                            If IsItalian Then
-                                MessageBox.Show("È fallito il download di " & NotDownloaded & " video da Webex. Riprova più tardi. Ora scarichiamo i video da microsoft stream.")
-                            Else
-                                MessageBox.Show("Could not download " & NotDownloaded & " videos from Webex. Please try again later. We will now download the microsoft stream videos.")
-                            End If
-                        End If
-
-                    Else
-                        If IsItalian Then
-                            MessageBox.Show("Abbiamo scaricato tutti i video da Webex. Ora scarichiamo quelli da microsoft stream.")
-                        Else
-                            MessageBox.Show("We downloaded all videos from Webex. We will now download the ones from microsoft stream.")
-                        End If
+                        NotDownloadedW = NotDownloaded
                     End If
                     'We have some polidown links to download.
                     RunCommandH(StartupForm.RootFolder & "\Poli-pkg\dist\polidown.exe", StreamArgs)

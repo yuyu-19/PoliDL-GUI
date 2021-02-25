@@ -6,7 +6,7 @@ Imports System.Text.RegularExpressions
 Imports Microsoft.Win32.TaskScheduler
 Imports Microsoft.WindowsAPICodePack.Dialogs
 Imports System.Net
-Imports PoliwebexGUI.StartupForm
+Imports PoliDLGUI.StartupForm
 
 Public Class GenerateDataForm
     Dim Courses As New List(Of CourseData)
