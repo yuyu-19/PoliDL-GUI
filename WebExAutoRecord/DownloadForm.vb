@@ -718,7 +718,12 @@ Public Class DownloadForm
                 End If
             End If
 
-            File.AppendAllText(Environment.CurrentDirectory & "\WBDLlogs.txt", outLine.Data & vbCrLf)
+            Try
+                File.AppendAllText(Environment.CurrentDirectory & "\WBDLlogs.txt", outLine.Data & vbCrLf)
+            Catch ex As Exception
+                'Error writing to the log file.
+            End Try
+
 
 
         End If
