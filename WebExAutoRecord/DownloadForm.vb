@@ -20,11 +20,12 @@ Public Class DownloadForm
     Public Shared NotDownloaded As Integer = -1
     Public Shared StreamArgs As String  'Why? Because I need to access it from outside where it was declared. Sue me. I'm tired of working on this godforsaken program.
     Public Shared LogsStream As StreamWriter
-    Private Shared Debug As Boolean = True
-    Private Sub Browse_Click(sender As Object, e As EventArgs) Handles Browse.Click
+    Private Shared ReadOnly Debug As Boolean = True
 
-        Dim COPF As New CommonOpenFileDialog
-        COPF.InitialDirectory = "C:\\Users"
+    Private Sub Browse_Click(sender As Object, e As EventArgs) Handles Browse.Click
+        Dim COPF As New CommonOpenFileDialog With {
+            .InitialDirectory = "C:\\Users"
+        }
         If ModeSelect.SelectedIndex = 0 Then
             COPF.IsFolderPicker = False
             COPF.EnsureFileExists = True
@@ -39,7 +40,6 @@ Public Class DownloadForm
                 COPF.Filters.Add(New CommonFileDialogFilter("Word file", "docx"))
                 COPF.Filters.Add(New CommonFileDialogFilter("Zip (of docx/xlsx/html files)", "zip"))
             End If
-
         Else
             COPF.IsFolderPicker = True
             COPF.EnsurePathExists = True
@@ -52,17 +52,17 @@ Public Class DownloadForm
     End Sub
 
     Private Sub BrowseFolder_Click(sender As Object, e As EventArgs) Handles BrowseFolder.Click
-        Dim COPF As New CommonOpenFileDialog
-        COPF.InitialDirectory = "C:\\Users"
-        COPF.IsFolderPicker = True
-        COPF.EnsurePathExists = True
+        Dim COPF As New CommonOpenFileDialog With {
+            .InitialDirectory = "C:\\Users",
+            .IsFolderPicker = True,
+            .EnsurePathExists = True
+        }
         If COPF.ShowDialog = CommonFileDialogResult.Ok Then
             FolderPath.Text = COPF.FileName
         End If
     End Sub
 
     Private Sub DownloadForm_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-
 
         If IsItalian Then
             BrowseFolder.Text = "Esplora"
@@ -155,8 +155,8 @@ Public Class DownloadForm
                 ZipFile.CreateFromDirectory(FilePath.Text, FilePath.Text.Substring(FilePath.Text.LastIndexOf("\") + 1) & ".zip")
                 FilePath.Text = FilePath.Text & ".zip"
             End If
-            'Add support for folders with files by just making them into a zip archive. 
-            'That is peak laziness, I know, but I just want to be done with this goddamn thing. 
+            'Add support for folders with files by just making them into a zip archive.
+            'That is peak laziness, I know, but I just want to be done with this goddamn thing.
 
             Dim extension As String = FilePath.Text.Substring(FilePath.Text.LastIndexOf(".") + 1).ToLower.Trim
 
@@ -203,13 +203,10 @@ Public Class DownloadForm
             Return
         End If
 
-
-
         'poliwebex.exe -v [URL ARRAY] -o [OUTPUT DIR] -s
         'We're calling it with the -v [URL ARRAY] option, so let's build the string.
 
         'Check if config.json exists. If it does, get the email and ID from it, as well as if the password is saved or not.
-
 
         Dim WebexArgs As String = "-t -i 3 -o """ & FolderPath.Text & """"
         StreamArgs = "-t -q 5 -i 3 -o """ & FolderPath.Text & """"
@@ -236,7 +233,6 @@ Public Class DownloadForm
                 End If
             End If
 
-
             If Not Config.Contains("passwordSaved") OrElse
             Not (Config.IndexOf("true", Config.IndexOf("passwordSaved")) = Config.IndexOf("passwordSaved") + "passwordSaved"": ".Length) Then
                 'Does the passwordsaved value exist?
@@ -250,7 +246,6 @@ Public Class DownloadForm
                 WebexArgs &= " -p " & TempString
                 StreamArgs &= " -p " & TempString
             End If
-
         Else    'Nothing is saved, ask everything to make sure.
             If IsItalian Then
                 TempString = InputForm.AskForInput("Inserisci il tuo codice persona")
@@ -308,7 +303,7 @@ Public Class DownloadForm
         LogsStream = My.Computer.FileSystem.OpenTextFileWriter(StartupForm.RootFolder & "\Logs\" & "\PoliDL-Logs_" & DateTime.Now.ToString("yyyy-MM-dd-HH-mm") & ".txt", False)
         LogsStream.AutoFlush = True
         StreamIsVideo = False
-            WebexProgress = 0
+        WebexProgress = 0
         NotDownloadedW = -1
         If WebexURLs.Count <> 0 Then
             RunCommandH(StartupForm.RootFolder & "\Poli-pkg\dist\poliwebex.exe", WebexArgs)
@@ -355,8 +350,7 @@ Public Class DownloadForm
         Dim i As Integer = AllText.IndexOf("politecnicomilano.webex.com/")
         Do Until i = -1
             Dim r As New Regex("([^a-zA-Z0-9\/.?=:]+)|$|\n")
-            Dim NewURL As String = ""
-            NewURL = AllText.Substring(i, r.Match(AllText, i).Index - i).Trim
+            Dim NewURL As String = AllText.Substring(i, r.Match(AllText, i).Index - i).Trim
             NewURL = "https://" & NewURL
             If Not WebexURLs.Contains(NewURL) Then WebexURLs.Add(NewURL)
 
@@ -371,8 +365,7 @@ Public Class DownloadForm
         'Also if you're actually reading these comments god bless your soul and I apologize for the profanity (not really, bugger off)
         'I've also been experiencing a bug which seems to be related to the virtual desktop program I'm using so whatever
         'I'm keeping the following parts (even if they're theoretically not necessary) JUST IN CASE SOMEONE IS BRIGHT ENOUGH TO FOLLOW A LINK UP WITH ONE OF THE ADDITIONAL SYMBOLS I EXCLUDED.
-        'JUST IN CASE. Nothing could surprise me at this point. I saw a link that had https spelt wrong, which is why I'm no longer looking for "https://politecnico." 
-
+        'JUST IN CASE. Nothing could surprise me at this point. I saw a link that had https spelt wrong, which is why I'm no longer looking for "https://politecnico."
 
         i = AllText.IndexOf("politecnicomilano.webex.com/recordingservice/")
         'It may seem like a waste of resources to just check every time, but we can't be sure if the links are hyperlinks or not, so we'll just grab everything and see
@@ -381,7 +374,7 @@ Public Class DownloadForm
             'This (SHOULD) let us handle most if not all cases? Since I'm assuming there'll at least be a space or something.
 
             Dim r As New Regex("([^a-zA-Z0-9]+)|$")
-            Dim NewURL As String = ""
+            Dim NewURL As String
             If AllText.IndexOf("/playback/", i) = -1 Or (AllText.IndexOf("/play/", i) < AllText.IndexOf("/playback/", i)) Then
                 NewURL = AllText.Substring(i, r.Match(AllText, AllText.IndexOf("/play/", i) + "/play/".Length).Index - i).Trim
             Else
@@ -410,7 +403,6 @@ Public Class DownloadForm
             i = AllText.IndexOf("politecnicomilano.webex.com/politecnicomilano/", i + 1)
         Loop
 
-
         'Another loop, this time for msstream links
         i = AllText.IndexOf("web.microsoftstream.com")
 
@@ -431,7 +423,8 @@ Public Class DownloadForm
         Do Until i = -1
             Dim r As New Regex("([^a-zA-Z0-9-_%]+)|$")    'This one excludes the - and _ characters from the match
 
-            Dim NewURL As String = ""
+            Dim NewURL As String
+
             If AllText.IndexOf("_layouts/", i) = AllText.IndexOf("_polimi_it/", i) + "_polimi_it/".Length Then
                 'It's the onedrive style of link
                 NewURL = AllText.Substring(i, r.Match(AllText, AllText.IndexOf("&originalPath=", i) + "&originalPath=".Length).Index - i).Trim
@@ -440,7 +433,6 @@ Public Class DownloadForm
                 NewURL = AllText.Substring(i, r.Match(AllText, AllText.IndexOf("_polimi_it/", i) + "_polimi_it/".Length).Index - i).Trim
             End If
 
-
             NewURL = "https://" & NewURL
             If Not StreamURLs.Contains(NewURL) Then StreamURLs.Add(NewURL)
 
@@ -448,11 +440,7 @@ Public Class DownloadForm
             i = AllText.IndexOf("polimi365-my.sharepoint.com", i + 1)
         Loop
 
-
-
     End Sub
-
-
 
     Shared Sub RunCommandH(Command As String, Arguments As String)
         'Console.WriteLine(Command)
@@ -462,7 +450,6 @@ Public Class DownloadForm
         Dim NoOutputRedirect As Boolean = False
         Dim oStartInfo As ProcessStartInfo
         DLError = False
-
 
         If NoOutputRedirect Then
             oStartInfo = New ProcessStartInfo(Command, Arguments) With {
@@ -485,7 +472,6 @@ Public Class DownloadForm
             .WorkingDirectory = Command.Substring(0, Command.LastIndexOf("\", Command.Length - 3))
             }
         End If
-
 
         oProcess.EnableRaisingEvents = True
         oProcess.StartInfo = oStartInfo
@@ -516,15 +502,12 @@ Public Class DownloadForm
         GlobalProcess = oProcess
     End Sub
 
-
-
     Private Shared Sub OutputHandler(sendingProcess As Object, outLine As DataReceivedEventArgs)
 
         Dim process As Process = sendingProcess
 
         Dim segmented As Boolean = process.StartInfo.Arguments.Contains(" -s")
         If process.StartInfo.FileName.Contains("polidown.exe") Then segmented = True    'polidown is always in segmented mode
-
 
         If Not String.IsNullOrEmpty(outLine.Data) Then
             If outLine.Data.Contains("Bad credentials.") Then   'Output is same on both.
@@ -554,7 +537,6 @@ Public Class DownloadForm
                 'I'm just going to completely erase the config.json file and kick the user back to the form.
             End If
 
-
             If outLine.Data.Contains("Start downloading video") Then    'Output is same on both
                 If DLError Then
                     DLError = False
@@ -566,7 +548,6 @@ Public Class DownloadForm
 
             'JANK IT UP
 
-
             If outLine.Data.Contains("Downloading") And outLine.Data.Contains("item(s)") And segmented Then 'aria2c output - differs slightly with polidown.
                 Dim Temp As Integer = outLine.Data.Substring(
                 outLine.Data.IndexOf("Downloading") + "Downloading".Length,
@@ -574,7 +555,7 @@ Public Class DownloadForm
                 If process.StartInfo.FileName.Contains("polidown.exe") Then
                     StreamIsVideo = Not (StreamIsVideo)
                     If StreamIsVideo Then
-                        currentsegmenttotal = Temp * 2 + 10 'polidown has to download audio and video separately. 
+                        currentsegmenttotal = Temp * 2 + 10 'polidown has to download audio and video separately.
                     End If 'So I multiply it by two and add 10 for safety in case there's a mismatch between the two
                 Else
                     currentsegmenttotal = Temp
@@ -631,7 +612,7 @@ Public Class DownloadForm
                 NotDownloaded -= 1  'THe above loop always counts one extra and I'm too lazy to figure out a good alternative method.
             End If
 
-            If outLine.Data.Contains("Done!") Then  'Shared output. 
+            If outLine.Data.Contains("Done!") Then  'Shared output.
                 If DLError Then currentfile -= 1
 
                 currentprogress = currentfile / currentfiletotal * 100  'Let's ensure we're at the correct progress.
@@ -658,7 +639,6 @@ Public Class DownloadForm
                                 MessageBox.Show("Could not download " & NotDownloaded & " videos. Please try again later.")
                             End If
                         End If
-
                     Else
                         If IsItalian Then
                             MessageBox.Show("Finito!")
@@ -668,7 +648,6 @@ Public Class DownloadForm
 
                     End If
                     LogsStream.Close()
-
                 Else
                     WebexProgress = currentprogress
                     If NotDownloaded <> -1 Then
@@ -678,16 +657,11 @@ Public Class DownloadForm
                     RunCommandH(StartupForm.RootFolder & "\Poli-pkg\dist\polidown.exe", StreamArgs)
                 End If
 
-
-
-
-
             End If
 
             If outLine.Data.Contains("Going to the next one") Then  'Shared output
                 DLError = True
             End If
-
 
             If outLine.Data.Contains("This video is password protected") Or outLine.Data.Contains("Wrong password!") Then   'Never occurs for polidown
                 If outLine.Data.Contains("Wrong password!") Then MessageBox.Show("Previous password was incorrect. Please try again.")
@@ -700,7 +674,6 @@ Public Class DownloadForm
                 process.StandardInput.WriteLine(Password)
                 'MessageBox.Show("Input Sent!")
             End If
-
 
             If outLine.Data.Contains("ffmpeg version") And CurrentSpeed <> "Setting up..." And CurrentSpeed <> "Sto avviando..." Then   'ffmpeg output
                 If IsItalian Then
@@ -756,8 +729,6 @@ Public Class DownloadForm
                 'Error writing to the log file.
             End Try
 
-
-
         End If
     End Sub
 
@@ -773,11 +744,11 @@ Public Class DownloadForm
        " It's only recommended if you're experiencing issues.", MsgBoxStyle.YesNo, "Unsegmented download?")
             End If
 
-
             If ans <> DialogResult.Yes Then
                 CheckSegmented.Checked = False
             End If
         End If
 
     End Sub
+
 End Class

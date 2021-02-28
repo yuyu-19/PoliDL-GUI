@@ -1,4 +1,5 @@
 ﻿Public Class ProgressTracker
+
     Private Sub Timer_Tick(sender As Object, e As EventArgs) Handles Timer.Tick
         'I swear I tried for hours to do this properly with multithreading etc, but it just refused.
         'JANK IT UP!
@@ -58,16 +59,15 @@
                 Catch ex As Exception
 
                 End Try
-
             Else
                 e.Cancel = True
             End If
         End If
-
 
     End Sub
 
     Private Sub ProgressTracker_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 
     End Sub
+
 End Class
