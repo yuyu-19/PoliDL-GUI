@@ -1,21 +1,22 @@
-# PoliWebex-GUI
+# PoliDL-GUI
 
-Download: https://github.com/yuyu-19/PoliWebex-GUI/releases
+Download: https://github.com/yuyu-19/PoliDL-GUI/releases
 
 Note: A couple of antiviruses on VirusTotal incorrectly flag this as malware. As far as I can tell, this is due to the program extracting the required DLLs in the folder it's running in. You can check the source code yourself and build it to make sure.
 
 ### English version below!
 
-Un grande grazie a @sup3rgiu per PoliWebex (su cui si basa l'intera funzionalità di download) e per avermi aiutato con le modifiche necessarie.
+Un grande grazie a @sup3rgiu per PoliWebex e PoliDown (su cui si basa l'intera funzionalità di download) e per avermi aiutato con le modifiche necessarie.
 
 PoliWebex: https://github.com/sup3rgiu/PoliWebex
+PoliDown: https://github.com/sup3rgiu/PoliDown
 
 ## Italiano
 
 Richiede .NET framework v4.6
 
 Questo programma ha due funzionalità principali:
-  - Scaricare molteplici lezioni da Webex (Download)
+  - Scaricare molteplici lezioni da Webex e Microsoft Stream (Download)
   - Registrare lezioni in locale automaticamente (Locale)
  
 ### Download
@@ -67,12 +68,13 @@ Questa funzionalità è un po' complessa:
 
 Requires .NET framework v4.6
 
-A huge thank you to @sup3rgiu for PoliWebex (on which the entire download functionality is based on) and for helping me make the necessary changes.
+A huge thank you to @sup3rgiu for PoliWebex and PoliDown (on which the entire download functionality is based on) and for helping me make the necessary changes.
 
 PoliWebex: https://github.com/sup3rgiu/PoliWebex
+PoliDown: https://github.com/sup3rgiu/PoliDown
 
 This tool has two main functions:
-  - Downloading lessons from Webex in bulk   (Download)
+  - Downloading lessons from Webex and Microsoft Stream in bulk   (Download)
   - Automatically recording lessons locally  (Local)
 
 ### Download
