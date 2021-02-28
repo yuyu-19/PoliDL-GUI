@@ -56,13 +56,12 @@ Partial Class StartupForm
         '
         'CreditLabel
         '
-        Me.CreditLabel.AutoSize = True
         Me.CreditLabel.Font = New System.Drawing.Font("Microsoft Sans Serif", 11.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.CreditLabel.Location = New System.Drawing.Point(500, 67)
+        Me.CreditLabel.Location = New System.Drawing.Point(201, 46)
         Me.CreditLabel.Name = "CreditLabel"
-        Me.CreditLabel.Size = New System.Drawing.Size(296, 18)
+        Me.CreditLabel.Size = New System.Drawing.Size(299, 42)
         Me.CreditLabel.TabIndex = 3
-        Me.CreditLabel.Text = "PoliWebex by @sup3rgiu, GUI by @yuyu-19"
+        Me.CreditLabel.Text = "PoliWebex and PoliDown by @sup3rgiu GUI by @yuyu-19"
         '
         'StartupForm
         '
@@ -75,8 +74,8 @@ Partial Class StartupForm
         Me.Controls.Add(Me.Question)
         Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog
         Me.Name = "StartupForm"
+        Me.Text = "PoliDL-GUI"
         Me.ResumeLayout(False)
-        Me.PerformLayout()
 
     End Sub
 

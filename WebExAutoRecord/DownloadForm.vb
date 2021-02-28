@@ -19,6 +19,7 @@ Public Class DownloadForm
     Public Shared WebexProgress As Double = 0
     Public Shared NotDownloaded As Integer = -1
     Public Shared StreamArgs As String  'Why? Because I need to access it from outside where it was declared. Sue me. I'm tired of working on this godforsaken program.
+    Public Shared LogsStream As StreamWriter
     Private Shared Debug As Boolean = True
     Private Sub Browse_Click(sender As Object, e As EventArgs) Handles Browse.Click
 
@@ -227,7 +228,7 @@ Public Class DownloadForm
                 StreamArgs &= " -u " & TempString
             End If
 
-            If Not Config.Contains("email") Then
+            If Not Config.Contains("email") And WebexURLs.Count > 0 Then    'If it's webex
                 If IsItalian Then
                     WebexArgs &= " -e " & InputForm.AskForInput("Inserisci la tua email (nome.cognome@mail.polimi.it)")
                 Else
@@ -267,11 +268,14 @@ Public Class DownloadForm
             WebexArgs &= " -p " & TempString
             StreamArgs &= " -p " & TempString
 
-            If IsItalian Then
-                TempString = InputForm.AskForInput("Inserisci la tua email (nome.cognome@mail.polimi.it)")
-            Else
-                TempString = InputForm.AskForInput("Please input your email (name.surname@mail.polimi.it)")
+            If WebexURLs.Count > 0 Then
+                If IsItalian Then
+                    TempString = InputForm.AskForInput("Inserisci la tua email (nome.cognome@mail.polimi.it)")
+                Else
+                    TempString = InputForm.AskForInput("Please input your email (name.surname@mail.polimi.it)")
+                End If
             End If
+
             WebexArgs &= " -e " & TempString
         End If
 
@@ -300,10 +304,11 @@ Public Class DownloadForm
         Else
             CurrentSpeed = "Setting up..."
         End If
-
-        File.Delete(Environment.CurrentDirectory & "\WBDLlogs.txt")
+        If Not Directory.Exists(StartupForm.RootFolder & "\Logs") Then Directory.CreateDirectory(StartupForm.RootFolder & "\Logs")
+        LogsStream = My.Computer.FileSystem.OpenTextFileWriter(StartupForm.RootFolder & "\Logs\" & "\PoliDL-Logs_" & DateTime.Now.ToString("yyyy-MM-dd-HH-mm") & ".txt", False)
+        LogsStream.AutoFlush = True
         StreamIsVideo = False
-        WebexProgress = 0
+            WebexProgress = 0
         NotDownloadedW = -1
         If WebexURLs.Count <> 0 Then
             RunCommandH(StartupForm.RootFolder & "\Poli-pkg\dist\poliwebex.exe", WebexArgs)
@@ -419,6 +424,32 @@ Public Class DownloadForm
             'CourseLine.Substring(startindex, CourseLine.IndexOf("-", startindex) - startindex).Trim()
             i = AllText.IndexOf("web.microsoftstream.com", i + 1)
         Loop
+
+        'And another one, for sharepoint links.
+        i = AllText.IndexOf("polimi365-my.sharepoint.com")
+
+        Do Until i = -1
+            Dim r As New Regex("([^a-zA-Z0-9-_%]+)|$")    'This one excludes the - and _ characters from the match
+
+            Dim NewURL As String = ""
+            If AllText.IndexOf("_layouts/", i) = AllText.IndexOf("_polimi_it/", i) + "_polimi_it/".Length Then
+                'It's the onedrive style of link
+                NewURL = AllText.Substring(i, r.Match(AllText, AllText.IndexOf("&originalPath=", i) + "&originalPath=".Length).Index - i).Trim
+            Else
+                'It's the other type
+                NewURL = AllText.Substring(i, r.Match(AllText, AllText.IndexOf("_polimi_it/", i) + "_polimi_it/".Length).Index - i).Trim
+            End If
+
+
+            NewURL = "https://" & NewURL
+            If Not StreamURLs.Contains(NewURL) Then StreamURLs.Add(NewURL)
+
+            'CourseLine.Substring(startindex, CourseLine.IndexOf("-", startindex) - startindex).Trim()
+            i = AllText.IndexOf("polimi365-my.sharepoint.com", i + 1)
+        Loop
+
+
+
     End Sub
 
 
@@ -613,11 +644,11 @@ Public Class DownloadForm
                     End If
 
                     If NotDownloaded <> -1 Or NotDownloadedW <> -1 Then
-                        NotDownloaded = Math.Min(NotDownloaded, 0) + Math.Min(NotDownloadedW, 0)
+                        NotDownloaded = Math.Max(NotDownloaded, 0) + Math.Max(NotDownloadedW, 0)
                         If segmented Then
                             If IsItalian Then
-                            MessageBox.Show("È fallito il download di " & NotDownloaded & " video. Riprova più tardi, oppure prova in modalità unsegmented.")
-                        Else
+                                MessageBox.Show("È fallito il download di " & NotDownloaded & " video. Riprova più tardi, oppure prova in modalità unsegmented.")
+                            Else
                                 MessageBox.Show("Could not download " & NotDownloaded & " videos. Please try again later, or try unsegmented mode.")
                             End If
                         Else
@@ -636,6 +667,7 @@ Public Class DownloadForm
                         End If
 
                     End If
+                    LogsStream.Close()
 
                 Else
                     WebexProgress = currentprogress
@@ -710,16 +742,16 @@ Public Class DownloadForm
 
             If outLine.Data.Contains("We're already in non-headless mode") Then 'Shared output
                 If IsItalian Then
-                    MessageBox.Show("Qualcosa è andato storto! Per favore crea un issue su github, e allega il file WBDLlogs.txt che puoi trovare in " & StartupForm.RootFolder)
+                    MessageBox.Show("Qualcosa è andato storto! Per favore crea un issue su github, e allega il file PoliDL-Logs.txt che puoi trovare in " & StartupForm.RootFolder)
                     Application.Exit()
                 Else
-                    MessageBox.Show("Something went wrong! Please file a github issue, and attach the WBDLlogs.txt file you can find in " & StartupForm.RootFolder)
+                    MessageBox.Show("Something went wrong! Please file a github issue, and attach the PoliDL-Logs.txt file you can find in " & StartupForm.RootFolder)
                     Application.Exit()
                 End If
             End If
 
             Try
-                File.AppendAllText(Environment.CurrentDirectory & "\WBDLlogs.txt", outLine.Data & vbCrLf)
+                LogsStream.Write(outLine.Data & vbCrLf)
             Catch ex As Exception
                 'Error writing to the log file.
             End Try

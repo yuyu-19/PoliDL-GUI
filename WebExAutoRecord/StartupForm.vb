@@ -21,6 +21,8 @@ Public Class StartupForm
         Dim CFont As New Font(Question.Font.FontFamily, 10, Question.Font.Style)
         Question.Font = CFont
         CreditLabel.Font = CFont
+        CreditLabel.Text = "PoliWebex and PoliDown by @sup3rgiu " & vbCrLf & "GUI by @yuyu-19"
+        CreditLabel.TextAlign = ContentAlignment.MiddleCenter
         localmode.Name = "recbutton"
         downloadmode.Name = "dlbutton"
         localmode.AutoSize = True
@@ -44,7 +46,7 @@ Public Class StartupForm
         Question.Width = size.Width
         Question.Height = size.Height
 
-        Me.Height = Question.Height + localmode.Height + 60
+        Me.Height = Question.Height + localmode.Height + 80
         Me.Width = Question.Width + 80
         Dim p As Point = Question.Location
         p.X = Me.ClientSize.Width / 2 - Question.Width / 2
@@ -53,7 +55,7 @@ Public Class StartupForm
 
 
         p = localmode.Location
-        p.Y = Question.Height + 10
+        p.Y = Question.Height + 30
         p.X = 10
         localmode.Location = p
 
