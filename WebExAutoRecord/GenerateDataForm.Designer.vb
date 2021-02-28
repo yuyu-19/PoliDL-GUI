@@ -42,6 +42,7 @@ Partial Class GenerateDataForm
         '
         'SavePath
         '
+        Me.SavePath.AllowDrop = True
         Me.SavePath.Font = New System.Drawing.Font("Microsoft Sans Serif", 10.0!)
         Me.SavePath.Location = New System.Drawing.Point(9, 118)
         Me.SavePath.Name = "SavePath"
@@ -90,6 +91,7 @@ Partial Class GenerateDataForm
         '
         'HtmlPath
         '
+        Me.HtmlPath.AllowDrop = True
         Me.HtmlPath.Font = New System.Drawing.Font("Microsoft Sans Serif", 10.0!)
         Me.HtmlPath.Location = New System.Drawing.Point(9, 47)
         Me.HtmlPath.Name = "HtmlPath"

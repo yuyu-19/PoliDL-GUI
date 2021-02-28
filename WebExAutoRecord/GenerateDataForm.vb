@@ -1,16 +1,14 @@
-﻿Imports System.Threading
-Imports System.Globalization
-Imports System.Drawing
+﻿Imports System.Globalization
 Imports System.IO
 Imports System.Text.RegularExpressions
+Imports System.Threading
 Imports Microsoft.Win32.TaskScheduler
 Imports Microsoft.WindowsAPICodePack.Dialogs
-Imports System.Net
 Imports PoliDLGUI.StartupForm
 
 Public Class GenerateDataForm
-    Dim Courses As New List(Of CourseData)
-    Dim IsItalian As Boolean = (Thread.CurrentThread.CurrentCulture.IetfLanguageTag = "it-IT")
+    ReadOnly Courses As New List(Of CourseData)
+    ReadOnly IsItalian As Boolean = (Thread.CurrentThread.CurrentCulture.IetfLanguageTag = "it-IT")
 
     Private Sub GenerateDataForm_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 
@@ -25,7 +23,6 @@ Public Class GenerateDataForm
             For Each t As Task In ts.RootFolder.EnumerateTasks(pred, True)
                 Dim tempstring As String = t.Name.Replace("WebExRec-OS-", "")
                 Dim courseID As String = tempstring.Substring(0, tempstring.IndexOf("-"))
-
 
                 Dim ListOfOneShots As List(Of DayData) = Nothing
 
@@ -69,17 +66,14 @@ Public Class GenerateDataForm
             '    Courses(CourseIndex).OneShots.Last.DayName = DTP.Value.ToString("dd/MM/yyyy")
             'End If
 
-
             pred = AddressOf IsWebEx
-
 
             For Each t As Task In ts.RootFolder.EnumerateTasks(pred, True)
                 'We're going to fill up the Courses list here, and empty it later if there's actually no tasks. I'd like to avoid iterating through them all twice.
 
-                Dim NewCourse As New CourseData
-
-
-                NewCourse.ID = t.Name.Replace("WebExRec-", "")
+                Dim NewCourse As New CourseData With {
+                    .ID = t.Name.Replace("WebExRec-", "")
+                }
 
                 If OneShotsFound.ContainsKey(NewCourse.ID) Then
                     NewCourse.OneShots = OneShotsFound(NewCourse.ID)
@@ -88,7 +82,6 @@ Public Class GenerateDataForm
                 NewCourse.Name = t.Definition.RegistrationInfo.Description.Replace("REC: ", "")
 
                 Dim lines As String() = File.ReadAllLines(StartupForm.RootFolder & "\OBS\config\obs-studio\basic\profiles\" & NewCourse.ID & "\LinkSchedule.txt")
-
 
                 If t.Definition.Triggers.Count <> 0 Then
 
@@ -102,9 +95,9 @@ Public Class GenerateDataForm
 
                         Dim WT As WeeklyTrigger = TryCast(trigger, WeeklyTrigger)
                         If WT Is Nothing Then Continue For           'Not a wek
-                        Dim NewDay As New DayData
-
-                        NewDay.DayName = CultureInfo.CurrentCulture.DateTimeFormat.GetDayName([Enum].Parse(GetType(DayOfWeek), WT.DaysOfWeek.ToString))
+                        Dim NewDay As New DayData With {
+                            .DayName = CultureInfo.CurrentCulture.DateTimeFormat.GetDayName([Enum].Parse(GetType(DayOfWeek), WT.DaysOfWeek.ToString))
+                        }
                         'This looks long, complicated and stupid, but it's necessary because WT.DaysOfWeek returns a "DaysOfTheWeek" enum, whereas GetDayName requires a DayOfWeek enum. Simple, amirite?
 
                         NewDay.DayName = NewDay.DayName.Replace(NewDay.DayName(0), Char.ToUpper(NewDay.DayName(0))) 'Complicated? Yes. But functional.
@@ -112,7 +105,7 @@ Public Class GenerateDataForm
                         NewDay.StartTime = trigger.StartBoundary.ToString("HH:mm")
                         NewDay.EndTime = trigger.EndBoundary.ToString("HH:mm")
 
-                        'I could've probably just gotten all the day data from the linkschedule.txt file. 
+                        'I could've probably just gotten all the day data from the linkschedule.txt file.
                         'I'm dumb. Whatever, I would've had to do this anyways to check for and remove outdated triggers.
 
                         For Each line In lines
@@ -123,17 +116,13 @@ Public Class GenerateDataForm
                             End If
                         Next
 
-
                         NewCourse.Days.Add(NewDay)
                     End If
                 Next
 
-
                 For Each tr As Trigger In ToBeDeleted
                     t.Definition.Triggers.Remove(tr)
                 Next
-
-
 
                 ToBeDeleted.Clear()
 
@@ -168,8 +157,6 @@ Public Class GenerateDataForm
             End If
         End Using
 
-
-
         If IsItalian Then
             info.Text = "Per favore inserire la locazione del file HTML."
             Generate.Text = "Genera"
@@ -187,7 +174,6 @@ Public Class GenerateDataForm
         Return t.Name.Contains("WebExRec-OS-")
     End Function
 
-
     Private Sub Generate_Click(sender As Object, e As EventArgs) Handles Generate.Click
         If IsItalian Then
             If SavePath.Text = "" Then
@@ -197,7 +183,6 @@ Public Class GenerateDataForm
                 MessageBox.Show("Per favore inserisci la posizione del file HTML.")
                 Return
             End If
-
         Else
             If SavePath.Text = "" Then
                 MessageBox.Show("Please select the folder to save the recordings in.")
@@ -207,8 +192,6 @@ Public Class GenerateDataForm
                 Return
             End If
         End If
-
-
 
         Dim teachermark, semestermark, lessonsstartmark, lessonsendmark, frommark, tomark, virtualclassroommark As String
         Dim DayNames As New List(Of String)
@@ -289,9 +272,10 @@ Public Class GenerateDataForm
                 Dim i As Integer = 0
                 Do Until Line.IndexOf(":5px;"">", i) = -1
                     i = Line.IndexOf(":5px;"">", i) + 7
-                    Dim NewDay As New DayData
-                    NewDay.TempDisabled = False
-                    NewDay.DayName = Line.Substring(i, Line.IndexOf(frommark, i) - i).Trim()
+                    Dim NewDay As New DayData With {
+                        .TempDisabled = False,
+                        .DayName = Line.Substring(i, Line.IndexOf(frommark, i) - i).Trim()
+                    }
                     i = Line.IndexOf(frommark, i) + frommark.Length
                     NewDay.StartTime = Line.Substring(i, Line.IndexOf(tomark, i) - i).Trim()
 
@@ -315,9 +299,7 @@ Public Class GenerateDataForm
 
             End If
 
-
         Next
-
 
         'Debug coursedata printout.
 
@@ -334,8 +316,6 @@ Public Class GenerateDataForm
         '    Next
         '    MessageBox.Show(asda)
         'Next
-
-
 
         'Now we ask the user to assign a name to every day, of every course.
 
@@ -357,9 +337,6 @@ Public Class GenerateDataForm
             Next
             Exit Do
         Loop
-
-
-
 
         'Now we have all the CourseData objects in Courses, and they're all set up correctly. We just iterate through them and set up the tasks
 
@@ -384,18 +361,17 @@ Public Class GenerateDataForm
 
                 fourAMbodgebelike = ""
                 For Each day In Course.Days
-                    fourAMbodgebelike = fourAMbodgebelike & DayNames.IndexOf(day.DayName) & "," & day.StartTime & "," & day.EndTime & "," & day.WebExLink & ",0" & vbCrLf
+                    fourAMbodgebelike = fourAMbodgebelike & New List(Of String)().IndexOf(day.DayName) & "," & day.StartTime & "," & day.EndTime & "," & day.WebExLink & ",0" & vbCrLf
                     'Write all the links with the day/time in the corresponding folder
 
-                    Dim WT As New WeeklyTrigger
-                    WT.DaysOfWeek = [Enum].Parse(GetType(DaysOfTheWeek), DayNamesEN(DayNames.IndexOf(day.DayName))) 'This looks stupid, but it at least works regardless of langauge
                     'There's probably a billion better ways to do this but it's 3am and I'm tired
-
                     'ERROR HERE???
-
-                    WT.StartBoundary = DateTime.ParseExact(Course.StartDate & " " & day.StartTime & ":59", "dd/MM/yyyy HH:mm:ss", Thread.CurrentThread.CurrentCulture)
-                    WT.EndBoundary = DateTime.ParseExact(Course.EndDate & " " & day.EndTime, "dd/MM/yyyy HH:mm", Thread.CurrentThread.CurrentCulture)
-                    WT.WeeksInterval = 1
+                    Dim WT As New WeeklyTrigger With {
+                        .DaysOfWeek = [Enum].Parse(GetType(DaysOfTheWeek), DayNamesEN(New List(Of String)().IndexOf(day.DayName))), 'This looks stupid, but it at least works regardless of langauge
+                        .StartBoundary = Date.ParseExact(Course.StartDate & " " & day.StartTime & ":59", "dd/MM/yyyy HH:mm:ss", Thread.CurrentThread.CurrentCulture),
+                        .EndBoundary = DateTime.ParseExact(Course.EndDate & " " & day.EndTime, "dd/MM/yyyy HH:mm", Thread.CurrentThread.CurrentCulture),
+                        .WeeksInterval = 1
+                    }
 
                     CourseTD.Triggers.Add(WT)
                 Next
@@ -423,7 +399,6 @@ Public Class GenerateDataForm
                 Directory.CreateDirectory(SavePath.Text & "\" & Course.Name & "-" & Course.ID)
                 'This saves the current template file, for comparing later.
 
-
                 File.WriteAllText(StartupForm.RootFolder & "\OBS\config\obs-studio\basic\profiles\" & Course.ID & "\basic.ini", text)
                 'File.WriteAllLines(StartupForm.RootFolder & "\OBS\config\obs-studio\basic\profiles\" & Course.ID & "\links.txt", Course.WebExLinks)
                 'OBS profile generation complete
@@ -450,12 +425,13 @@ Public Class GenerateDataForm
         For Each course In Courses
             P.X = 15
             P.Y = 35 * Courses.IndexOf(course) + 10
-            Dim RTB As New RichTextBox
-            RTB.ReadOnly = True
-            RTB.AutoSize = True
-            RTB.BorderStyle = BorderStyle.None
-            RTB.Multiline = False
-            RTB.Text = course.Name
+            Dim RTB As New RichTextBox With {
+                .ReadOnly = True,
+                .AutoSize = True,
+                .BorderStyle = BorderStyle.None,
+                .Multiline = False,
+                .Text = course.Name
+            }
             Dim CFont As New Font(RTB.Font.FontFamily, 9, RTB.Font.Style)
             RTB.Font = CFont
             Dim size As Size = TextRenderer.MeasureText(course.Name, CFont)
@@ -483,7 +459,6 @@ Public Class GenerateDataForm
 
             AddHandler EB.Click, AddressOf Edit_Click
         Next
-
 
         Dim max As Integer = 0
 
@@ -520,8 +495,6 @@ Public Class GenerateDataForm
         f.Controls.Add(Done)
         AddHandler Done.Click, AddressOf f.Close
 
-
-
         Return f
 
     End Function
@@ -534,21 +507,23 @@ Public Class GenerateDataForm
 
         Dim HolyShitImSoFuckingDoneWithThis As Integer = 0
 
-        Dim f As New Form
-        f.Width = 0
-        f.Text = "Schedule for " & CurrentCourse.Name
+        Dim f As New Form With {
+            .Width = 0,
+            .Text = "Schedule for " & CurrentCourse.Name
+        }
         If IsItalian Then f.Text = "Programma di " & CurrentCourse.Name
 
         f.Tag = Courses.IndexOf(CurrentCourse)
         For Each Day In CurrentCourse.Days
             p.X = 15
             p.Y = 35 * CurrentCourse.Days.IndexOf(Day) + 10
-            Dim RTB As New RichTextBox
-            RTB.ReadOnly = True
-            RTB.AutoSize = True
-            RTB.BorderStyle = BorderStyle.None
-            RTB.Multiline = False
-            RTB.Text = Day.DayName & ":" & Day.StartTime & "-" & Day.EndTime
+            Dim RTB As New RichTextBox With {
+                .ReadOnly = True,
+                .AutoSize = True,
+                .BorderStyle = BorderStyle.None,
+                .Multiline = False,
+                .Text = Day.DayName & ":" & Day.StartTime & "-" & Day.EndTime
+            }
             Dim CFont As New Font(RTB.Font.FontFamily, 9, RTB.Font.Style)
             RTB.Font = CFont
             Dim size As Size = TextRenderer.MeasureText(RTB.Text, CFont)
@@ -587,10 +562,9 @@ Public Class GenerateDataForm
 
             AddHandler CB.TextChanged, AddressOf ComboBox_ChangeElement
 
-
-            Dim DB As New Button
-
-            DB.Text = "Delete"
+            Dim DB As New Button With {
+                .Text = "Delete"
+            }
             If IsItalian Then DB.Text = "Elimina"
 
             DB.Name = "Delete"
@@ -601,16 +575,16 @@ Public Class GenerateDataForm
             p.X = p.X + CB.Width + 10
             DB.Location = p
 
-
             AddHandler DB.Click, AddressOf Delete_Click
 
             If IsEdit Then
-                Dim CkBox As New CheckBox
-                CkBox.Checked = Day.TempDisabled
-                CkBox.Enabled = True
-                CkBox.Name = "TempDisable"
-                CkBox.AutoSize = True
-                CkBox.Tag = CurrentCourse.Days.IndexOf(Day)
+                Dim CkBox As New CheckBox With {
+                    .Checked = Day.TempDisabled,
+                    .Enabled = True,
+                    .Name = "TempDisable",
+                    .AutoSize = True,
+                    .Tag = CurrentCourse.Days.IndexOf(Day)
+                }
                 If IsItalian Then
                     CkBox.Text = "Disabilita una volta"
                 Else
@@ -620,9 +594,9 @@ Public Class GenerateDataForm
                 f.Controls.Add(CkBox)
                 HolyShitImSoFuckingDoneWithThis = DB.Width
                 p.X = p.X + DB.Width + 10
-                p.Y = p.Y + (CB.Height - CkBox.Height) / 2
+                p.Y += (CB.Height - CkBox.Height) / 2
                 CkBox.Location = p
-                p.Y = p.Y - (CB.Height - CkBox.Height) / 2
+                p.Y -= (CB.Height - CkBox.Height) / 2
                 If f.Width < p.X + CkBox.Width + 30 Then f.Width = p.X + CkBox.Width + 30
 
                 AddHandler CkBox.CheckedChanged, AddressOf Checkbox_Changed
@@ -630,18 +604,11 @@ Public Class GenerateDataForm
                 If f.Width < p.X + DB.Width + 30 Then f.Width = p.X + DB.Width + 30
             End If
 
-
         Next
-
-
 
         f.Height = 35 * CurrentCourse.Days.Count + 45
 
-
-
-
         Dim max1, max2 As Integer                        'Probably not the best solution to make everything the same size, and probably wasteful, but I'm just lazy and bad
-
 
         For Each CTRL As Control In f.Controls
             If TypeOf CTRL Is RichTextBox AndAlso CTRL.Width > max1 Then max1 = CTRL.Width
@@ -678,9 +645,6 @@ Public Class GenerateDataForm
             End If
         Next
 
-
-
-
         'Add a OneShots As List(of DayData) property to courseData.
         'Fill that in by checking for tasks with WebExRec-OS- (additional check in the existing sub)
         'If a oneshot recording is marked as completed (the current date is beyond the endboundary) then delete it
@@ -688,8 +652,9 @@ Public Class GenerateDataForm
 
         If IsEdit Then
 
-            Dim AddOneShot As New Button
-            AddOneShot.AutoSize = True
+            Dim AddOneShot As New Button With {
+                .AutoSize = True
+            }
 
             If IsItalian Then
                 AddOneShot.Text = "Aggiungi registrazione temp."
@@ -724,7 +689,6 @@ Public Class GenerateDataForm
             f.Height = f.Height + Done.Height + 5
         End If
 
-
         Iamahackandjustwantthistobeover.Y = f.ClientSize.Height - 5 - Done.Height
         Done.Location = Iamahackandjustwantthistobeover
         f.Controls.Add(Done)
@@ -732,10 +696,11 @@ Public Class GenerateDataForm
 
         If IsEdit Then
             For Each OneShot In CurrentCourse.OneShots
-                f.Height = f.Height + 35
+                f.Height += 35
 
-                p = New Point
-                p.X = 15
+                p = New Point With {
+                    .X = 15
+                }
                 Dim RTB, RTB2 As New RichTextBox With {
                             .ReadOnly = True,
                             .AutoSize = True,
@@ -766,11 +731,7 @@ Public Class GenerateDataForm
             Next
         End If
 
-
-
         f.ShowDialog(b.Parent)
-
-
 
     End Sub
 
@@ -782,8 +743,9 @@ Public Class GenerateDataForm
             .TempDisabled = False
         }
         Courses(courseindex).OneShots.Add(NewOneShot)
-        Dim f As New Form
-        f.Tag = courseindex
+        Dim f As New Form With {
+            .Tag = courseindex
+        }
 
         Dim DayPicker As New DateTimePicker
         Dim CFont As New Font(DayPicker.Font.FontFamily, 9, DayPicker.Font.Style)
@@ -799,11 +761,12 @@ Public Class GenerateDataForm
         AddHandler DayPicker.ValueChanged, AddressOf DTP_ChangeElement
         DTP_ChangeElement(DayPicker, Nothing)
 
-        Dim StartTimePicker As New DateTimePicker
-        StartTimePicker.CustomFormat = "HH:mm"
-        StartTimePicker.Format = DateTimePickerFormat.Custom
-        StartTimePicker.ShowUpDown = True
-        StartTimePicker.Font = CFont
+        Dim StartTimePicker As New DateTimePicker With {
+            .CustomFormat = "HH:mm",
+            .Format = DateTimePickerFormat.Custom,
+            .ShowUpDown = True,
+            .Font = CFont
+        }
         p.X = p.X + DayPicker.Width + 5
         f.Controls.Add(StartTimePicker)
         StartTimePicker.Size = TextRenderer.MeasureText("99:99", CFont)
@@ -814,11 +777,12 @@ Public Class GenerateDataForm
         AddHandler StartTimePicker.ValueChanged, AddressOf DTP_ChangeElement
         DTP_ChangeElement(StartTimePicker, Nothing)
 
-        Dim EndTimePicker As New DateTimePicker
-        EndTimePicker.CustomFormat = "HH:mm"
-        EndTimePicker.Format = DateTimePickerFormat.Custom
-        EndTimePicker.ShowUpDown = True
-        EndTimePicker.Font = CFont
+        Dim EndTimePicker As New DateTimePicker With {
+            .CustomFormat = "HH:mm",
+            .Format = DateTimePickerFormat.Custom,
+            .ShowUpDown = True,
+            .Font = CFont
+        }
         p.X = p.X + StartTimePicker.Width + 5
         f.Controls.Add(EndTimePicker)
         EndTimePicker.Size = TextRenderer.MeasureText("99:99", CFont)
@@ -829,8 +793,9 @@ Public Class GenerateDataForm
         AddHandler EndTimePicker.ValueChanged, AddressOf DTP_ChangeElement
         DTP_ChangeElement(EndTimePicker, Nothing)
 
-        Dim CBprof As New ComboBox
-        CBprof.Name = "CBProf"
+        Dim CBprof As New ComboBox With {
+            .Name = "CBProf"
+        }
         Dim LongestItem As String = ""
         For Each Professor In Courses(courseindex).Professors
             CBprof.Items.Add(Professor.Key)
@@ -850,7 +815,6 @@ Public Class GenerateDataForm
         CBprof.Location = p
 
         f.Width = 5 + DayPicker.Width + 5 + StartTimePicker.Width + 5 + EndTimePicker.Width + 5 + CBprof.Width + 5 + 17
-
 
         AddHandler CBprof.TextChanged, AddressOf CBprofOS_ChangeElement
 
@@ -874,11 +838,9 @@ Public Class GenerateDataForm
         f.Height = 5 + CBprof.Height + 5 + Done.Height + 5 + 35
         AddHandler Done.Click, AddressOf OSDone_Click
 
-
         f.ShowDialog(b.Parent)
 
         'UHHHH. Need to figure out how to add/display the oneshots in the previous window.
-
 
     End Sub
 
@@ -900,9 +862,10 @@ Public Class GenerateDataForm
                 Using ts As New TaskService()
                     Dim td As TaskDefinition = ts.NewTask
                     td.RegistrationInfo.Description = "Oneshot recording for " & currentcourse.ID
-                    Dim T As New TimeTrigger
-                    T.StartBoundary = DateTime.ParseExact(currentcourse.OneShots.Last.DayName & " " & currentcourse.OneShots.Last.StartTime & ":59", "dd/MM/yyyy HH:mm:ss", Thread.CurrentThread.CurrentCulture)
-                    T.EndBoundary = DateTime.ParseExact(currentcourse.OneShots.Last.DayName & " " & currentcourse.OneShots.Last.EndTime, "dd/MM/yyyy HH:mm", Thread.CurrentThread.CurrentCulture)
+                    Dim T As New TimeTrigger With {
+                        .StartBoundary = DateTime.ParseExact(currentcourse.OneShots.Last.DayName & " " & currentcourse.OneShots.Last.StartTime & ":59", "dd/MM/yyyy HH:mm:ss", Thread.CurrentThread.CurrentCulture),
+                        .EndBoundary = DateTime.ParseExact(currentcourse.OneShots.Last.DayName & " " & currentcourse.OneShots.Last.EndTime, "dd/MM/yyyy HH:mm", Thread.CurrentThread.CurrentCulture)
+                    }
                     If T.EndBoundary <= T.StartBoundary Then
                         If IsItalian Then
                             MessageBox.Show("L'orario di fine deve essere dopo quello d'inizio.")
@@ -953,7 +916,6 @@ Public Class GenerateDataForm
 
     End Sub
 
-
     Private Sub DTP_ChangeElement(sender As Object, e As EventArgs)
         Dim DTP As DateTimePicker = sender
         Dim CourseIndex As Integer = DTP.Parent.Tag
@@ -974,6 +936,7 @@ Public Class GenerateDataForm
         Dim CourseIndex As Integer = CB.Parent.Tag
         Courses(CourseIndex).OneShots.Last.WebExLink = Courses(CourseIndex).Professors.Item(CB.Text)
     End Sub
+
     Private Sub ComboBox_ChangeElement(sender As Object, e As EventArgs)
         Dim CB As ComboBox = sender
         Dim IsEdit As Boolean = (Me.Tag = "edit")
@@ -1009,7 +972,6 @@ Public Class GenerateDataForm
 
         End If
 
-
         'MessageBox.Show("Set URL for course " & CurrentCourse.ID & " on " & CurrentDay.DayName & " from " & CurrentDay.StartTime & " to " & CurrentDay.EndTime & " to " & CurrentCourse.Professors.Item(CB.Text))
         Courses(CourseIndex).Days(DayIndex).WebExLink = CurrentCourse.Professors.Item(CB.Text)
     End Sub
@@ -1020,7 +982,6 @@ Public Class GenerateDataForm
         Dim DayIndex As Integer = sender.tag
         Courses(CourseIndex).Days(DayIndex).TempDisabled = CkBox.CheckState
         Dim CurrentDay As DayData = Courses(CourseIndex).Days(DayIndex)
-
 
         Dim DayNames As List(Of String) = {"Domenica", "Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato"}.ToList
         'I'm sure all of this could be consensed down to like a single line of code if I knew how the fuck the datetime stuff works
@@ -1047,7 +1008,6 @@ Public Class GenerateDataForm
 
     End Sub
 
-
     Private Sub Delete_Click(sender As Object, e As EventArgs)
         Dim b As Button = sender
         Dim f As Form = b.Parent
@@ -1066,7 +1026,7 @@ Public Class GenerateDataForm
 
             If IsNumeric(CTRL.Tag) AndAlso CTRL.Tag > b.Tag Then    'If it's a day after the one getting delete'd
                 Dim p As Point = CTRL.Location
-                p.Y = p.Y - 35          'Move it up one slot
+                p.Y -= 35          'Move it up one slot
                 CTRL.Location = p
 
                 ToBeLowered.Add(CTRL)
@@ -1091,7 +1051,7 @@ Public Class GenerateDataForm
         Next
 
         For Each ctrl In ToBeLowered
-            ctrl.Tag = ctrl.Tag - 1
+            ctrl.Tag -= 1
         Next
 
         If IsEdit Then
@@ -1101,7 +1061,7 @@ Public Class GenerateDataForm
                 Dim t As Task = ts.GetTask("WebExRec-" & Courses(f.Tag).ID)
                 Dim Currentday As DayData = Courses(f.Tag).Days(b.Tag)
 
-                Dim toberemoved As Trigger
+                Dim toberemoved As Trigger = Nothing
                 For Each trigger In t.Definition.Triggers
                     Dim WT As WeeklyTrigger = TryCast(trigger, WeeklyTrigger)
                     If WT Is Nothing Then Continue For           'Not a wek
@@ -1120,7 +1080,6 @@ Public Class GenerateDataForm
             End Using
         End If
 
-
         Courses(f.Tag).Days.RemoveAt(b.Tag)
 
         For Each CTRL In ToDelete
@@ -1129,24 +1088,25 @@ Public Class GenerateDataForm
             CTRL = Nothing
         Next
 
-
         f.Height -= 35
     End Sub
 
     Private Sub Browse_Click(sender As Object, e As EventArgs) Handles Browse.Click
-        Dim COPF As New CommonOpenFileDialog
-        COPF.InitialDirectory = "C:\\Users"
-        COPF.IsFolderPicker = True
+        Dim COPF As New CommonOpenFileDialog With {
+            .InitialDirectory = "C:\\Users",
+            .IsFolderPicker = True
+        }
         If COPF.ShowDialog = CommonFileDialogResult.Ok Then
             SavePath.Text = COPF.FileName
         End If
     End Sub
 
     Private Sub BrowseFile_Click(sender As Object, e As EventArgs) Handles BrowseFile.Click
-        Dim COPF As New CommonOpenFileDialog
-        COPF.InitialDirectory = "C:\\Users"
-        COPF.IsFolderPicker = False
-        COPF.EnsureFileExists = True
+        Dim COPF As New CommonOpenFileDialog With {
+            .InitialDirectory = "C:\\Users",
+            .IsFolderPicker = False,
+            .EnsureFileExists = True
+        }
         COPF.Filters.Add(New CommonFileDialogFilter("HTML file", ".html"))
         If COPF.ShowDialog = CommonFileDialogResult.Ok Then
             HtmlPath.Text = COPF.FileName
@@ -1154,6 +1114,4 @@ Public Class GenerateDataForm
 
     End Sub
 
-
 End Class
-

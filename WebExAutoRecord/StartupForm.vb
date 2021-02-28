@@ -1,18 +1,13 @@
-﻿Imports System.Threading
-Imports System.Globalization
-Imports System.Drawing
-Imports System.IO
+﻿Imports System.IO
 Imports System.IO.Compression
-Imports System.Text.RegularExpressions
+Imports System.Threading
 Imports Microsoft.Win32.TaskScheduler
-Imports Microsoft.WindowsAPICodePack.Dialogs
-Imports System.Net
 
 Public Class StartupForm
 
     Public RootFolder As String = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) & "\WebExRec"
 
-    Dim Courses As New List(Of CourseData)
+    ReadOnly Courses As New List(Of CourseData)
     Public Shared IsItalian As Boolean = (Thread.CurrentThread.CurrentCulture.IetfLanguageTag = "it-IT")
 
     Private Sub StartupForm_Load(sender As Object, e As EventArgs) Handles MyBase.Load
@@ -30,8 +25,6 @@ Public Class StartupForm
 
         AddHandler localmode.Click, AddressOf LocalMode_Click
         AddHandler downloadmode.Click, AddressOf DownloadMode_Click
-
-
 
         If IsItalian Then
             Question.Text = "Vuoi gestire le registrazioni locali o scaricare delle registrazioni?"
@@ -52,7 +45,6 @@ Public Class StartupForm
         p.X = Me.ClientSize.Width / 2 - Question.Width / 2
         p.Y = 5
         Question.Location = p
-
 
         p = localmode.Location
         p.Y = Question.Height + 30
@@ -95,7 +87,6 @@ Public Class StartupForm
         If Directory.Exists(appData) AndAlso Not File.Exists(appData & "\version.txt") Then
             File.WriteAllText(appData & "\version.txt", "1")  'We don't have a version number, so that means the version unpacked must've been v1
         End If
-
 
         'Kill every process that is currently using the folder.
         If Directory.Exists(appData) AndAlso My.Resources.Version <> File.ReadAllText(appData & "\version.txt") Then
@@ -160,7 +151,6 @@ Public Class StartupForm
                 Application.Exit()
             End Try
 
-
             Try
                 System.IO.File.WriteAllBytes(appData & "\temp.zip", My.Resources.Data)
             Catch ex As Exception
@@ -202,6 +192,7 @@ Public Class StartupForm
 
         GenerateDataForm.ShowDialog()
     End Sub
+
     Private Sub DownloadMode_Click(sender As Object, e As EventArgs)
 
         DownloadForm.ShowDialog()
@@ -216,6 +207,7 @@ Public Class StartupForm
         Public Days As New List(Of DayData)
         Public OneShots As New List(Of DayData)
     End Class
+
     Public Class DayData
         Public DayName As String
         Public StartTime As String

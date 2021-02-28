@@ -1,6 +1,8 @@
 ﻿Imports System.Threading
+
 Public Class InputForm
     Private ReadOnly WaitEvent As New ManualResetEvent(False)
+
     Private Sub OK_Click(sender As Object, e As EventArgs) Handles OK.Click
         If InputText.Text Is Nothing Or InputText.Text = "" Then
             MessageBox.Show("Please input something.")
@@ -18,7 +20,6 @@ Public Class InputForm
         End If
         InputText.Text = ""
         Dim OldHeight As Integer = InputText.Location.Y
-
 
         If Query.Contains("video:") Then
 
@@ -62,4 +63,5 @@ Public Class InputForm
             Skip.Text = "Salta"
         End If
     End Sub
+
 End Class

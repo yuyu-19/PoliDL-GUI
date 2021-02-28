@@ -66,6 +66,7 @@ Partial Class DownloadForm
         '
         'FilePath
         '
+        Me.FilePath.AllowDrop = True
         Me.FilePath.Location = New System.Drawing.Point(16, 69)
         Me.FilePath.Name = "FilePath"
         Me.FilePath.Size = New System.Drawing.Size(260, 20)
