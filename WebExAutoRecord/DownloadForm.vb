@@ -347,10 +347,12 @@ Public Class DownloadForm
     End Sub
 
     Sub GetAllRecordingLinks(AllText As String, ByRef WebexURLs As List(Of String), ByRef StreamURLs As List(Of String)) 'This just takes a big ol string (file) as input and a list, and adds all links to the list.
+        AllText = System.Net.WebUtility.UrlDecode(AllText)  'Fixes the URL encoding weirdness
         Dim i As Integer = AllText.IndexOf("politecnicomilano.webex.com/")
         Do Until i = -1
             Dim r As New Regex("([^a-zA-Z0-9\/.?=:]+)|$|\n")
             Dim NewURL As String = AllText.Substring(i, r.Match(AllText, i).Index - i).Trim
+
             NewURL = "https://" & NewURL
             If Not WebexURLs.Contains(NewURL) Then WebexURLs.Add(NewURL)
 
@@ -421,7 +423,7 @@ Public Class DownloadForm
         i = AllText.IndexOf("polimi365-my.sharepoint.com")
 
         Do Until i = -1
-            Dim r As New Regex("([^a-zA-Z0-9-_%]+)|$")    'This one excludes the - and _ characters from the match
+            Dim r As New Regex("([^a-zA-Z0-9-_]+)|$")    'This one excludes the - and _ characters from the match
 
             Dim NewURL As String
 
@@ -432,8 +434,8 @@ Public Class DownloadForm
                 'It's the other type
                 NewURL = AllText.Substring(i, r.Match(AllText, AllText.IndexOf("_polimi_it/", i) + "_polimi_it/".Length).Index - i).Trim
             End If
-
             NewURL = "https://" & NewURL
+
             If Not StreamURLs.Contains(NewURL) Then StreamURLs.Add(NewURL)
 
             'CourseLine.Substring(startindex, CourseLine.IndexOf("-", startindex) - startindex).Trim()
