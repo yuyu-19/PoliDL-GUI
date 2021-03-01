@@ -7,7 +7,6 @@ namespace PoliDLGUI
 {
     public partial class InputForm
     {
-        
         public InputForm(Point location)
         {
             this.Location = location;

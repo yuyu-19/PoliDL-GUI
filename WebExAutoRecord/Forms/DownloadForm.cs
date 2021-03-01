@@ -300,8 +300,8 @@ namespace PoliDLGUI
                     if (StartupForm.IsItalian)
                     {
                         WebexArgs = Conversions.ToString(WebexArgs + Operators.ConcatenateObject(
-                                " -e ", 
-                                InputForm.AskForInput("Inserisci la tua email (nome.cognome@mail.polimi.it)",this.Location))
+                                " -e ",
+                                InputForm.AskForInput("Inserisci la tua email (nome.cognome@mail.polimi.it)", this.Location))
                             );
                     }
                     else
@@ -320,7 +320,7 @@ namespace PoliDLGUI
                     // Checking the position in this way also checks wheter or not it's set to true.
                     if (StartupForm.IsItalian)
                     {
-                        TempString = Conversions.ToString(InputForm.AskForInput("Inserisci la tua password",this.Location));
+                        TempString = Conversions.ToString(InputForm.AskForInput("Inserisci la tua password", this.Location));
                     }
                     else
                     {
@@ -346,11 +346,11 @@ namespace PoliDLGUI
                 StreamArgs += " -u " + TempString;
                 if (StartupForm.IsItalian)
                 {
-                    TempString = Conversions.ToString(InputForm.AskForInput("Inserisci la tua password",this.Location));
+                    TempString = Conversions.ToString(InputForm.AskForInput("Inserisci la tua password", this.Location));
                 }
                 else
                 {
-                    TempString = Conversions.ToString(InputForm.AskForInput("Please input your password",this.Location));
+                    TempString = Conversions.ToString(InputForm.AskForInput("Please input your password", this.Location));
                 }
 
                 WebexArgs += " -p " + TempString;
@@ -363,7 +363,7 @@ namespace PoliDLGUI
                     }
                     else
                     {
-                        TempString = Conversions.ToString(InputForm.AskForInput("Please input your email (name.surname@mail.polimi.it)",this.Location));
+                        TempString = Conversions.ToString(InputForm.AskForInput("Please input your email (name.surname@mail.polimi.it)", this.Location));
                     }
                 }
 
@@ -853,7 +853,7 @@ namespace PoliDLGUI
                     {
                         Password = Conversions.ToString(
                             InputForm.AskForInput(
-                                "Inserisci la password per questo video: " + 
+                                "Inserisci la password per questo video: " +
                                 Constants.vbCrLf + outLine.Data.Substring(outLine.Data.LastIndexOf("/") + 1), this.Location)
                             );
                     }
@@ -861,7 +861,7 @@ namespace PoliDLGUI
                     {
                         Password = Conversions.ToString(
                             InputForm.AskForInput(
-                                "Please input the password for this video: " + 
+                                "Please input the password for this video: " +
                                 Constants.vbCrLf + outLine.Data.Substring(outLine.Data.LastIndexOf("/") + 1), this.Location)
                             );
                     }

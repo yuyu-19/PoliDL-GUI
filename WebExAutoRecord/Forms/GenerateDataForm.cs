@@ -33,8 +33,8 @@ namespace PoliDLGUI
             {
                 var ToBeDeleted = new List<object>();
                 var OneShotsFound = new Dictionary<string, List<StartupForm.DayData>>();
-                Predicate < Task > pred = (Task t) => this.IsWebExOS(t);
-                foreach (Task t in ts.RootFolder.EnumerateTasks(pred,true))
+                Predicate<Task> pred = (Task t) => this.IsWebExOS(t);
+                foreach (Task t in ts.RootFolder.EnumerateTasks(pred, true))
                 {
                     string tempstring = t.Name.Replace("WebExRec-OS-", "");
                     string courseID = tempstring.Substring(0, tempstring.IndexOf("-"));
