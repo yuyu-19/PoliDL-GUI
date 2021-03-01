@@ -9,7 +9,7 @@ using System.IO.Compression;
 using System.Threading;
 using System.Windows.Forms;
 
-namespace PoliDLGUI
+namespace PoliDLGUI.Forms
 {
     public partial class StartupForm
     {

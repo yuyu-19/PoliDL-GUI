@@ -3,7 +3,7 @@ using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
 
-namespace PoliDLGUI
+namespace PoliDLGUI.Forms
 {
     public partial class InputForm
     {

@@ -10,7 +10,7 @@ using System.IO.Compression;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
-namespace PoliDLGUI
+namespace PoliDLGUI.Forms
 {
     public partial class DownloadForm
     {

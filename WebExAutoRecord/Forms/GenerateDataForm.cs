@@ -12,7 +12,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
 
-namespace PoliDLGUI
+namespace PoliDLGUI.Forms
 {
     public partial class GenerateDataForm
     {

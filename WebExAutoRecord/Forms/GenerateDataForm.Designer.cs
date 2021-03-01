@@ -4,7 +4,7 @@ using System.Drawing;
 using System.Runtime.CompilerServices;
 using System.Windows.Forms;
 
-namespace PoliDLGUI
+namespace PoliDLGUI.Forms
 {
     [Microsoft.VisualBasic.CompilerServices.DesignerGenerated()]
     public partial class GenerateDataForm : Form

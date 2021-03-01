@@ -5,7 +5,7 @@ using System.Runtime.CompilerServices;
 using System.Windows.Forms;
 using Microsoft.VisualBasic.CompilerServices;
 
-namespace PoliDLGUI
+namespace PoliDLGUI.Forms
 {
     [DesignerGenerated()]
     public partial class InputForm : Form
