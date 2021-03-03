@@ -172,77 +172,78 @@ namespace PoliDLGUI.Forms
 
         public void UpdateFileNum2(ProgressUpdate text)
         {
-            lock (this)
+
+            // InvokeRequired required compares the thread ID of the
+            // calling thread to the thread ID of the creating thread.
+            // If these threads are different, it returns true.
+
+            switch (text)
             {
-                // InvokeRequired required compares the thread ID of the
-                // calling thread to the thread ID of the creating thread.
-                // If these threads are different, it returns true.
-
-                switch (text)
-                {
-                    case ProgressUpdate.COMPLETED:
+                case ProgressUpdate.COMPLETED:
+                    {
+                        if (this.NumCompleted.InvokeRequired)
                         {
-                            if (this.NumCompleted.InvokeRequired)
-                            {
-                                UpdateFileNumCallBack d = new UpdateFileNumCallBack(UpdateFileNum2);
-                                this.Invoke(d, new object[] { text });
-                                return;
-                            }
-                            break;
+                            UpdateFileNumCallBack d = new UpdateFileNumCallBack(UpdateFileNum2);
+                            this.Invoke(d, new object[] { text });
+                            return;
                         }
+                        break;
+                    }
 
-                    case ProgressUpdate.ERROR:
+                case ProgressUpdate.ERROR:
+                    {
+                        if (this.NumFailed.InvokeRequired)
                         {
-                            if (this.NumFailed.InvokeRequired)
-                            {
-                                UpdateFileNumCallBack d = new UpdateFileNumCallBack(UpdateFileNum2);
-                                this.Invoke(d, new object[] { text });
-                                return;
-                            }
-                            break;
+                            UpdateFileNumCallBack d = new UpdateFileNumCallBack(UpdateFileNum2);
+                            this.Invoke(d, new object[] { text });
+                            return;
                         }
-                    case ProgressUpdate.STARTED:
+                        break;
+                    }
+                case ProgressUpdate.STARTED:
+                    {
+                        if (this.OverallProgressCompleted.InvokeRequired)
                         {
-                            if (this.OverallProgressCompleted.InvokeRequired)
-                            {
-                                UpdateFileNumCallBack d = new UpdateFileNumCallBack(UpdateFileNum2);
-                                this.Invoke(d, new object[] { text });
-                                return;
-                            }
-                            break;
+                            UpdateFileNumCallBack d = new UpdateFileNumCallBack(UpdateFileNum2);
+                            this.Invoke(d, new object[] { text });
+                            return;
                         }
-                }
-
-
-
-                switch (text)
-                {
-                    case ProgressUpdate.COMPLETED:
-                        {
-                            this.OverallProgressCompleted.Value++;
-                            break;
-                        }
-                    case ProgressUpdate.ERROR:
-                        {
-                            this.NumCompleted.Text = ((Convert.ToInt32(this.NumCompleted.Text)) + 1).ToString();
-                            break;
-                        }
-                    case ProgressUpdate.STARTED:
-                        {
-                            this.NumCompleted.Text = ((Convert.ToInt32(this.NumCompleted.Text)) + 1).ToString();
-                            break;
-                        }
-
-
-                }
-
-                int a = this.downloadForm.downloadInfoList.Select(x => x.ended == HowEnded.SUCCESS).Count(x => x);
-                int b = this.downloadForm.downloadInfoList.Count;
-                this.FileNum.Text = "File " + a.ToString() + "/" + (b).ToString();
-                this.OverallProgressCompleted.Minimum = 0;
-                this.OverallProgressCompleted.Maximum = b;
+                        break;
+                    }
             }
+
+
+
+            switch (text)
+            {
+                case ProgressUpdate.COMPLETED:
+                    {
+                        this.OverallProgressCompleted.Value++;
+                        this.NumCompleted.Text = ((Convert.ToInt32(this.NumCompleted.Text)) + 1).ToString();
+                        break;
+                    }
+                case ProgressUpdate.ERROR:
+                    {
+                        this.NumFailed.Text = ((Convert.ToInt32(this.NumFailed.Text)) + 1).ToString();
+                        break;
+                    }
+                case ProgressUpdate.STARTED:
+                    {
+                        startedDownloads++;
+                        break;
+                    }
+
+
+            }
+
+            int a = this.downloadForm.downloadInfoList.Select(x => x.ended == HowEnded.SUCCESS).Count(x => x);
+            this.FileNum.Text = "File " + a.ToString() + "/" + (startedDownloads).ToString();
+            this.OverallProgressCompleted.Minimum = 0;
+            this.OverallProgressCompleted.Maximum = startedDownloads;
+            
         }
+
+        int startedDownloads = 0;
 
         internal void UpdateFileNum()
         {

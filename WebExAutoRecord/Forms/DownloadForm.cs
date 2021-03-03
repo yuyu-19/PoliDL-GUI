@@ -710,6 +710,15 @@ namespace PoliDLGUI.Forms
 
                 try
                 {
+                    ProgressTracker.KillAllProcesses(this.downloadInfoList);
+                }
+                catch
+                {
+                    ;
+                }
+
+                try
+                {
                     File.Delete(StartupForm.RootFolder + @"\Poli-pkg\dist\config.json");
                     if (StartupForm.IsItalian)
                     {
