@@ -15,7 +15,7 @@ namespace PoliDLGUI.Forms
             _Skip.Name = "Skip";
         }
 
-        private readonly ManualResetEvent WaitEvent = new ManualResetEvent(false);
+        //private readonly ManualResetEvent WaitEvent = new ManualResetEvent(false);
 
         private void OK_Click(object sender, EventArgs e)
         {
