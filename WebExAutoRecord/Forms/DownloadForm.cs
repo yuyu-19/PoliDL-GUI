@@ -861,35 +861,11 @@ namespace PoliDLGUI.Forms
 
                     if (downloadinfo.NotDownloaded != -1 | downloadinfo.NotDownloadedW != -1)
                     {
-                        downloadinfo.NotDownloaded = Math.Max(downloadinfo.NotDownloaded, 0) + Math.Max(downloadinfo.NotDownloadedW, 0);
-                        if (segmented)
-                        {
-                            if (StartupForm.IsItalian)
-                            {
-                                MessageBox.Show("È fallito il download di " + downloadinfo.NotDownloaded + " video. Riprova più tardi, oppure prova in modalità unsegmented.");
-                            }
-                            else
-                            {
-                                MessageBox.Show("Could not download " + downloadinfo.NotDownloaded + " videos. Please try again later, or try unsegmented mode.");
-                            }
-                        }
-                        else if (StartupForm.IsItalian)
-                        {
-                            MessageBox.Show("È fallito il download di " + downloadinfo.NotDownloaded + " video. Riprova più tardi.");
-                        }
-                        else
-                        {
-                            MessageBox.Show("Could not download " + downloadinfo.NotDownloaded + " videos. Please try again later.");
-                        }
+                        downloadinfo.Failed(segmented);
                     }
-                    else if (StartupForm.IsItalian)
-                    {
-                        MessageBox.Show("Finito!");
-                    }
-                    else
-                    {
-                        MessageBox.Show("All done!");
-                    }
+
+                    downloadinfo.EndedSuccessfully(StartupForm.IsItalian);
+                    return;
 
                     //LogsStream.Close();
                 }

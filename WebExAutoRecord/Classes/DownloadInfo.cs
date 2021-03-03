@@ -1,6 +1,7 @@
 ﻿using PoliDLGUI.Forms;
 using System;
 using System.Diagnostics;
+using System.Windows;
 
 namespace PoliDLGUI.Classes
 {
@@ -23,7 +24,7 @@ namespace PoliDLGUI.Classes
         public bool DLError;
         public double WebexProgress = 0d;
         public int NotDownloaded = -1;
-        public bool ended = false;
+        public PoliDLGUI.Enums.HowEnded ended = Enums.HowEnded.NOT_ENDED_YET;
 
         public DownloadInfo(ProgressTracker progressTracker)
         {
@@ -41,9 +42,36 @@ namespace PoliDLGUI.Classes
                 this.CurrentSpeed = "Finished.";
             }
 
-            this.ended = true;
+            this.ended = Enums.HowEnded.SUCCESS;
             this.progressTracker.OneDownloadHasFinished();
 
+        }
+
+        internal void Failed(bool segmented)
+        {
+            this.NotDownloaded = Math.Max(this.NotDownloaded, 0) + Math.Max(this.NotDownloadedW, 0);
+            if (segmented)
+            {
+                if (StartupForm.IsItalian)
+                {
+                    Console.WriteLine("È fallito il download di " + this.NotDownloaded + " video. Riprova più tardi, oppure prova in modalità unsegmented.");
+                }
+                else
+                {
+                    Console.WriteLine("Could not download " + this.NotDownloaded + " videos. Please try again later, or try unsegmented mode.");
+                }
+            }
+            else if (StartupForm.IsItalian)
+            {
+                Console.WriteLine("È fallito il download di " + this.NotDownloaded + " video. Riprova più tardi.");
+            }
+            else
+            {
+                Console.WriteLine("Could not download " + this.NotDownloaded + " videos. Please try again later.");
+            }
+
+            this.ended = Enums.HowEnded.FAIL;
+            this.progressTracker.OneDownloadHasFailed();
         }
     }
 }

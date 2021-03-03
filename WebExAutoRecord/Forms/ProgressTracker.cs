@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualBasic;
 using PoliDLGUI.Classes;
+using PoliDLGUI.Enums;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -40,27 +41,11 @@ namespace PoliDLGUI.Forms
             */
         }
 
-        delegate void OneDownloadHasFinishedCallback(object o);
 
-        private void OneDownloadHasFinished2(object o)
-        {
-            // InvokeRequired required compares the thread ID of the
-            // calling thread to the thread ID of the creating thread.
-            // If these threads are different, it returns true.
-            if (this.OverallProgressCompleted.InvokeRequired)
-            {
-                OneDownloadHasFinishedCallback d = new OneDownloadHasFinishedCallback(OneDownloadHasFinished2);
-                this.Invoke(d, new object[] { null });
-            }
-            else
-            {
-                this.OverallProgressCompleted.Value++;
-            }
-        }
 
         internal void OneDownloadHasFinished()
         {
-            OneDownloadHasFinished2(null);
+            UpdateFileNum2(ProgressUpdate.COMPLETED);
         }
 
         private void ProgressTracker_Closing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -109,6 +94,11 @@ namespace PoliDLGUI.Forms
                     e.Cancel = true;
                 }
             }
+        }
+
+        internal void OneDownloadHasFailed()
+        {
+            UpdateFileNum2(ProgressUpdate.ERROR);
         }
 
         public static void KillAllProcesses(List<DownloadInfo> list)
@@ -178,29 +168,85 @@ namespace PoliDLGUI.Forms
         }
         
 
-        delegate void UpdateFileNumCallBack(string text);
+        delegate void UpdateFileNumCallBack(ProgressUpdate text);
 
-        public void UpdateFileNum2(string text)
+        public void UpdateFileNum2(ProgressUpdate text)
         {
-            // InvokeRequired required compares the thread ID of the
-            // calling thread to the thread ID of the creating thread.
-            // If these threads are different, it returns true.
-            if (this.InvokeRequired)
+            lock (this)
             {
-                UpdateFileNumCallBack d = new UpdateFileNumCallBack(UpdateFileNum2);
-                this.Invoke(d, new object[] { text });
-            }
-            else
-            {
-                int a = this.downloadForm.downloadInfoList.Select(x => x.ended).Count(x => x);
+                // InvokeRequired required compares the thread ID of the
+                // calling thread to the thread ID of the creating thread.
+                // If these threads are different, it returns true.
+
+                switch (text)
+                {
+                    case ProgressUpdate.COMPLETED:
+                        {
+                            if (this.NumCompleted.InvokeRequired)
+                            {
+                                UpdateFileNumCallBack d = new UpdateFileNumCallBack(UpdateFileNum2);
+                                this.Invoke(d, new object[] { text });
+                                return;
+                            }
+                            break;
+                        }
+
+                    case ProgressUpdate.ERROR:
+                        {
+                            if (this.NumFailed.InvokeRequired)
+                            {
+                                UpdateFileNumCallBack d = new UpdateFileNumCallBack(UpdateFileNum2);
+                                this.Invoke(d, new object[] { text });
+                                return;
+                            }
+                            break;
+                        }
+                    case ProgressUpdate.STARTED:
+                        {
+                            if (this.OverallProgressCompleted.InvokeRequired)
+                            {
+                                UpdateFileNumCallBack d = new UpdateFileNumCallBack(UpdateFileNum2);
+                                this.Invoke(d, new object[] { text });
+                                return;
+                            }
+                            break;
+                        }
+                }
+
+
+
+                switch (text)
+                {
+                    case ProgressUpdate.COMPLETED:
+                        {
+                            this.OverallProgressCompleted.Value++;
+                            break;
+                        }
+                    case ProgressUpdate.ERROR:
+                        {
+                            this.NumCompleted.Text = ((Convert.ToInt32(this.NumCompleted.Text)) + 1).ToString();
+                            break;
+                        }
+                    case ProgressUpdate.STARTED:
+                        {
+                            this.NumCompleted.Text = ((Convert.ToInt32(this.NumCompleted.Text)) + 1).ToString();
+                            break;
+                        }
+
+
+                }
+
+                int a = this.downloadForm.downloadInfoList.Select(x => x.ended == HowEnded.SUCCESS).Count(x => x);
                 int b = this.downloadForm.downloadInfoList.Count;
-                this.FileNum.Text = "File "+a.ToString()+"/" + (b).ToString();
+                this.FileNum.Text = "File " + a.ToString() + "/" + (b).ToString();
+                this.OverallProgressCompleted.Minimum = 0;
+                this.OverallProgressCompleted.Maximum = b;
             }
         }
 
         internal void UpdateFileNum()
         {
-            UpdateFileNum2(null);
+            UpdateFileNum2(ProgressUpdate.STARTED);
         }
 
         private void ProgressTracker_FormClosing(object sender, FormClosingEventArgs e)

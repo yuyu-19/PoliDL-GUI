@@ -43,8 +43,9 @@ namespace PoliDLGUI.Forms
             this.DLspeed = new System.Windows.Forms.Label();
             this._Timer = new System.Windows.Forms.Timer(this.components);
             this.l1 = new System.Windows.Forms.Label();
-            this.WorkingOnItems = new System.Windows.Forms.Label();
+            this.NumCompleted = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
+            this.NumFailed = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // OverallProgressCompleted
@@ -83,39 +84,50 @@ namespace PoliDLGUI.Forms
             // 
             this.l1.AutoSize = true;
             this.l1.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.l1.Location = new System.Drawing.Point(12, 97);
+            this.l1.Location = new System.Drawing.Point(12, 83);
             this.l1.Name = "l1";
-            this.l1.Size = new System.Drawing.Size(121, 25);
+            this.l1.Size = new System.Drawing.Size(239, 25);
             this.l1.TabIndex = 3;
-            this.l1.Text = "Working on";
+            this.l1.Text = "Completed successfully";
             // 
-            // WorkingOnItems
+            // NumCompleted
             // 
-            this.WorkingOnItems.AutoSize = true;
-            this.WorkingOnItems.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.WorkingOnItems.Location = new System.Drawing.Point(139, 97);
-            this.WorkingOnItems.Name = "WorkingOnItems";
-            this.WorkingOnItems.Size = new System.Drawing.Size(48, 25);
-            this.WorkingOnItems.TabIndex = 4;
-            this.WorkingOnItems.Text = "999";
+            this.NumCompleted.AutoSize = true;
+            this.NumCompleted.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.NumCompleted.Location = new System.Drawing.Point(262, 83);
+            this.NumCompleted.Name = "NumCompleted";
+            this.NumCompleted.Size = new System.Drawing.Size(24, 25);
+            this.NumCompleted.TabIndex = 4;
+            this.NumCompleted.Text = "0";
             // 
             // label2
             // 
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.Location = new System.Drawing.Point(193, 97);
+            this.label2.Location = new System.Drawing.Point(180, 118);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(63, 25);
+            this.label2.Size = new System.Drawing.Size(71, 25);
             this.label2.TabIndex = 5;
-            this.label2.Text = "items";
+            this.label2.Text = "Failed";
+            // 
+            // NumFailed
+            // 
+            this.NumFailed.AutoSize = true;
+            this.NumFailed.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.NumFailed.Location = new System.Drawing.Point(262, 118);
+            this.NumFailed.Name = "NumFailed";
+            this.NumFailed.Size = new System.Drawing.Size(24, 25);
+            this.NumFailed.TabIndex = 6;
+            this.NumFailed.Text = "0";
             // 
             // ProgressTracker
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(448, 131);
+            this.ClientSize = new System.Drawing.Size(448, 152);
+            this.Controls.Add(this.NumFailed);
             this.Controls.Add(this.label2);
-            this.Controls.Add(this.WorkingOnItems);
+            this.Controls.Add(this.NumCompleted);
             this.Controls.Add(this.l1);
             this.Controls.Add(this.DLspeed);
             this.Controls.Add(this.FileNum);
@@ -136,8 +148,9 @@ namespace PoliDLGUI.Forms
         public ProgressBar OverallProgressCompleted;
         private Timer _Timer;
         public Label l1;
-        public Label WorkingOnItems;
+        public Label NumCompleted;
         public Label label2;
+        public Label NumFailed;
 
         internal Timer Timer
         {
