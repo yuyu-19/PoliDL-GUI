@@ -195,7 +195,7 @@ Public Class StartupForm
 
     Private Sub DownloadMode_Click(sender As Object, e As EventArgs)
 
-        DownloadForm.ShowDialog()
+        DownloadForm.Show()
     End Sub
 
     Public Class CourseData
