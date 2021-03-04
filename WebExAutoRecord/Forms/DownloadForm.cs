@@ -46,6 +46,7 @@ namespace PoliDLGUI.Forms
                     COPF.Filters.Add(new CommonFileDialogFilter("File Excel", "xlsx"));
                     COPF.Filters.Add(new CommonFileDialogFilter("File Word", "docx"));
                     COPF.Filters.Add(new CommonFileDialogFilter("Zip (di file docx/xlsx/html)", "zip"));
+                    COPF.Filters.Add(new CommonFileDialogFilter("TXT", "txt"));
                 }
                 else
                 {
@@ -53,6 +54,7 @@ namespace PoliDLGUI.Forms
                     COPF.Filters.Add(new CommonFileDialogFilter("Excel file", "xlsx"));
                     COPF.Filters.Add(new CommonFileDialogFilter("Word file", "docx"));
                     COPF.Filters.Add(new CommonFileDialogFilter("Zip (of docx/xlsx/html files)", "zip"));
+                    COPF.Filters.Add(new CommonFileDialogFilter("TXT", "txt"));
                 }
             }
             else
@@ -162,7 +164,7 @@ namespace PoliDLGUI.Forms
             List<string> WebexURLs = new List<string>(), StreamURLs = new List<string>();
             if (ModeSelect.SelectedIndex == 1)
             {
-                GetAllRecordingLinks(URLlist.Text, ref WebexURLs, ref StreamURLs);
+                GetAllRecordingLinks(URLlist.Text, ref WebexURLs, ref StreamURLs, txt:false);
             }
             else
             {
@@ -205,10 +207,15 @@ namespace PoliDLGUI.Forms
                 string extension = FilePath.Text.Substring(FilePath.Text.LastIndexOf(".") + 1).ToLower().Trim();
                 switch (extension ?? "")
                 {
+                    case "txt":
+                        {
+                            GetAllRecordingLinks(File.ReadAllText(FilePath.Text), ref WebexURLs, ref StreamURLs, txt: true);
+                            break;
+                        }
                     case "html":
                     case "htm":
                         {
-                            GetAllRecordingLinks(File.ReadAllText(FilePath.Text), ref WebexURLs, ref StreamURLs);
+                            GetAllRecordingLinks(File.ReadAllText(FilePath.Text), ref WebexURLs, ref StreamURLs, txt:false);
                             break;
                         }
 
@@ -463,16 +470,25 @@ namespace PoliDLGUI.Forms
                 }
                 else
                 {
-                    GetAllRecordingLinks(File.ReadAllText(Entry.Name), ref WebexURLs, ref StreamURLs);
+                    GetAllRecordingLinks(File.ReadAllText(Entry.Name), ref WebexURLs, ref StreamURLs, txt: false);
                 }
 
                 File.Delete(FileName);
             }
         }
 
-        public void GetAllRecordingLinks(string AllText, ref List<string> WebexURLs, ref List<string> StreamURLs) // This just takes a big ol string (file) as input and a list, and adds all links to the list.
+        public void GetAllRecordingLinks(string AllText, ref List<string> WebexURLs, ref List<string> StreamURLs, bool txt) // This just takes a big ol string (file) as input and a list, and adds all links to the list.
         {
-            AllText = System.Net.WebUtility.UrlDecode(AllText);  // Fixes the URL encoding weirdness
+            if (string.IsNullOrEmpty(AllText))
+                return;
+
+            if (txt == false)
+            {
+                AllText = System.Net.WebUtility.UrlDecode(AllText);  // Fixes the URL encoding weirdness
+            }
+
+            AllText = AllText.Trim();
+
             int i = AllText.IndexOf("politecnicomilano.webex.com/");
             while (i != -1)
             {
