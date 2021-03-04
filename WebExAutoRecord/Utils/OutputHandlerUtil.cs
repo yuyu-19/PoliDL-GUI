@@ -68,7 +68,6 @@ namespace PoliDLGUI.Utils
 
             string outLineData = outLine.Data.Trim();
 
-           
             if (outLineData == "You are not authorized to access this video.")
             {
                 downloadinfo.Failed(segmented);

@@ -63,8 +63,8 @@ namespace PoliDLGUI.Classes
         internal void LoadPanelResults(ref Panel panel1)
         {
             const int HEIGHT = 20;
-            int WIDTH_LABEL = panel1.Width /5 * 3;
-            int WIDTH_BUTTON = panel1.Width / 5 * 2;
+            int WIDTH_LABEL = panel1.Width / 10 * 7;
+            int WIDTH_BUTTON = panel1.Width / 10 * 3;
             _ = new Label()
             {
                 Location = new System.Drawing.Point(x: 0, y: 0),

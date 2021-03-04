@@ -136,7 +136,7 @@ namespace PoliDLGUI.Forms
             CheckSegmented.Location = p;
         }
 
-        public const int maxDownloadInParallel = 10;
+        public const int maxDownloadInParallel = 7;
 
         private void DLButton_Click(object sender, EventArgs e)
         {
@@ -396,7 +396,7 @@ namespace PoliDLGUI.Forms
             }
 
             int total = 0;
-            if (StreamURLs!=null)
+            if (StreamURLs != null)
             {
                 total += StreamURLs.Count;
             }

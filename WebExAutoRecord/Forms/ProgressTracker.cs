@@ -132,7 +132,6 @@ namespace PoliDLGUI.Forms
             {
                 case ProgressUpdate.COMPLETED:
                     {
-                        
                         this.NumCompleted.Text = ((Convert.ToInt32(this.NumCompleted.Text)) + 1).ToString();
                         break;
                     }

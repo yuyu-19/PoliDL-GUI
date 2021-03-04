@@ -104,11 +104,14 @@ namespace PoliDLGUI.Classes
                     }
                 }
 
-                if (this.current.GetCount() < this.maxCurrent && waiting.GetCount() > 0)
+                for (int i = 0; i < 3; i++)
                 {
-                    DownloadInfo p = this.waiting.GetAndRemoveFirst();
-                    if (p != null)
-                        Add2(p);
+                    if (this.current.GetCount() < this.maxCurrent && waiting.GetCount() > 0)
+                    {
+                        DownloadInfo p = this.waiting.GetAndRemoveFirst();
+                        if (p != null)
+                            Add2(p);
+                    }
                 }
             }
         }
@@ -117,7 +120,7 @@ namespace PoliDLGUI.Classes
         {
             lock (this)
             {
-                if (current.GetCount() < this.maxCurrent)
+                if (current.GetCount() == 0)
                 {
                     Add2(downloadInfo);
                 }
@@ -177,8 +180,6 @@ namespace PoliDLGUI.Classes
                     outputHandler = new OutputHandlerUtil(this.downloadForm);
                 }
 
-               
-
                 downloadInfo.process.OutputDataReceived += outputHandler.OutputHandler;
                 downloadInfo.process.ErrorDataReceived += outputHandler.OutputHandler;
                 try
@@ -212,7 +213,5 @@ namespace PoliDLGUI.Classes
                 }
             }
         }
-
-      
     }
 }

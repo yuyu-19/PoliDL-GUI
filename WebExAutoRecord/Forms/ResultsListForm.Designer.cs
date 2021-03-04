@@ -62,6 +62,7 @@ namespace PoliDLGUI.Forms
             this.Controls.Add(this.button1);
             this.Controls.Add(this.panel1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.MaximizeBox = false;
             this.Name = "ResultsListForm";
             this.Text = "ResultsListForm";
             this.Load += new System.EventHandler(this.ResultsListForm_Load);
