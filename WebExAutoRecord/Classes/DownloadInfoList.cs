@@ -64,10 +64,19 @@ namespace PoliDLGUI.Classes
         {
             const int HEIGHT = 20;
             int WIDTH_LABEL = panel1.Width;
+
+            Label url = new Label()
+            {
+                Location = new System.Drawing.Point(x: 0, y: 0),
+                Size = new System.Drawing.Size(WIDTH_LABEL, HEIGHT),
+                Parent = panel1,
+                Text = "URL"
+            };
+
             for (int i=0; i<this.list.Count; i++)
             {
                 Label label = new Label() { 
-                    Location = new System.Drawing.Point(x: 0,y: i*HEIGHT), 
+                    Location = new System.Drawing.Point(x: 0,y: (i+1)*HEIGHT), 
                     Size = new System.Drawing.Size(WIDTH_LABEL, HEIGHT ), 
                     Parent = panel1, 
                     Text = this.list[i].uri.ToString()

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,15 +15,35 @@ namespace PoliDLGUI.Forms
     public partial class ResultsListForm : Form
     {
         DownloadInfoList downloadInfoList;
-        public ResultsListForm(DownloadInfoList downloadInfoList)
+        Enums.HowEnded howEnded;
+
+        public ResultsListForm(DownloadInfoList downloadInfoList, Enums.HowEnded howEnded)
         {
             this.downloadInfoList = downloadInfoList;
+            this.howEnded = howEnded;
             InitializeComponent();
         }
 
         private void ResultsListForm_Load(object sender, EventArgs e)
         {
             this.downloadInfoList.LoadPanelResults(ref this.panel1);
+            this.Text += " [" + howEnded.ToString() + "]";
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            SaveFileDialog saveFileDialog = new SaveFileDialog
+            {
+                Filter = "TXT|*.txt"
+            };
+            var r = saveFileDialog.ShowDialog();
+            if (r != DialogResult.OK)
+            {
+                return;
+            }
+
+            List<string> Urls = this.downloadInfoList.GetURIs();
+            File.WriteAllLines(saveFileDialog.FileName, Urls);
         }
     }
 }
