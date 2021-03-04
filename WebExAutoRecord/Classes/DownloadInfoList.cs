@@ -64,8 +64,7 @@ namespace PoliDLGUI.Classes
         {
             const int HEIGHT = 20;
             int WIDTH_LABEL = panel1.Width;
-
-            Label url = new Label()
+            _ = new Label()
             {
                 Location = new System.Drawing.Point(x: 0, y: 0),
                 Size = new System.Drawing.Size(WIDTH_LABEL, HEIGHT),
@@ -75,7 +74,7 @@ namespace PoliDLGUI.Classes
 
             for (int i = 0; i < this.list.Count; i++)
             {
-                Label label = new Label()
+                _ = new Label()
                 {
                     Location = new System.Drawing.Point(x: 0, y: (i + 1) * HEIGHT),
                     Size = new System.Drawing.Size(WIDTH_LABEL, HEIGHT),
@@ -139,10 +138,10 @@ namespace PoliDLGUI.Classes
             try
             {
                 for (int i = 0; i < list.Count; i++)
-                {
-                    DownloadInfo x = list[i];
+                {                
                     try
                     {
+                        DownloadInfo x = list[i];
                         x.process.Kill();
                         x.process.Dispose();
                         list.Remove(x);

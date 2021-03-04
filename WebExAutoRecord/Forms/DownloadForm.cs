@@ -729,7 +729,14 @@ namespace PoliDLGUI.Forms
             }
             else if (outLine.Data.Contains("[DL:") & segmented)     // aria2c output
             {
-                downloadinfo.CurrentSpeed = outLine.Data.Substring("[DL:".Length, outLine.Data.IndexOf("]") - "[DL:".Length) + "/s";
+                try
+                {
+                    downloadinfo.CurrentSpeed = outLine.Data.Substring("[DL:".Length, outLine.Data.IndexOf("]") - "[DL:".Length) + "/s";
+                }
+                catch
+                {
+                    ;
+                }
                 try
                 {
                     if (StartupForm.IsItalian)
