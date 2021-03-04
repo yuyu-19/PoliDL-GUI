@@ -45,7 +45,14 @@ namespace PoliDLGUI.Utils
 
             DownloadInfo downloadinfo = this.downloadForm.downloadPool.Find(process);
 
-            downloadinfo.AppendLog(outLine.Data);
+            try
+            {
+                downloadinfo.AppendLog(outLine.Data);
+            }
+            catch
+            {
+                ;
+            }
 
             if (outLine.Data.Contains("Bad credentials"))   // Output is same on both.
             {
