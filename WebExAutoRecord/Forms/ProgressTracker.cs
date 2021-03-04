@@ -4,7 +4,6 @@ using PoliDLGUI.Enums;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Windows.Forms;
 
 namespace PoliDLGUI.Forms
@@ -41,7 +40,6 @@ namespace PoliDLGUI.Forms
             */
         }
 
-
         internal void OneDownloadHasFinished()
         {
             UpdateFileNum2(ProgressUpdate.COMPLETED);
@@ -57,11 +55,11 @@ namespace PoliDLGUI.Forms
                 //MessageBox.Show("Please wait until the file is done processing.");
                 //e.Cancel = true;
                 //return;
-            //}
+                //}
 
-            //if (!(!downloadForm.downloadInfoList.Select(x => x.CurrentSpeed != "Finished.").Any(x => x) ||
-            //    !downloadForm.downloadInfoList.Select(x => x.CurrentSpeed != "Finito.").Any(x => x)))
-            //{
+                //if (!(!downloadForm.downloadInfoList.Select(x => x.CurrentSpeed != "Finished.").Any(x => x) ||
+                //    !downloadForm.downloadInfoList.Select(x => x.CurrentSpeed != "Finito.").Any(x => x)))
+                //{
                 int ans;
                 var isSegmented = downloadForm.downloadPool.WeHaveSegmentedDownloadsCurrently();
                 if (StartupForm.IsItalian)
@@ -130,11 +128,9 @@ namespace PoliDLGUI.Forms
 
         private void ProgressTracker_Load(object sender, EventArgs e)
         {
-
         }
 
-
-        delegate void CloseThisCallback(string text);
+        private delegate void CloseThisCallback(string text);
 
         public void CloseThis(string text)
         {
@@ -147,20 +143,15 @@ namespace PoliDLGUI.Forms
                 this.Invoke(d, new object[] { text });
             }
             else
-            { 
-
+            {
                 this.Close();
-
-
             }
         }
-        
 
-        delegate void UpdateFileNumCallBack(ProgressUpdate text);
+        private delegate void UpdateFileNumCallBack(ProgressUpdate text);
 
         public void UpdateFileNum2(ProgressUpdate text)
         {
-
             // InvokeRequired required compares the thread ID of the
             // calling thread to the thread ID of the creating thread.
             // If these threads are different, it returns true.
@@ -200,8 +191,6 @@ namespace PoliDLGUI.Forms
                     }
             }
 
-
-
             switch (text)
             {
                 case ProgressUpdate.COMPLETED:
@@ -229,7 +218,7 @@ namespace PoliDLGUI.Forms
             this.NumDownloading.Text = this.downloadForm.downloadPool.current.Count.ToString();
         }
 
-        int startedDownloads = 0;
+        private int startedDownloads = 0;
 
         internal void UpdateFileNum()
         {
@@ -241,17 +230,17 @@ namespace PoliDLGUI.Forms
             KillAllProcesses(this.downloadForm.downloadPool);
         }
 
-        private void buttonInfoCompleted_Click(object sender, EventArgs e)
+        private void ButtonInfoCompleted_Click(object sender, EventArgs e)
         {
             MoreInfo(Enums.HowEnded.SUCCESS);
         }
 
-        private void buttonInfoFailed_Click(object sender, EventArgs e)
+        private void ButtonInfoFailed_Click(object sender, EventArgs e)
         {
             MoreInfo(Enums.HowEnded.FAIL);
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void Button1_Click(object sender, EventArgs e)
         {
             MoreInfo(Enums.HowEnded.NOT_ENDED_YET);
         }
@@ -264,9 +253,11 @@ namespace PoliDLGUI.Forms
                 case HowEnded.SUCCESS:
                     r = this.downloadForm.downloadPool.success;
                     break;
+
                 case HowEnded.FAIL:
                     r = this.downloadForm.downloadPool.fail;
                     break;
+
                 case HowEnded.NOT_ENDED_YET:
                     r = this.downloadForm.downloadPool.current;
                     break;
@@ -282,7 +273,7 @@ namespace PoliDLGUI.Forms
             }
 
             string s = "";
-            foreach(var r1 in r)
+            foreach (var r1 in r)
             {
                 s += r1.uri.ToString() + "\n";
             }
@@ -291,7 +282,5 @@ namespace PoliDLGUI.Forms
 
             MessageBox.Show(s);
         }
-
-
     }
 }

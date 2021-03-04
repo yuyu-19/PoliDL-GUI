@@ -1,7 +1,6 @@
 ﻿using PoliDLGUI.Forms;
 using System;
 using System.Diagnostics;
-using System.Windows;
 
 namespace PoliDLGUI.Classes
 {
@@ -22,6 +21,7 @@ namespace PoliDLGUI.Classes
 
         //public Process GlobalProcess;
         public bool DLError;
+
         public double WebexProgress = 0d;
         public int NotDownloaded = -1;
         public PoliDLGUI.Enums.HowEnded ended = Enums.HowEnded.NOT_ENDED_YET;

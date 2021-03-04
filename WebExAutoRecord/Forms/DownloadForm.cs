@@ -27,11 +27,7 @@ namespace PoliDLGUI.Forms
         }
 
         public DownloadPool downloadPool = null;
-        
-        
 
-        
-        
         public static StreamWriter LogsStream;
         private readonly ProgressTracker progressTracker;
 
@@ -143,12 +139,11 @@ namespace PoliDLGUI.Forms
         public const int maxDownloadInParallel = 10;
 
         private void DLButton_Click(object sender, EventArgs e)
-        {          
+        {
             if (downloadPool == null)
             {
                 downloadPool = new DownloadPool(maxDownloadInParallel, this, this.progressTracker);
             }
-
 
             if (string.IsNullOrEmpty(FolderPath.Text))
             {
@@ -389,7 +384,6 @@ namespace PoliDLGUI.Forms
             if (!CheckSegmented.Checked)
                 WebexArgs += " -s";
 
-
             if (!Directory.Exists(StartupForm.RootFolder + @"\Logs"))
                 Directory.CreateDirectory(StartupForm.RootFolder + @"\Logs");
 
@@ -401,8 +395,6 @@ namespace PoliDLGUI.Forms
                 };
             }
 
-            
-
             progressTracker.OverallProgressCompleted.Value = 0;
 
             if (StreamURLs != null && StreamURLs.Count > 0)
@@ -411,7 +403,7 @@ namespace PoliDLGUI.Forms
                 {
                     string s2 = StreamArgs;
                     s2 += " \"" + x + "\"";
-                    RunCommandH(StartupForm.RootFolder + @"\Poli-pkg\dist\polidown.exe", s2, StreamURLs.Count,WebexURLs.Count,new Uri(x));
+                    RunCommandH(StartupForm.RootFolder + @"\Poli-pkg\dist\polidown.exe", s2, StreamURLs.Count, WebexURLs.Count, new Uri(x));
                 }
             }
 
@@ -421,7 +413,7 @@ namespace PoliDLGUI.Forms
                 {
                     string s2 = WebexArgs;
                     s2 += " \"" + x + "\"";
-                    RunCommandH(StartupForm.RootFolder + @"\Poli-pkg\dist\poliwebex.exe", s2, StreamURLs.Count, WebexURLs.Count,new Uri(x));
+                    RunCommandH(StartupForm.RootFolder + @"\Poli-pkg\dist\poliwebex.exe", s2, StreamURLs.Count, WebexURLs.Count, new Uri(x));
                 }
             }
 
@@ -596,7 +588,6 @@ namespace PoliDLGUI.Forms
                 currentfiletotal = WebexURLs + StreamURLs
             };
 
-            
             if (StartupForm.IsItalian)
             {
                 downloadInfo.CurrentSpeed = "Sto avviando...";
@@ -611,7 +602,7 @@ namespace PoliDLGUI.Forms
             downloadPool.Add(downloadInfo);
         }
 
-        bool badCredentials = false;
+        private bool badCredentials = false;
 
         public void OutputHandler(object sendingProcess, DataReceivedEventArgs outLine)
         {
@@ -633,14 +624,10 @@ namespace PoliDLGUI.Forms
             if (process.StartInfo.FileName.Contains("polidown.exe"))
                 segmented = true;    // polidown is always in segmented mode
 
-
-
             if (string.IsNullOrEmpty(outLine.Data))
             {
                 return;
             }
-
-
 
             DownloadInfo downloadinfo = this.downloadPool.Find(process);
 
@@ -714,7 +701,6 @@ namespace PoliDLGUI.Forms
                 }
                 else
                 {
-
                     downloadinfo.currentprogress = downloadinfo.currentfile / (double)downloadinfo.currentfiletotal * 100d;  // Let's ensure we're at the correct progress.
                     downloadinfo.currentfile += 1;
                 }
@@ -880,8 +866,8 @@ namespace PoliDLGUI.Forms
             {
                 if (process.StartInfo.FileName.Contains("poliwebex.exe"))
                     downloadinfo.WebexProgress = 0d;
-                RunCommandH(process.StartInfo.FileName, 
-                    process.StartInfo.Arguments.Replace("-i 3", "-i 10") + " -l false", 
+                RunCommandH(process.StartInfo.FileName,
+                    process.StartInfo.Arguments.Replace("-i 3", "-i 10") + " -l false",
                     downloadinfo.currentfiletotalS, downloadinfo.currentfiletotal, downloadinfo.uri);
                 try
                 {
@@ -936,7 +922,7 @@ namespace PoliDLGUI.Forms
             }
         }
 
-        delegate void CloseThisCallback(string text);
+        private delegate void CloseThisCallback(string text);
 
         private void CloseThis(string text)
         {
@@ -960,8 +946,6 @@ namespace PoliDLGUI.Forms
                 }
 
                 this.Close();
-
-
             }
         }
 
@@ -988,7 +972,6 @@ namespace PoliDLGUI.Forms
 
         private void URLlist_TextChanged(object sender, EventArgs e)
         {
-
         }
 
         private void DownloadForm_FormClosing(object sender, FormClosingEventArgs e)

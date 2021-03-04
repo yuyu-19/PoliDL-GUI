@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Threading;
 using System.Windows;
 
 namespace PoliDLGUI.Classes
@@ -16,8 +15,8 @@ namespace PoliDLGUI.Classes
         public List<DownloadInfo> waiting = new List<DownloadInfo>();
         public List<DownloadInfo> success = new List<DownloadInfo>();
         public List<DownloadInfo> fail = new List<DownloadInfo>();
-        readonly int maxCurrent;
-        readonly DownloadForm downloadForm;
+        private readonly int maxCurrent;
+        private readonly DownloadForm downloadForm;
         public ProgressTracker progressTracker;
 
         public DownloadPool(int maxCurrent, DownloadForm downloadForm, ProgressTracker progressTracker)

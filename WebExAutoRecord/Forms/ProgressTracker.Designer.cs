@@ -133,7 +133,7 @@ namespace PoliDLGUI.Forms
             this.buttonInfoCompleted.TabIndex = 7;
             this.buttonInfoCompleted.Text = "More info";
             this.buttonInfoCompleted.UseVisualStyleBackColor = true;
-            this.buttonInfoCompleted.Click += new System.EventHandler(this.buttonInfoCompleted_Click);
+            this.buttonInfoCompleted.Click += new System.EventHandler(this.ButtonInfoCompleted_Click);
             // 
             // buttonInfoFailed
             // 
@@ -143,7 +143,7 @@ namespace PoliDLGUI.Forms
             this.buttonInfoFailed.TabIndex = 8;
             this.buttonInfoFailed.Text = "More info";
             this.buttonInfoFailed.UseVisualStyleBackColor = true;
-            this.buttonInfoFailed.Click += new System.EventHandler(this.buttonInfoFailed_Click);
+            this.buttonInfoFailed.Click += new System.EventHandler(this.ButtonInfoFailed_Click);
             // 
             // label1
             // 
@@ -173,7 +173,7 @@ namespace PoliDLGUI.Forms
             this.button1.TabIndex = 11;
             this.button1.Text = "More info";
             this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.button1.Click += new System.EventHandler(this.Button1_Click);
             // 
             // ProgressTracker
             // 
