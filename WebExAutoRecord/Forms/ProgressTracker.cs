@@ -242,5 +242,51 @@ namespace PoliDLGUI.Forms
         {
             KillAllProcesses(this.downloadForm.downloadPool);
         }
+
+        private void buttonInfoCompleted_Click(object sender, EventArgs e)
+        {
+            MoreInfo(Enums.HowEnded.SUCCESS);
+        }
+
+
+        private void buttonInfoFailed_Click(object sender, EventArgs e)
+        {
+            MoreInfo(Enums.HowEnded.FAIL);
+        }
+
+        private void MoreInfo(HowEnded howEnded)
+        {
+            List<DownloadInfo> r = null;
+            switch (howEnded)
+            {
+                case HowEnded.SUCCESS:
+                    r = this.downloadForm.downloadPool.success;
+                    break;
+                case HowEnded.FAIL:
+                    r = this.downloadForm.downloadPool.fail;
+                    break;
+                case HowEnded.NOT_ENDED_YET:
+                    break;
+            }
+
+            if (r == null || r.Count == 0)
+            {
+                if (StartupForm.IsItalian)
+                    MessageBox.Show("Nessun risultato!");
+                else
+                    MessageBox.Show("No results!");
+                return;
+            }
+
+            string s = "";
+            foreach(var r1 in r)
+            {
+                s += r1.uri.ToString() + "\n";
+            }
+
+            s += "Here is the list:\n" + s;
+
+            MessageBox.Show(s);
+        }
     }
 }

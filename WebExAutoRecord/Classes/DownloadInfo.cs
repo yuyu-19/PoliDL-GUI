@@ -29,11 +29,13 @@ namespace PoliDLGUI.Classes
         internal string Arguments;
 
         public DownloadPool owner;
+        public Uri uri;
 
-        public DownloadInfo(ProgressTracker progressTracker, DownloadPool owner)
+        public DownloadInfo(ProgressTracker progressTracker, DownloadPool owner, Uri uri)
         {
             this.progressTracker = progressTracker;
             this.owner = owner;
+            this.uri = uri;
         }
 
         internal void EndedSuccessfully(bool isItalian)

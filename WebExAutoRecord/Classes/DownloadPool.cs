@@ -73,7 +73,9 @@ namespace PoliDLGUI.Classes
             lock (this)
             {
                 int a = this.current.IndexOf(downloadInfo);
-                this.current.RemoveAt(a);
+                if (a >= 0 && a < this.current.Count)
+                    this.current.RemoveAt(a);
+
                 switch (howEnded)
                 {
                     case HowEnded.SUCCESS:

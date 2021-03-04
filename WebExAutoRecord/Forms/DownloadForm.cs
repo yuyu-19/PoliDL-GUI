@@ -411,7 +411,7 @@ namespace PoliDLGUI.Forms
                 {
                     string s2 = StreamArgs;
                     s2 += " \"" + x + "\"";
-                    RunCommandH(StartupForm.RootFolder + @"\Poli-pkg\dist\polidown.exe", s2, StreamURLs.Count,WebexURLs.Count);
+                    RunCommandH(StartupForm.RootFolder + @"\Poli-pkg\dist\polidown.exe", s2, StreamURLs.Count,WebexURLs.Count,new Uri(x));
                 }
             }
 
@@ -421,7 +421,7 @@ namespace PoliDLGUI.Forms
                 {
                     string s2 = WebexArgs;
                     s2 += " \"" + x + "\"";
-                    RunCommandH(StartupForm.RootFolder + @"\Poli-pkg\dist\poliwebex.exe", s2, StreamURLs.Count, WebexURLs.Count);
+                    RunCommandH(StartupForm.RootFolder + @"\Poli-pkg\dist\poliwebex.exe", s2, StreamURLs.Count, WebexURLs.Count,new Uri(x));
                 }
             }
 
@@ -576,7 +576,7 @@ namespace PoliDLGUI.Forms
             }
         }
 
-        public void RunCommandH(string Command, string Arguments, int StreamURLs, int WebexURLs)
+        public void RunCommandH(string Command, string Arguments, int StreamURLs, int WebexURLs, Uri uri)
         {
             // Console.WriteLine(Command)
             // Console.ReadLine()
@@ -588,7 +588,7 @@ namespace PoliDLGUI.Forms
             }
 
             var oProcess = new Process();
-            DownloadInfo downloadInfo = new DownloadInfo(progressTracker, downloadPool)
+            DownloadInfo downloadInfo = new DownloadInfo(progressTracker, downloadPool, uri)
             {
                 process = oProcess,
                 currentfile = 0,
@@ -873,7 +873,9 @@ namespace PoliDLGUI.Forms
             {
                 if (process.StartInfo.FileName.Contains("poliwebex.exe"))
                     downloadinfo.WebexProgress = 0d;
-                RunCommandH(process.StartInfo.FileName, process.StartInfo.Arguments.Replace("-i 3", "-i 10") + " -l false", downloadinfo.currentfiletotalS, downloadinfo.currentfiletotal);
+                RunCommandH(process.StartInfo.FileName, 
+                    process.StartInfo.Arguments.Replace("-i 3", "-i 10") + " -l false", 
+                    downloadinfo.currentfiletotalS, downloadinfo.currentfiletotal, downloadinfo.uri);
                 try
                 {
                     process.Close();

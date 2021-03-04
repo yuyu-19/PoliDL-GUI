@@ -46,6 +46,8 @@ namespace PoliDLGUI.Forms
             this.NumCompleted = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.NumFailed = new System.Windows.Forms.Label();
+            this.buttonInfoCompleted = new System.Windows.Forms.Button();
+            this.buttonInfoFailed = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // OverallProgressCompleted
@@ -120,11 +122,33 @@ namespace PoliDLGUI.Forms
             this.NumFailed.TabIndex = 6;
             this.NumFailed.Text = "0";
             // 
+            // buttonInfoCompleted
+            // 
+            this.buttonInfoCompleted.Location = new System.Drawing.Point(361, 83);
+            this.buttonInfoCompleted.Name = "buttonInfoCompleted";
+            this.buttonInfoCompleted.Size = new System.Drawing.Size(75, 23);
+            this.buttonInfoCompleted.TabIndex = 7;
+            this.buttonInfoCompleted.Text = "More info";
+            this.buttonInfoCompleted.UseVisualStyleBackColor = true;
+            this.buttonInfoCompleted.Click += new System.EventHandler(this.buttonInfoCompleted_Click);
+            // 
+            // buttonInfoFailed
+            // 
+            this.buttonInfoFailed.Location = new System.Drawing.Point(361, 118);
+            this.buttonInfoFailed.Name = "buttonInfoFailed";
+            this.buttonInfoFailed.Size = new System.Drawing.Size(75, 23);
+            this.buttonInfoFailed.TabIndex = 8;
+            this.buttonInfoFailed.Text = "More info";
+            this.buttonInfoFailed.UseVisualStyleBackColor = true;
+            this.buttonInfoFailed.Click += new System.EventHandler(this.buttonInfoFailed_Click);
+            // 
             // ProgressTracker
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(448, 152);
+            this.Controls.Add(this.buttonInfoFailed);
+            this.Controls.Add(this.buttonInfoCompleted);
             this.Controls.Add(this.NumFailed);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.NumCompleted);
@@ -151,6 +175,8 @@ namespace PoliDLGUI.Forms
         public Label NumCompleted;
         public Label label2;
         public Label NumFailed;
+        private Button buttonInfoCompleted;
+        private Button buttonInfoFailed;
 
         internal Timer Timer
         {
