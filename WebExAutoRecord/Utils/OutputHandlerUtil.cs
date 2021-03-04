@@ -43,7 +43,19 @@ namespace PoliDLGUI.Utils
                 return;
             }
 
-            DownloadInfo downloadinfo = this.downloadForm.downloadPool.Find(process);
+            DownloadInfo downloadinfo = null;
+
+            try
+            {
+                downloadinfo = this.downloadForm.downloadPool.Find(process);
+            }
+            catch
+            {
+                ;
+            }
+
+            if (downloadinfo == null)
+                return;
 
             try
             {

@@ -30,11 +30,24 @@ namespace PoliDLGUI.Classes
 
         internal DownloadInfo Find(Process process)
         {
-            bool pred(DownloadInfo i)
+            try
             {
-                return i.process == process;
+                lock (this)
+                {
+                    bool pred(DownloadInfo i)
+                    {
+                        return i.process == process;
+                    }
+
+                    return ((current.Find(pred) ?? waiting.Find(pred)) ?? success.Find(pred)) ?? fail.Find(pred);
+                }
             }
-            return current.Find(pred);
+            catch
+            {
+                ;
+            }
+
+            return null;
         }
 
         internal bool? WeHaveSegmentedDownloadsCurrently()
