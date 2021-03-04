@@ -19,7 +19,8 @@ namespace PoliDLGUI.Forms
         }
 
         public static string RootFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\WebExRec";
-        private readonly List<CourseData> Courses = new List<CourseData>();
+
+        //private readonly List<CourseData> Courses = new List<CourseData>();
         public static bool IsItalian = Thread.CurrentThread.CurrentCulture.IetfLanguageTag == "it-IT";
 
         private void StartupForm_Load(object sender, EventArgs e)
@@ -276,6 +277,18 @@ namespace PoliDLGUI.Forms
         private void Localmode_Click_1(object sender, EventArgs e)
         {
             LocalMode_Click(sender, e);
+        }
+
+        private void StartupForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            try
+            {
+                Application.Exit();
+            }
+            catch
+            {
+                ;
+            }
         }
     }
 }

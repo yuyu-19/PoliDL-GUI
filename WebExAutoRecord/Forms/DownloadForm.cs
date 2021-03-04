@@ -1,6 +1,7 @@
 ﻿using Microsoft.VisualBasic;
 using Microsoft.VisualBasic.CompilerServices;
 using Microsoft.WindowsAPICodePack.Dialogs;
+using PoliDLGUI.Classes;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -25,21 +26,12 @@ namespace PoliDLGUI.Forms
             _CheckSegmented.Name = "CheckSegmented";
         }
 
-        public int currentsegmenttotal;
-        public int currentfiletotalS;
-        public int currentfiletotal;
-        public bool StreamIsVideo;
-        public int NotDownloadedW;
-        public int currentfile;
-        public double currentprogress = 0d;
-        public string CurrentSpeed = "";
-        public Process GlobalProcess;
-        public bool DLError;
-        public double WebexProgress = 0d;
-        public int NotDownloaded = -1;
-        public string StreamArgs;  // Why? Because I need to access it from outside where it was declared. Sue me. I'm tired of working on this godforsaken program.
-        public StreamWriter LogsStream;
+        public DownloadPool downloadPool = null;
+
+        public static StreamWriter LogsStream;
         private readonly ProgressTracker progressTracker;
+
+        //private readonly ProgressTracker progressTracker;
 
         private void Browse_Click(object sender, EventArgs e)
         {
@@ -144,8 +136,15 @@ namespace PoliDLGUI.Forms
             CheckSegmented.Location = p;
         }
 
+        public const int maxDownloadInParallel = 7;
+
         private void DLButton_Click(object sender, EventArgs e)
         {
+            if (downloadPool == null)
+            {
+                downloadPool = new DownloadPool(maxDownloadInParallel, this, this.progressTracker);
+            }
+
             if (string.IsNullOrEmpty(FolderPath.Text))
             {
                 if (StartupForm.IsItalian)
@@ -275,7 +274,7 @@ namespace PoliDLGUI.Forms
             // Check if config.json exists. If it does, get the email and ID from it, as well as if the password is saved or not.
 
             string WebexArgs = "-t -i 3 -o \"" + FolderPath.Text + "\"";
-            StreamArgs = "-t -q 5 -i 3 -o \"" + FolderPath.Text + "\"";
+            string StreamArgs = "-t -q 5 -i 3 -o \"" + FolderPath.Text + "\"";
             string TempString;
             if (File.Exists(StartupForm.RootFolder + @"\Poli-pkg\dist\config.json"))
             {
@@ -372,50 +371,77 @@ namespace PoliDLGUI.Forms
 
             WebexArgs += " -v";
             StreamArgs += " -v";
+
+            /*
             foreach (string URL in WebexURLs)
                 WebexArgs += " \"" + URL + "\"";
             foreach (string URL in StreamURLs)
                 StreamArgs += " \"" + URL + "\"";
+            */
 
             // Time to boot up poliwebex.
 
             if (!CheckSegmented.Checked)
                 WebexArgs += " -s";
-            currentfile = 0;
-            currentfiletotalS = StreamURLs.Count;
-            currentfiletotal = WebexURLs.Count + StreamURLs.Count;
-            progressTracker.OverallProgress.Value = 0;
-            progressTracker.FileNum.Text = "File 0/" + currentfiletotal;
-            if (StartupForm.IsItalian)
-            {
-                CurrentSpeed = "Sto avviando...";
-            }
-            else
-            {
-                CurrentSpeed = "Setting up...";
-            }
 
             if (!Directory.Exists(StartupForm.RootFolder + @"\Logs"))
                 Directory.CreateDirectory(StartupForm.RootFolder + @"\Logs");
-            LogsStream = new StreamWriter(StartupForm.RootFolder + @"\Logs\" + @"\PoliDL-Logs_" + DateTime.Now.ToString("yyyy-MM-dd-HH-mm") + ".txt", false)
+
+            if (LogsStream == null)
             {
-                AutoFlush = true
-            };
-            StreamIsVideo = false;
-            WebexProgress = 0d;
-            NotDownloadedW = -1;
-            if (WebexURLs.Count != 0)
-            {
-                RunCommandH(StartupForm.RootFolder + @"\Poli-pkg\dist\poliwebex.exe", WebexArgs);
+                LogsStream = new StreamWriter(StartupForm.RootFolder + @"\Logs\" + @"\PoliDL-Logs_" + DateTime.Now.ToString("yyyy-MM-dd-HH-mm") + ".txt", false)
+                {
+                    AutoFlush = true
+                };
             }
-            else
+
+            int total = 0;
+            if (StreamURLs != null)
             {
-                RunCommandH(StartupForm.RootFolder + @"\Poli-pkg\dist\polidown.exe", StreamArgs);
+                total += StreamURLs.Count;
+            }
+            if (WebexURLs != null)
+            {
+                total += WebexURLs.Count;
+            }
+
+            progressTracker.OverallProgressCurrent.Value = 0;
+            progressTracker.OverallProgressCurrent.Minimum = 0;
+            progressTracker.OverallProgressTotal.Value = 0;
+            progressTracker.OverallProgressTotal.Minimum = 0;
+            progressTracker.OverallProgressTotal.Maximum = total;
+            downloadPool.total = total;
+
+            if (StreamURLs != null && StreamURLs.Count > 0)
+            {
+                foreach (var x in StreamURLs)
+                {
+                    string s2 = StreamArgs;
+                    s2 += " \"" + x + "\"";
+                    RunCommandH(StartupForm.RootFolder + @"\Poli-pkg\dist\polidown.exe", s2, StreamURLs.Count, WebexURLs.Count, new Uri(x));
+                }
+            }
+
+            if (WebexURLs != null && WebexURLs.Count > 0)
+            {
+                foreach (var x in WebexURLs)
+                {
+                    string s2 = WebexArgs;
+                    s2 += " \"" + x + "\"";
+                    RunCommandH(StartupForm.RootFolder + @"\Poli-pkg\dist\poliwebex.exe", s2, StreamURLs.Count, WebexURLs.Count, new Uri(x));
+                }
             }
 
             this.Hide();
             progressTracker.ShowDialog();
-            this.Show();
+            try
+            {
+                this.Show();
+            }
+            catch
+            {
+                ;
+            }
         }
 
         public void GetAllLinksFromZip(ZipArchive AFile, ref List<string> WebexURLs, ref List<string> StreamURLs)
@@ -557,394 +583,66 @@ namespace PoliDLGUI.Forms
             }
         }
 
-        public void RunCommandH(string Command, string Arguments)
+        public void RunCommandH(string Command, string Arguments, int StreamURLs, int WebexURLs, Uri uri)
         {
             // Console.WriteLine(Command)
             // Console.ReadLine()
 
-            var oProcess = new Process();
-            bool NoOutputRedirect = false;
-            ProcessStartInfo oStartInfo;
-            DLError = false;
-            if (NoOutputRedirect)
+            if (badCredentials)
             {
-                oStartInfo = new ProcessStartInfo(Command, Arguments)
-                {
-                    RedirectStandardOutput = false,
-                    RedirectStandardError = false,
-                    RedirectStandardInput = false,
-                    UseShellExecute = true,
-                    WindowStyle = ProcessWindowStyle.Normal,
-                    CreateNoWindow = false,
-                    WorkingDirectory = Command.Substring(0, Command.LastIndexOf(@"\"))
-                };
+                this.Close();
+                return;
+            }
+
+            var oProcess = new Process();
+            DownloadInfo downloadInfo = new DownloadInfo(progressTracker, downloadPool, uri)
+            {
+                process = oProcess,
+                currentfile = 0,
+                currentfiletotalS = StreamURLs,
+                currentfiletotal = WebexURLs + StreamURLs
+            };
+
+            if (StartupForm.IsItalian)
+            {
+                downloadInfo.CurrentSpeed = "Sto avviando...";
             }
             else
             {
-                oStartInfo = new ProcessStartInfo(Command, Arguments)
-                {
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true,
-                    RedirectStandardInput = true,
-                    UseShellExecute = false,
-                    WindowStyle = ProcessWindowStyle.Normal,
-                    CreateNoWindow = true,
-                    WorkingDirectory = Command.Substring(0, Command.LastIndexOf(@"\", Command.Length - 3))
-                };
+                downloadInfo.CurrentSpeed = "Setting up...";
             }
 
-            oProcess.EnableRaisingEvents = true;
-            oProcess.StartInfo = oStartInfo;
-            currentprogress = WebexProgress;
-            NotDownloaded = -1;
-            oProcess.OutputDataReceived += OutputHandler;
-            oProcess.ErrorDataReceived += OutputHandler;
-            try
-            {
-                oProcess.Start();
-                if (!NoOutputRedirect)
-                    oProcess.BeginOutputReadLine();
-                if (!NoOutputRedirect)
-                    oProcess.BeginErrorReadLine();
-            }
-            catch (Exception ex)
-            {
-                File.WriteAllText(StartupForm.RootFolder + @"\crashreport.txt", ex.ToString());
-                if (StartupForm.IsItalian)
-                {
-                    MessageBox.Show("Errore nell'avvio del processo. Informazioni sull'errore salvate in " + StartupForm.RootFolder + @"\crashreport.txt");
-                }
-                else
-                {
-                    MessageBox.Show("Error starting the process. Exception info saved in crashreport.txt");
-                }
-
-                if (StartupForm.IsItalian)
-                {
-                    CurrentSpeed = "Finito.";
-                }
-                else
-                {
-                    CurrentSpeed = "Finished.";
-                }
-            }
-
-            GlobalProcess = oProcess;
+            downloadInfo.Command = Command;
+            downloadInfo.Arguments = Arguments;
+            downloadPool.Add(downloadInfo);
         }
 
-        private void OutputHandler(object sendingProcess, DataReceivedEventArgs outLine)
+        public bool badCredentials = false;
+
+        private delegate void CloseThisCallback(string text);
+
+        public void CloseThis(string text)
         {
-            Process process = (Process)sendingProcess;
-            bool segmented = process.StartInfo.Arguments.Contains(" -s");
-            if (process.StartInfo.FileName.Contains("polidown.exe"))
-                segmented = true;    // polidown is always in segmented mode
-            if (!string.IsNullOrEmpty(outLine.Data))
+            // InvokeRequired required compares the thread ID of the
+            // calling thread to the thread ID of the creating thread.
+            // If these threads are different, it returns true.
+            if (this.InvokeRequired)
             {
-                if (outLine.Data.Contains("Bad credentials."))   // Output is same on both.
-                {
-                    try
-                    {
-                        File.Delete(StartupForm.RootFolder + @"\Poli-pkg\dist\config.json");
-                        if (StartupForm.IsItalian)
-                        {
-                            MessageBox.Show("Credenziali errate. Riprova, ti verrà chiesto di reinserirle.");
-                        }
-                        else
-                        {
-                            MessageBox.Show(@"Bad credentials. Please try again, you will be prompted to input them. If that didn't happen, please delete the file at %APPDATA%\WebExRec\Poli-pkg\dist\config.json");
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        if (StartupForm.IsItalian)
-                        {
-                            MessageBox.Show(@"Credenziali errate. Non è stato possibile cancellare il file %APPDATA%\WebExRec\Poli-pkg\dist\config.json, per favore fallo manualmente");
-                        }
-                        else
-                        {
-                            MessageBox.Show(@"Bad credentials. We could not delete the file at %APPDATA%\WebExRec\Poli-pkg\dist\config.json, please do so manually");
-                        }
-
-                        Console.WriteLine(ex);
-                    }
-
-                    // Might as well stay on the safe side - if one of them is outdated, it's likely the other one is as well.
-
-                    if (StartupForm.IsItalian)
-                    {
-                        CurrentSpeed = "Finito.";
-                    }
-                    else
-                    {
-                        CurrentSpeed = "Finished.";
-                    }
-
-                    // I'm just going to completely erase the config.json file and kick the user back to the form.
-                }
-
-                if (outLine.Data.Contains("Start downloading video"))    // Output is same on both
-                {
-                    if (DLError)
-                    {
-                        DLError = false;
-                    }
-                    else
-                    {
-                        currentprogress = currentfile / (double)currentfiletotal * 100d;  // Let's ensure we're at the correct progress.
-                        currentfile += 1;
-                    }
-                }
-
-                // JANK IT UP
-
-                if (outLine.Data.Contains("Downloading") & outLine.Data.Contains("item(s)") & segmented) // aria2c output - differs slightly with polidown.
-                {
-                    int Temp = Conversions.ToInteger(outLine.Data.Substring(outLine.Data.IndexOf("Downloading") + "Downloading".Length, outLine.Data.IndexOf("item(s)") - (outLine.Data.IndexOf("Downloading") + "Downloading".Length)).Trim());
-                    if (process.StartInfo.FileName.Contains("polidown.exe"))
-                    {
-                        StreamIsVideo = !StreamIsVideo;
-                        if (StreamIsVideo)
-                        {
-                            currentsegmenttotal = Temp * 2 + 10; // polidown has to download audio and video separately.
-                        } // So I multiply it by two and add 10 for safety in case there's a mismatch between the two
-                    }
-                    else
-                    {
-                        currentsegmenttotal = Temp;
-                    }
-                }
-
-                if (outLine.Data.Contains("0B CN") & !segmented)    // aria2c output
-                {
-                    // Means it's an update. We can get the speed from here.
-                    CurrentSpeed = outLine.Data.Substring(outLine.Data.IndexOf("DL:") + "DL:".Length, outLine.Data.Length - 1 - (outLine.Data.IndexOf("DL:") + "DL:".Length)) + "/s";
-                }
-
-                if (outLine.Data.Contains("[DL:") & segmented)     // aria2c output
-                {
-                    CurrentSpeed = outLine.Data.Substring("[DL:".Length, outLine.Data.IndexOf("]") - "[DL:".Length) + "/s";
-                    if (StartupForm.IsItalian)
-                    {
-                        if (CurrentSpeed == "0B/s")
-                            CurrentSpeed = "Sto leggendo dal disco...";
-                    }
-                    else if (CurrentSpeed == "0B/s")
-                        CurrentSpeed = "Reading from disk...";
-                }
-
-                if (outLine.Data.Contains("Download complete:")) // aria2c output
-                {
-                    if (segmented)
-                    {
-                        // MessageBox.Show(1 & "/" & currentfiletotal & "/" & currentsegmenttotal & "=" & (currentfile / currentfiletotal) / currentsegmenttotal * 100)
-                        currentprogress += 1d / currentfiletotal / currentsegmenttotal * 100d;
-                    }
-                    else
-                    {
-                        // MessageBox.Show(ProgressTracker.OverallProgress.Value)
-                        // MessageBox.Show(currentfile & "-" & currentfiletotal)
-                        currentprogress += 1d / currentfiletotal * 100d;
-                    }
-                }
-
-                if (outLine.Data.Contains("Download has already completed:") & segmented)   // aria2c output
-                {
-                    // Hey, as long as it works.
-                    currentprogress -= 1d / currentfiletotal / currentsegmenttotal * 100d;
-                }
-
-                // MessageBox.Show(outLine.Data)
-
-                if (outLine.Data.Contains("These videos have not been downloaded:"))
-                {
-                    NotDownloaded = 0;
-                    if (outLine.Data.Contains("https://"))
-                    {
-                        NotDownloaded += 1;
-                    }
-                }
-
-                if (outLine.Data.Contains("https://") & NotDownloaded != -1)    //
-                {
-                    int tempi = -1;
-                    do
-                    {
-                        tempi = outLine.Data.IndexOf("https://", tempi + 1);
-                        NotDownloaded += 1;
-                    }
-                    while (tempi != -1);
-                    NotDownloaded -= 1;  // THe above loop always counts one extra and I'm too lazy to figure out a good alternative method.
-                }
-
-                if (outLine.Data.Contains("Done!"))  // Shared output.
-                {
-                    if (DLError)
-                        currentfile -= 1;
-                    currentprogress = currentfile / (double)currentfiletotal * 100d;  // Let's ensure we're at the correct progress.
-                    if (process.StartInfo.FileName.Contains("polidown.exe") | currentfiletotalS == 0)
-                    {
-                        // Either we've finished polidown, or there's no msstream links to download.
-                        if (StartupForm.IsItalian)
-                        {
-                            CurrentSpeed = "Finito.";
-                        }
-                        else
-                        {
-                            CurrentSpeed = "Finished.";
-                        }
-
-                        if (NotDownloaded != -1 | NotDownloadedW != -1)
-                        {
-                            NotDownloaded = Math.Max(NotDownloaded, 0) + Math.Max(NotDownloadedW, 0);
-                            if (segmented)
-                            {
-                                if (StartupForm.IsItalian)
-                                {
-                                    MessageBox.Show("È fallito il download di " + NotDownloaded + " video. Riprova più tardi, oppure prova in modalità unsegmented.");
-                                }
-                                else
-                                {
-                                    MessageBox.Show("Could not download " + NotDownloaded + " videos. Please try again later, or try unsegmented mode.");
-                                }
-                            }
-                            else if (StartupForm.IsItalian)
-                            {
-                                MessageBox.Show("È fallito il download di " + NotDownloaded + " video. Riprova più tardi.");
-                            }
-                            else
-                            {
-                                MessageBox.Show("Could not download " + NotDownloaded + " videos. Please try again later.");
-                            }
-                        }
-                        else if (StartupForm.IsItalian)
-                        {
-                            MessageBox.Show("Finito!");
-                        }
-                        else
-                        {
-                            MessageBox.Show("All done!");
-                        }
-
-                        LogsStream.Close();
-                    }
-                    else
-                    {
-                        WebexProgress = currentprogress;
-                        if (NotDownloaded != -1)
-                        {
-                            NotDownloadedW = NotDownloaded;
-                        }
-                        // We have some polidown links to download.
-                        RunCommandH(StartupForm.RootFolder + @"\Poli-pkg\dist\polidown.exe", StreamArgs);
-                    }
-                }
-
-                if (outLine.Data.Contains("Going to the next one"))  // Shared output
-                {
-                    DLError = true;
-                }
-
-                if (outLine.Data.Contains("This video is password protected") | outLine.Data.Contains("Wrong password!"))   // Never occurs for polidown
-                {
-                    if (outLine.Data.Contains("Wrong password!"))
-                        MessageBox.Show("Previous password was incorrect. Please try again.");
-                    string Password;
-                    if (StartupForm.IsItalian)
-                    {
-                        Password = Conversions.ToString(
-                            InputForm.AskForInput(
-                                "Inserisci la password per questo video: " +
-                                Constants.vbCrLf + outLine.Data.Substring(outLine.Data.LastIndexOf("/") + 1), this.Location)
-                            );
-                    }
-                    else
-                    {
-                        Password = Conversions.ToString(
-                            InputForm.AskForInput(
-                                "Please input the password for this video: " +
-                                Constants.vbCrLf + outLine.Data.Substring(outLine.Data.LastIndexOf("/") + 1), this.Location)
-                            );
-                    }
-
-                    process.StandardInput.WriteLine(Password);
-                    // MessageBox.Show("Input Sent!")
-                }
-
-                if (outLine.Data.Contains("ffmpeg version") & CurrentSpeed != "Setting up..." & CurrentSpeed != "Sto avviando...")   // ffmpeg output
-                {
-                    if (StartupForm.IsItalian)
-                    {
-                        CurrentSpeed = "Sto elaborando il file...";
-                    }
-                    else
-                    {
-                        CurrentSpeed = "Processing file...";
-                    }
-                }
-
-                if (outLine.Data.Contains("Try in non-headless mode") | outLine.Data.Contains("this is not an exact science"))   // shared output
-                {
-                    if (process.StartInfo.FileName.Contains("poliwebex.exe"))
-                        WebexProgress = 0d;
-                    RunCommandH(process.StartInfo.FileName, process.StartInfo.Arguments.Replace("-i 3", "-i 10") + " -l false");
-                    try
-                    {
-                        process.Close();
-                        process.Dispose();
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine(ex);
-                    }
-                }
-
-                if (outLine.Data.Contains("You need aria2c in $PATH for this to work"))  // Shared output
-                {
-                    // This is a weird bug that just kinda...popped up. I'm not sure if it's an issue with my multiple desktops program, but juuuuuust to be on the safe side
-                    // If this happens, let's just ask the user to try again.
-                    // I can't really fix this as it doesn't really make any sense? And I really don't have enough info.
-                    if (StartupForm.IsItalian)
-                    {
-                        MessageBox.Show("Qualcosa è andato storto. Per favore riprova.");
-                    }
-                    else
-                    {
-                        MessageBox.Show("Something went wrong. Please try again.");
-                    }
-
-                    if (StartupForm.IsItalian)
-                    {
-                        CurrentSpeed = "Finito.";
-                    }
-                    else
-                    {
-                        CurrentSpeed = "Finished.";
-                    }
-                }
-
-                if (outLine.Data.Contains("We're already in non-headless mode")) // Shared output
-                {
-                    if (StartupForm.IsItalian)
-                    {
-                        MessageBox.Show("Qualcosa è andato storto! Per favore crea un issue su github, e allega il file PoliDL-Logs.txt che puoi trovare in " + StartupForm.RootFolder);
-                        Application.Exit();
-                    }
-                    else
-                    {
-                        MessageBox.Show("Something went wrong! Please file a github issue, and attach the PoliDL-Logs.txt file you can find in " + StartupForm.RootFolder);
-                        Application.Exit();
-                    }
-                }
-
+                CloseThisCallback d = new CloseThisCallback(CloseThis);
+                this.Invoke(d, new object[] { text });
+            }
+            else
+            {
                 try
                 {
-                    LogsStream.Write(outLine.Data + Constants.vbCrLf);
+                    this.progressTracker.CloseThis(null);
                 }
-                catch (Exception ex)
+                catch
                 {
-                    // Error writing to the log file.
-                    Console.WriteLine(ex);
+                    ;
                 }
+
+                this.Close();
             }
         }
 
@@ -967,6 +665,15 @@ namespace PoliDLGUI.Forms
                     CheckSegmented.Checked = false;
                 }
             }
+        }
+
+        private void URLlist_TextChanged(object sender, EventArgs e)
+        {
+        }
+
+        private void DownloadForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            ProgressTracker.KillAllProcesses(this.downloadPool);
         }
     }
 }

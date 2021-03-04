@@ -598,7 +598,6 @@ namespace PoliDLGUI.Forms
                 CB.AllowDrop = false;
                 CB.ImeMode = ImeMode.NoControl;
                 CB.Tag = CurrentCourse.Days.IndexOf(Day);
-                string res = null;
                 CB.Text = "";
                 if (!string.IsNullOrEmpty(Day.WebExLink))
                 {
