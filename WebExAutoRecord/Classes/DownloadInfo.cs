@@ -25,10 +25,15 @@ namespace PoliDLGUI.Classes
         public double WebexProgress = 0d;
         public int NotDownloaded = -1;
         public PoliDLGUI.Enums.HowEnded ended = Enums.HowEnded.NOT_ENDED_YET;
+        internal string Command;
+        internal string Arguments;
 
-        public DownloadInfo(ProgressTracker progressTracker)
+        public DownloadPool owner;
+
+        public DownloadInfo(ProgressTracker progressTracker, DownloadPool owner)
         {
             this.progressTracker = progressTracker;
+            this.owner = owner;
         }
 
         internal void EndedSuccessfully(bool isItalian)
@@ -44,7 +49,7 @@ namespace PoliDLGUI.Classes
 
             this.ended = Enums.HowEnded.SUCCESS;
             this.progressTracker.OneDownloadHasFinished();
-
+            this.owner.Ended(this, Enums.HowEnded.SUCCESS);
         }
 
         internal void Failed(bool segmented)
@@ -72,6 +77,7 @@ namespace PoliDLGUI.Classes
 
             this.ended = Enums.HowEnded.FAIL;
             this.progressTracker.OneDownloadHasFailed();
+            this.owner.Ended(this, Enums.HowEnded.FAIL);
         }
     }
 }

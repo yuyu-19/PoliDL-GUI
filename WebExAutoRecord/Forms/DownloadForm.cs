@@ -26,7 +26,8 @@ namespace PoliDLGUI.Forms
             _CheckSegmented.Name = "CheckSegmented";
         }
 
-        public List<DownloadInfo> downloadInfoList = new List<DownloadInfo>();
+        public DownloadPool downloadPool = null;
+        
         
 
         
@@ -141,6 +142,11 @@ namespace PoliDLGUI.Forms
 
         private void DLButton_Click(object sender, EventArgs e)
         {          
+            if (downloadPool == null)
+            {
+                downloadPool = new DownloadPool(10, this);
+            }
+
 
             if (string.IsNullOrEmpty(FolderPath.Text))
             {
@@ -580,7 +586,7 @@ namespace PoliDLGUI.Forms
             }
 
             var oProcess = new Process();
-            DownloadInfo downloadInfo = new DownloadInfo(progressTracker)
+            DownloadInfo downloadInfo = new DownloadInfo(progressTracker, downloadPool)
             {
                 process = oProcess,
                 currentfile = 0,
@@ -598,79 +604,14 @@ namespace PoliDLGUI.Forms
                 downloadInfo.CurrentSpeed = "Setting up...";
             }
 
-            downloadInfoList.Add(downloadInfo);
-            bool NoOutputRedirect = false;
-            ProcessStartInfo oStartInfo;
-            downloadInfo.DLError = false;
-            if (NoOutputRedirect)
-            {
-                oStartInfo = new ProcessStartInfo(Command, Arguments)
-                {
-                    RedirectStandardOutput = false,
-                    RedirectStandardError = false,
-                    RedirectStandardInput = false,
-                    UseShellExecute = true,
-                    WindowStyle = ProcessWindowStyle.Normal,
-                    CreateNoWindow = false,
-                    WorkingDirectory = Command.Substring(0, Command.LastIndexOf(@"\"))
-                };
-            }
-            else
-            {
-                oStartInfo = new ProcessStartInfo(Command, Arguments)
-                {
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true,
-                    RedirectStandardInput = true,
-                    UseShellExecute = false,
-                    WindowStyle = ProcessWindowStyle.Normal,
-                    CreateNoWindow = true,
-                    WorkingDirectory = Command.Substring(0, Command.LastIndexOf(@"\", Command.Length - 3))
-                };
-            }
-
-            oProcess.EnableRaisingEvents = true;
-            oProcess.StartInfo = oStartInfo;
-            downloadInfo.currentprogress = downloadInfo.WebexProgress;
-            downloadInfo.NotDownloaded = -1;
-            oProcess.OutputDataReceived += OutputHandler;
-            oProcess.ErrorDataReceived += OutputHandler;
-            try
-            {
-                oProcess.Start();
-                if (!NoOutputRedirect)
-                    oProcess.BeginOutputReadLine();
-                if (!NoOutputRedirect)
-                    oProcess.BeginErrorReadLine();
-            }
-            catch (Exception ex)
-            {
-                File.WriteAllText(StartupForm.RootFolder + @"\crashreport.txt", ex.ToString());
-                if (StartupForm.IsItalian)
-                {
-                    MessageBox.Show("Errore nell'avvio del processo. Informazioni sull'errore salvate in " + StartupForm.RootFolder + @"\crashreport.txt");
-                }
-                else
-                {
-                    MessageBox.Show("Error starting the process. Exception info saved in crashreport.txt");
-                }
-
-                if (StartupForm.IsItalian)
-                {
-                    downloadInfo.CurrentSpeed = "Finito.";
-                }
-                else
-                {
-                    downloadInfo.CurrentSpeed = "Finished.";
-                }
-            }
-
-            //GlobalProcess = oProcess;
+            downloadInfo.Command = Command;
+            downloadInfo.Arguments = Arguments;
+            downloadPool.Add(downloadInfo);
         }
 
         bool badCredentials = false;
 
-        private void OutputHandler(object sendingProcess, DataReceivedEventArgs outLine)
+        public void OutputHandler(object sendingProcess, DataReceivedEventArgs outLine)
         {
             if (badCredentials)
             {
@@ -697,12 +638,9 @@ namespace PoliDLGUI.Forms
                 return;
             }
 
-            bool pred(DownloadInfo i)
-            {
-                return i.process == process;
-            }
 
-            DownloadInfo downloadinfo = this.downloadInfoList.Find(pred);
+
+            DownloadInfo downloadinfo = this.downloadPool.Find(process);
 
             if (outLine.Data.Contains("Bad credentials"))   // Output is same on both.
             {
@@ -710,7 +648,7 @@ namespace PoliDLGUI.Forms
 
                 try
                 {
-                    ProgressTracker.KillAllProcesses(this.downloadInfoList);
+                    ProgressTracker.KillAllProcesses(this.downloadPool);
                 }
                 catch
                 {
@@ -1044,7 +982,7 @@ namespace PoliDLGUI.Forms
 
         private void DownloadForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            ProgressTracker.KillAllProcesses(this.downloadInfoList);
+            ProgressTracker.KillAllProcesses(this.downloadPool);
         }
     }
 }

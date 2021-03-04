@@ -1,0 +1,179 @@
+﻿using PoliDLGUI.Enums;
+using PoliDLGUI.Forms;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Threading;
+using System.Windows;
+
+namespace PoliDLGUI.Classes
+{
+    public class DownloadPool
+    {
+        public List<DownloadInfo> current = new List<DownloadInfo>();
+        public List<DownloadInfo> waiting = new List<DownloadInfo>();
+        public List<DownloadInfo> success = new List<DownloadInfo>();
+        public List<DownloadInfo> fail = new List<DownloadInfo>();
+        readonly int maxCurrent;
+        readonly DownloadForm downloadForm;
+
+        public DownloadPool(int maxCurrent, DownloadForm downloadForm)
+        {
+            this.maxCurrent = maxCurrent;
+            this.downloadForm = downloadForm;
+        }
+
+        internal DownloadInfo Find(Process process)
+        {
+            bool pred(DownloadInfo i)
+            {
+                return i.process == process;
+            }
+            return current.Find(pred);
+        }
+
+        internal bool WeHaveSegmentedDownloadsCurrently()
+        {
+            return this.current.Select(x => x.process.StartInfo.Arguments.Contains("- s")).Any(x => x) ||
+                        this.current.Select(x => x.process.StartInfo.FileName.Contains("polidown.exe")).Any(x => x);
+        }
+
+        internal void KillAll()
+        {
+            try
+            {
+                foreach (var x in current)
+                {
+                    try
+                    {
+                        x.process.Kill();
+                        x.process.Dispose();
+                    }
+                    catch
+                    {
+                        ;
+                    }
+                }
+            }
+            catch
+            {
+                ;
+            }
+        }
+
+        internal void Ended(DownloadInfo downloadInfo, HowEnded howEnded)
+        {
+            lock (this)
+            {
+                int a = this.current.IndexOf(downloadInfo);
+                this.current.RemoveAt(a);
+                switch (howEnded)
+                {
+                    case HowEnded.SUCCESS:
+                        {
+                            success.Add(downloadInfo);
+                            break;
+                        }
+                    case HowEnded.FAIL:
+                        {
+                            fail.Add(downloadInfo);
+                            break;
+                        }
+                    case HowEnded.NOT_ENDED_YET:
+                        break;
+                }
+
+                if (this.current.Count < this.maxCurrent && waiting.Count > 0)
+                {
+                    var p = this.waiting[0];
+                    this.waiting.RemoveAt(0);
+                    Add2(p);
+                }
+            }
+        }
+
+        internal void Add(DownloadInfo downloadInfo)
+        {
+            if (this.current.Count < this.maxCurrent)
+            {
+                Add2(downloadInfo);
+            }
+            else
+            {
+                waiting.Add(downloadInfo);
+            }
+        }
+
+        private void Add2(DownloadInfo downloadInfo)
+        {
+            this.current.Add(downloadInfo);
+            bool NoOutputRedirect = false;
+            ProcessStartInfo oStartInfo;
+            downloadInfo.DLError = false;
+            if (NoOutputRedirect)
+            {
+                oStartInfo = new ProcessStartInfo(downloadInfo.Command, downloadInfo.Arguments)
+                {
+                    RedirectStandardOutput = false,
+                    RedirectStandardError = false,
+                    RedirectStandardInput = false,
+                    UseShellExecute = true,
+                    WindowStyle = ProcessWindowStyle.Normal,
+                    CreateNoWindow = false,
+                    WorkingDirectory = downloadInfo.Command.Substring(0, downloadInfo.Command.LastIndexOf(@"\"))
+                };
+            }
+            else
+            {
+                oStartInfo = new ProcessStartInfo(downloadInfo.Command, downloadInfo.Arguments)
+                {
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    RedirectStandardInput = true,
+                    UseShellExecute = false,
+                    WindowStyle = ProcessWindowStyle.Normal,
+                    CreateNoWindow = true,
+                    WorkingDirectory = downloadInfo.Command.Substring(0, downloadInfo.Command.LastIndexOf(@"\", downloadInfo.Command.Length - 3))
+                };
+            }
+
+            downloadInfo.process.EnableRaisingEvents = true;
+            downloadInfo.process.StartInfo = oStartInfo;
+            downloadInfo.currentprogress = downloadInfo.WebexProgress;
+            downloadInfo.NotDownloaded = -1;
+            downloadInfo.process.OutputDataReceived += this.downloadForm.OutputHandler;
+            downloadInfo.process.ErrorDataReceived += this.downloadForm.OutputHandler;
+            try
+            {
+                downloadInfo.process.Start();
+                if (!NoOutputRedirect)
+                    downloadInfo.process.BeginOutputReadLine();
+                if (!NoOutputRedirect)
+                    downloadInfo.process.BeginErrorReadLine();
+            }
+            catch (Exception ex)
+            {
+                File.WriteAllText(StartupForm.RootFolder + @"\crashreport.txt", ex.ToString());
+                if (StartupForm.IsItalian)
+                {
+                    MessageBox.Show("Errore nell'avvio del processo. Informazioni sull'errore salvate in " + StartupForm.RootFolder + @"\crashreport.txt");
+                }
+                else
+                {
+                    MessageBox.Show("Error starting the process. Exception info saved in crashreport.txt");
+                }
+
+                if (StartupForm.IsItalian)
+                {
+                    downloadInfo.CurrentSpeed = "Finito.";
+                }
+                else
+                {
+                    downloadInfo.CurrentSpeed = "Finished.";
+                }
+            }
+        }
+    }
+}

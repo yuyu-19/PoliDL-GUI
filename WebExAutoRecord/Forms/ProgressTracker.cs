@@ -42,7 +42,6 @@ namespace PoliDLGUI.Forms
         }
 
 
-
         internal void OneDownloadHasFinished()
         {
             UpdateFileNum2(ProgressUpdate.COMPLETED);
@@ -50,24 +49,24 @@ namespace PoliDLGUI.Forms
 
         private void ProgressTracker_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            if (downloadForm.downloadInfoList.Select(x => x.CurrentSpeed == "Processing file...").Any(x => x) ||
-                downloadForm.downloadInfoList.Select(x => x.CurrentSpeed == "Sto elaborando il file...").Any(x => x))
+            if (downloadForm.downloadPool.current.Count > 0) //downloadForm.downloadInfoList.Select(x => x.CurrentSpeed == "Processing file...").Any(x => x) ||
+                                                             //downloadForm.downloadInfoList.Select(x => x.CurrentSpeed == "Sto elaborando il file...").Any(x => x))
             {
                 // We don't want the user to stop a file whilst it's processing.
                 // TODO: Add the existing file check to poliwebex.js
-                MessageBox.Show("Please wait until the file is done processing.");
-                e.Cancel = true;
-                return;
-            }
+                //MessageBox.Show("Please wait until the file is done processing.");
+                //e.Cancel = true;
+                //return;
+            //}
 
-            if (!(!downloadForm.downloadInfoList.Select(x => x.CurrentSpeed != "Finished.").Any(x => x) ||
-                !downloadForm.downloadInfoList.Select(x => x.CurrentSpeed != "Finito.").Any(x => x)))
-            {
+            //if (!(!downloadForm.downloadInfoList.Select(x => x.CurrentSpeed != "Finished.").Any(x => x) ||
+            //    !downloadForm.downloadInfoList.Select(x => x.CurrentSpeed != "Finito.").Any(x => x)))
+            //{
                 int ans;
+                var isSegmented = downloadForm.downloadPool.WeHaveSegmentedDownloadsCurrently();
                 if (StartupForm.IsItalian)
                 {
-                    if (!downloadForm.downloadInfoList.Select(x => x.process.StartInfo.Arguments.Contains("- s")).Any(x => x) &&
-                        !downloadForm.downloadInfoList.Select( x => x.process.StartInfo.FileName.Contains("polidown.exe")).Any(x => x))
+                    if (isSegmented)
                     {
                         ans = (int)Interaction.MsgBox("Sei sicuro? Interromperà il download corrente e dovrai ricominciare da capo, dato che sei in modalità unsegmented.", MsgBoxStyle.YesNo, "Exit?");
                     }
@@ -76,7 +75,7 @@ namespace PoliDLGUI.Forms
                         ans = (int)Interaction.MsgBox("Sei sicuro? Interromperà il download corrente.", MsgBoxStyle.YesNo, "Exit?");
                     }
                 }
-                else if (!downloadForm.downloadInfoList.Select(x => x.process.StartInfo.Arguments.Contains(" -s")).Any() & !downloadForm.downloadInfoList.Select(x => x.process.StartInfo.FileName.Contains("polidown.exe")).Any())
+                else if (isSegmented)
                 {
                     ans = (int)Interaction.MsgBox("Are you sure? This will stop the current download and you will have to start from scratch, since you're in unsegmented mode.", MsgBoxStyle.YesNo, "Exit?");
                 }
@@ -87,7 +86,7 @@ namespace PoliDLGUI.Forms
 
                 if (ans == (int)DialogResult.Yes)
                 {
-                    KillAllProcesses(this.downloadForm.downloadInfoList);
+                    KillAllProcesses(this.downloadForm.downloadPool);
                 }
                 else
                 {
@@ -101,22 +100,11 @@ namespace PoliDLGUI.Forms
             UpdateFileNum2(ProgressUpdate.ERROR);
         }
 
-        public static void KillAllProcesses(List<DownloadInfo> list)
+        public static void KillAllProcesses(DownloadPool list)
         {
             try
             {
-                foreach (var x in list)
-                {
-                    try
-                    {
-                        x.process.Kill();
-                        x.process.Dispose();
-                    }
-                    catch
-                    {
-                        ;
-                    }
-                }
+                list.KillAll();
 
                 foreach (var proc in Process.GetProcessesByName("aria2c"))   // Stop the download.
                 {
@@ -236,7 +224,7 @@ namespace PoliDLGUI.Forms
 
             }
 
-            int a = this.downloadForm.downloadInfoList.Select(x => x.ended == HowEnded.SUCCESS).Count(x => x);
+            int a = this.downloadForm.downloadPool.success.Count;
             this.FileNum.Text = "File " + a.ToString() + "/" + (startedDownloads).ToString();
             this.OverallProgressCompleted.Minimum = 0;
             this.OverallProgressCompleted.Maximum = startedDownloads;
@@ -252,7 +240,7 @@ namespace PoliDLGUI.Forms
 
         private void ProgressTracker_FormClosing(object sender, FormClosingEventArgs e)
         {
-            KillAllProcesses(this.downloadForm.downloadInfoList);
+            KillAllProcesses(this.downloadForm.downloadPool);
         }
     }
 }
