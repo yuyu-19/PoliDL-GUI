@@ -1,5 +1,6 @@
 ﻿using PoliDLGUI.Forms;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace PoliDLGUI.Classes
@@ -31,6 +32,8 @@ namespace PoliDLGUI.Classes
         public DownloadPool owner;
         public Uri uri;
 
+        public List<string> Log = new List<string>();
+
         public DownloadInfo(ProgressTracker progressTracker, DownloadPool owner, Uri uri)
         {
             this.progressTracker = progressTracker;
@@ -52,6 +55,14 @@ namespace PoliDLGUI.Classes
             this.ended = Enums.HowEnded.SUCCESS;
 
             this.owner.Ended(this, Enums.HowEnded.SUCCESS);
+        }
+
+        internal void AppendLog(string data)
+        {
+            if (!string.IsNullOrEmpty(data))
+            {
+                this.Log.Add(data);
+            }
         }
 
         internal void Failed(bool segmented)
@@ -80,6 +91,12 @@ namespace PoliDLGUI.Classes
             this.ended = Enums.HowEnded.FAIL;
 
             this.owner.Ended(this, Enums.HowEnded.FAIL);
+        }
+
+        internal void ClickedMoreInfo()
+        {
+            LogViewForm logViewForm = new LogViewForm(this.Log);
+            logViewForm.ShowDialog();
         }
     }
 }

@@ -45,6 +45,8 @@ namespace PoliDLGUI.Utils
 
             DownloadInfo downloadinfo = this.downloadForm.downloadPool.Find(process);
 
+            downloadinfo.AppendLog(outLine.Data);
+
             if (outLine.Data.Contains("Bad credentials"))   // Output is same on both.
             {
                 downloadForm.badCredentials = true;
@@ -78,6 +80,7 @@ namespace PoliDLGUI.Utils
                 // Might as well stay on the safe side - if one of them is outdated, it's likely the other one is as well.
 
                 downloadinfo.CurrentSpeed = StartupForm.IsItalian ? "Finito." : "Finished.";
+                downloadinfo.ended = Enums.HowEnded.FAIL;
 
                 // I'm just going to completely erase the config.json file and kick the user back to the form.
                 try

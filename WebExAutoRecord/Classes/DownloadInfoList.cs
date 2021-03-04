@@ -63,7 +63,8 @@ namespace PoliDLGUI.Classes
         internal void LoadPanelResults(ref Panel panel1)
         {
             const int HEIGHT = 20;
-            int WIDTH_LABEL = panel1.Width;
+            int WIDTH_LABEL = panel1.Width /5 * 3;
+            int WIDTH_BUTTON = panel1.Width / 5 * 2;
             _ = new Label()
             {
                 Location = new System.Drawing.Point(x: 0, y: 0),
@@ -74,13 +75,24 @@ namespace PoliDLGUI.Classes
 
             for (int i = 0; i < this.list.Count; i++)
             {
+                var p = this.list[i];
                 _ = new Label()
                 {
                     Location = new System.Drawing.Point(x: 0, y: (i + 1) * HEIGHT),
                     Size = new System.Drawing.Size(WIDTH_LABEL, HEIGHT),
                     Parent = panel1,
-                    Text = this.list[i].uri.ToString()
+                    Text = p.uri.ToString()
                 };
+
+                Button b = new Button()
+                {
+                    Location = new System.Drawing.Point(WIDTH_LABEL, (i + 1) * HEIGHT),
+                    Size = new System.Drawing.Size(WIDTH_BUTTON, HEIGHT),
+                    Parent = panel1,
+                    Text = "More info"
+                };
+
+                b.Click += (sender, args) => p.ClickedMoreInfo();
             }
         }
 
