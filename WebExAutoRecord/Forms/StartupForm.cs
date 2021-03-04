@@ -19,7 +19,8 @@ namespace PoliDLGUI.Forms
         }
 
         public static string RootFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\WebExRec";
-        private readonly List<CourseData> Courses = new List<CourseData>();
+
+        //private readonly List<CourseData> Courses = new List<CourseData>();
         public static bool IsItalian = Thread.CurrentThread.CurrentCulture.IetfLanguageTag == "it-IT";
 
         private void StartupForm_Load(object sender, EventArgs e)
@@ -226,12 +227,12 @@ namespace PoliDLGUI.Forms
             localmode.Enabled = true;
         }
 
-        public object IsWebEx(Task t)
+        public bool IsWebEx(Task t)
         {
             return t.Name.Contains("WebExRec-") & !t.Name.Contains("WebExRec-OS-");
         }
 
-        public object IsWebExOS(Task t)
+        public bool IsWebExOS(Task t)
         {
             return t.Name.Contains("WebExRec-OS-");
         }
@@ -239,7 +240,7 @@ namespace PoliDLGUI.Forms
         private void LocalMode_Click(object sender, EventArgs e)
         {
             GenerateDataForm generateDataForm = new GenerateDataForm();
-            generateDataForm.ShowDialog();
+            generateDataForm.Show();
         }
 
         private void DownloadMode_Click(object sender, EventArgs e)
@@ -276,6 +277,18 @@ namespace PoliDLGUI.Forms
         private void Localmode_Click_1(object sender, EventArgs e)
         {
             LocalMode_Click(sender, e);
+        }
+
+        private void StartupForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            try
+            {
+                Application.Exit();
+            }
+            catch
+            {
+                ;
+            }
         }
     }
 }
