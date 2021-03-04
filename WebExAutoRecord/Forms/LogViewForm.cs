@@ -12,7 +12,7 @@ namespace PoliDLGUI.Forms
 {
     public partial class LogViewForm : Form
     {
-        List<string> s;
+        readonly List<string> s;
         public LogViewForm(List<string> s)
         {
             this.s = s;

@@ -19,6 +19,7 @@ namespace PoliDLGUI.Classes
         private readonly DownloadForm downloadForm;
         public ProgressTracker progressTracker;
         public OutputHandlerUtil outputHandler = null;
+        public int total;
 
         public DownloadPool(int maxCurrent, DownloadForm downloadForm, ProgressTracker progressTracker)
         {
@@ -163,6 +164,8 @@ namespace PoliDLGUI.Classes
                     outputHandler = new OutputHandlerUtil(this.downloadForm);
                 }
 
+               
+
                 downloadInfo.process.OutputDataReceived += outputHandler.OutputHandler;
                 downloadInfo.process.ErrorDataReceived += outputHandler.OutputHandler;
                 try
@@ -196,5 +199,7 @@ namespace PoliDLGUI.Classes
                 }
             }
         }
+
+      
     }
 }

@@ -395,7 +395,22 @@ namespace PoliDLGUI.Forms
                 };
             }
 
-            progressTracker.OverallProgressCompleted.Value = 0;
+            int total = 0;
+            if (StreamURLs!=null)
+            {
+                total += StreamURLs.Count;
+            }
+            if (WebexURLs != null)
+            {
+                total += WebexURLs.Count;
+            }
+
+            progressTracker.OverallProgressCurrent.Value = 0;
+            progressTracker.OverallProgressCurrent.Minimum = 0;
+            progressTracker.OverallProgressTotal.Value = 0;
+            progressTracker.OverallProgressTotal.Minimum = 0;
+            progressTracker.OverallProgressTotal.Maximum = total;
+            downloadPool.total = total;
 
             if (StreamURLs != null && StreamURLs.Count > 0)
             {

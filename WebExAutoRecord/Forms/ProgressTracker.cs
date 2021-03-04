@@ -17,28 +17,6 @@ namespace PoliDLGUI.Forms
             InitializeComponent();
         }
 
-        private void Timer_Tick(object sender, EventArgs e)
-        {
-            // I swear I tried for hours to do this properly with multithreading etc, but it just refused.
-            // JANK IT UP!
-
-            /*
-            if (downloadForm.CurrentSpeed == "Finished." | downloadForm.CurrentSpeed == "Finito.")
-                Close();
-            OverallProgressCompleted.Value = (int)Math.Round(downloadForm.currentprogress);
-            FileNum.Text = "File " + downloadForm.currentfile + "/" + downloadForm.currentfiletotal;
-            if ((DLspeed.Text ?? "") != (downloadForm.CurrentSpeed ?? ""))
-            {
-                DLspeed.Text = downloadForm.CurrentSpeed;
-                var size = TextRenderer.MeasureText(DLspeed.Text, DLspeed.Font);
-                DLspeed.Width = size.Width;
-                var p = DLspeed.Location;
-                p.X = ClientSize.Width - DLspeed.Width - 5;
-                DLspeed.Location = p;
-            }
-            */
-        }
-
         internal void OneDownloadHasFinished()
         {
             UpdateFileNum2(ProgressUpdate.COMPLETED);
@@ -139,46 +117,22 @@ namespace PoliDLGUI.Forms
             // calling thread to the thread ID of the creating thread.
             // If these threads are different, it returns true.
 
-            switch (text)
+            if (this.InvokeRequired)
             {
-                case ProgressUpdate.COMPLETED:
-                    {
-                        if (this.NumCompleted.InvokeRequired)
-                        {
-                            UpdateFileNumCallBack d = new UpdateFileNumCallBack(UpdateFileNum2);
-                            this.Invoke(d, new object[] { text });
-                            return;
-                        }
-                        break;
-                    }
-
-                case ProgressUpdate.ERROR:
-                    {
-                        if (this.NumFailed.InvokeRequired)
-                        {
-                            UpdateFileNumCallBack d = new UpdateFileNumCallBack(UpdateFileNum2);
-                            this.Invoke(d, new object[] { text });
-                            return;
-                        }
-                        break;
-                    }
-                case ProgressUpdate.STARTED:
-                    {
-                        if (this.OverallProgressCompleted.InvokeRequired)
-                        {
-                            UpdateFileNumCallBack d = new UpdateFileNumCallBack(UpdateFileNum2);
-                            this.Invoke(d, new object[] { text });
-                            return;
-                        }
-                        break;
-                    }
+                UpdateFileNumCallBack d = new UpdateFileNumCallBack(UpdateFileNum2);
+                this.Invoke(d, new object[] { text });
+                return;
             }
 
+            var SuccessCount = this.downloadForm.downloadPool.success.GetCount();
+            var CurrentCount = this.downloadForm.downloadPool.current.GetCount();
+            var FailedCount = this.downloadForm.downloadPool.fail.GetCount();
+
             switch (text)
             {
                 case ProgressUpdate.COMPLETED:
                     {
-                        this.OverallProgressCompleted.Value++;
+                        
                         this.NumCompleted.Text = ((Convert.ToInt32(this.NumCompleted.Text)) + 1).ToString();
                         break;
                     }
@@ -194,15 +148,12 @@ namespace PoliDLGUI.Forms
                     }
             }
 
-            int? a = this.downloadForm.downloadPool.success.GetCount();
-            var a2 = a == null ? "null" : a.Value.ToString();
-            this.FileNum.Text = "File " + a2 + "/" + (startedDownloads).ToString();
-            this.OverallProgressCompleted.Minimum = 0;
-            this.OverallProgressCompleted.Maximum = startedDownloads;
-
-            int? b = this.downloadForm.downloadPool.current.GetCount();
-            var b2 = b == null ? "null" : b.Value.ToString();
-            this.NumDownloading.Text = b2;
+            this.NumDownloading.Text = CurrentCount.ToString();
+            this.FileNumCurrent.Text = "File " + (CurrentCount + SuccessCount + FailedCount) + "/" + (startedDownloads).ToString();
+            this.FileNumTotal.Text = "File " + (SuccessCount + FailedCount).ToString() + "/" + (this.downloadForm.downloadPool.total).ToString();
+            this.OverallProgressCurrent.Maximum = startedDownloads;
+            this.OverallProgressCurrent.Value = (CurrentCount + SuccessCount + FailedCount);
+            this.OverallProgressTotal.Value = (SuccessCount + FailedCount);
         }
 
         private int startedDownloads = 0;

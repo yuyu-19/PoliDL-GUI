@@ -96,18 +96,9 @@ namespace PoliDLGUI.Classes
             }
         }
 
-        internal int? GetCount()
+        internal int GetCount()
         {
-            try
-            {
-                return this.list.Count;
-            }
-            catch
-            {
-                ;
-            }
-
-            return null;
+            return this.list.Count;
         }
 
         internal DownloadInfo Find(Predicate<DownloadInfo> pred)
