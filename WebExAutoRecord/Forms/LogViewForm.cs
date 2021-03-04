@@ -22,6 +22,7 @@ namespace PoliDLGUI.Forms
         private void LogViewForm_Load(object sender, EventArgs e)
         {
             this.textBox1.Lines = s.ToArray();
+            this.textBox1.ScrollBars = ScrollBars.Both;
         }
     }
 }
