@@ -604,7 +604,6 @@ namespace PoliDLGUI.Forms
 
         public bool badCredentials = false;
 
-
         private delegate void CloseThisCallback(string text);
 
         public void CloseThis(string text)

@@ -138,7 +138,7 @@ namespace PoliDLGUI.Classes
             try
             {
                 for (int i = 0; i < list.Count; i++)
-                {                
+                {
                     try
                     {
                         DownloadInfo x = list[i];
