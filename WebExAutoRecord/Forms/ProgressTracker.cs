@@ -220,15 +220,13 @@ namespace PoliDLGUI.Forms
                         startedDownloads++;
                         break;
                     }
-
-
             }
 
             int a = this.downloadForm.downloadPool.success.Count;
             this.FileNum.Text = "File " + a.ToString() + "/" + (startedDownloads).ToString();
             this.OverallProgressCompleted.Minimum = 0;
             this.OverallProgressCompleted.Maximum = startedDownloads;
-            
+            this.NumDownloading.Text = this.downloadForm.downloadPool.current.Count.ToString();
         }
 
         int startedDownloads = 0;
@@ -248,10 +246,14 @@ namespace PoliDLGUI.Forms
             MoreInfo(Enums.HowEnded.SUCCESS);
         }
 
-
         private void buttonInfoFailed_Click(object sender, EventArgs e)
         {
             MoreInfo(Enums.HowEnded.FAIL);
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            MoreInfo(Enums.HowEnded.NOT_ENDED_YET);
         }
 
         private void MoreInfo(HowEnded howEnded)
@@ -266,6 +268,7 @@ namespace PoliDLGUI.Forms
                     r = this.downloadForm.downloadPool.fail;
                     break;
                 case HowEnded.NOT_ENDED_YET:
+                    r = this.downloadForm.downloadPool.current;
                     break;
             }
 
@@ -284,9 +287,11 @@ namespace PoliDLGUI.Forms
                 s += r1.uri.ToString() + "\n";
             }
 
-            s += "Here is the list:\n" + s;
+            s = "Here is the list:\n" + s;
 
             MessageBox.Show(s);
         }
+
+
     }
 }

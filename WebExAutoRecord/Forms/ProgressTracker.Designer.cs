@@ -48,6 +48,9 @@ namespace PoliDLGUI.Forms
             this.NumFailed = new System.Windows.Forms.Label();
             this.buttonInfoCompleted = new System.Windows.Forms.Button();
             this.buttonInfoFailed = new System.Windows.Forms.Button();
+            this.label1 = new System.Windows.Forms.Label();
+            this.NumDownloading = new System.Windows.Forms.Label();
+            this.button1 = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // OverallProgressCompleted
@@ -86,7 +89,7 @@ namespace PoliDLGUI.Forms
             // 
             this.l1.AutoSize = true;
             this.l1.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.l1.Location = new System.Drawing.Point(12, 83);
+            this.l1.Location = new System.Drawing.Point(12, 110);
             this.l1.Name = "l1";
             this.l1.Size = new System.Drawing.Size(239, 25);
             this.l1.TabIndex = 3;
@@ -96,7 +99,7 @@ namespace PoliDLGUI.Forms
             // 
             this.NumCompleted.AutoSize = true;
             this.NumCompleted.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.NumCompleted.Location = new System.Drawing.Point(262, 83);
+            this.NumCompleted.Location = new System.Drawing.Point(262, 110);
             this.NumCompleted.Name = "NumCompleted";
             this.NumCompleted.Size = new System.Drawing.Size(24, 25);
             this.NumCompleted.TabIndex = 4;
@@ -106,7 +109,7 @@ namespace PoliDLGUI.Forms
             // 
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.Location = new System.Drawing.Point(180, 118);
+            this.label2.Location = new System.Drawing.Point(180, 145);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(71, 25);
             this.label2.TabIndex = 5;
@@ -116,7 +119,7 @@ namespace PoliDLGUI.Forms
             // 
             this.NumFailed.AutoSize = true;
             this.NumFailed.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.NumFailed.Location = new System.Drawing.Point(262, 118);
+            this.NumFailed.Location = new System.Drawing.Point(262, 145);
             this.NumFailed.Name = "NumFailed";
             this.NumFailed.Size = new System.Drawing.Size(24, 25);
             this.NumFailed.TabIndex = 6;
@@ -124,7 +127,7 @@ namespace PoliDLGUI.Forms
             // 
             // buttonInfoCompleted
             // 
-            this.buttonInfoCompleted.Location = new System.Drawing.Point(361, 83);
+            this.buttonInfoCompleted.Location = new System.Drawing.Point(361, 110);
             this.buttonInfoCompleted.Name = "buttonInfoCompleted";
             this.buttonInfoCompleted.Size = new System.Drawing.Size(75, 23);
             this.buttonInfoCompleted.TabIndex = 7;
@@ -134,7 +137,7 @@ namespace PoliDLGUI.Forms
             // 
             // buttonInfoFailed
             // 
-            this.buttonInfoFailed.Location = new System.Drawing.Point(361, 118);
+            this.buttonInfoFailed.Location = new System.Drawing.Point(361, 145);
             this.buttonInfoFailed.Name = "buttonInfoFailed";
             this.buttonInfoFailed.Size = new System.Drawing.Size(75, 23);
             this.buttonInfoFailed.TabIndex = 8;
@@ -142,11 +145,44 @@ namespace PoliDLGUI.Forms
             this.buttonInfoFailed.UseVisualStyleBackColor = true;
             this.buttonInfoFailed.Click += new System.EventHandler(this.buttonInfoFailed_Click);
             // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label1.Location = new System.Drawing.Point(25, 73);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(226, 25);
+            this.label1.TabIndex = 9;
+            this.label1.Text = "Currently downloading";
+            // 
+            // NumDownloading
+            // 
+            this.NumDownloading.AutoSize = true;
+            this.NumDownloading.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.NumDownloading.Location = new System.Drawing.Point(262, 73);
+            this.NumDownloading.Name = "NumDownloading";
+            this.NumDownloading.Size = new System.Drawing.Size(24, 25);
+            this.NumDownloading.TabIndex = 10;
+            this.NumDownloading.Text = "0";
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(361, 73);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.TabIndex = 11;
+            this.button1.Text = "More info";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
             // ProgressTracker
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(448, 152);
+            this.ClientSize = new System.Drawing.Size(448, 191);
+            this.Controls.Add(this.button1);
+            this.Controls.Add(this.NumDownloading);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.buttonInfoFailed);
             this.Controls.Add(this.buttonInfoCompleted);
             this.Controls.Add(this.NumFailed);
@@ -177,6 +213,9 @@ namespace PoliDLGUI.Forms
         public Label NumFailed;
         private Button buttonInfoCompleted;
         private Button buttonInfoFailed;
+        public Label label1;
+        public Label NumDownloading;
+        private Button button1;
 
         internal Timer Timer
         {

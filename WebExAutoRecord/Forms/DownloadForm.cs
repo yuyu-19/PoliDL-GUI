@@ -744,13 +744,20 @@ namespace PoliDLGUI.Forms
             else if (outLine.Data.Contains("[DL:") & segmented)     // aria2c output
             {
                 downloadinfo.CurrentSpeed = outLine.Data.Substring("[DL:".Length, outLine.Data.IndexOf("]") - "[DL:".Length) + "/s";
-                if (StartupForm.IsItalian)
+                try
                 {
-                    if (downloadinfo.CurrentSpeed == "0B/s")
-                        downloadinfo.CurrentSpeed = "Sto leggendo dal disco...";
+                    if (StartupForm.IsItalian)
+                    {
+                        if (downloadinfo.CurrentSpeed == "0B/s")
+                            downloadinfo.CurrentSpeed = "Sto leggendo dal disco...";
+                    }
+                    else if (downloadinfo.CurrentSpeed == "0B/s")
+                        downloadinfo.CurrentSpeed = "Reading from disk...";
                 }
-                else if (downloadinfo.CurrentSpeed == "0B/s")
-                    downloadinfo.CurrentSpeed = "Reading from disk...";
+                catch
+                {
+                    ;
+                }
             }
             else if (outLine.Data.Contains("Download complete:")) // aria2c output
             {
