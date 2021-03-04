@@ -97,7 +97,7 @@ namespace PoliDLGUI.Classes
         internal void ClickedMoreInfo()
         {
             LogViewForm logViewForm = new LogViewForm(this.Log);
-            logViewForm.ShowDialog();
+            logViewForm.Show();
         }
     }
 }
