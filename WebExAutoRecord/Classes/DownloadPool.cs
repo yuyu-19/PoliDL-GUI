@@ -64,20 +64,26 @@ namespace PoliDLGUI.Classes
             {
                 this.current.Remove(downloadInfo);
 
-                switch (howEnded)
+                bool b1 = success.Contains(downloadInfo);
+                bool b2 = fail.Contains(downloadInfo);
+
+                if (!b1 && !b2)
                 {
-                    case HowEnded.SUCCESS:
-                        {
-                            success.Add(downloadInfo);
+                    switch (howEnded)
+                    {
+                        case HowEnded.SUCCESS:
+                            {
+                                success.Add(downloadInfo);
+                                break;
+                            }
+                        case HowEnded.FAIL:
+                            {
+                                fail.Add(downloadInfo);
+                                break;
+                            }
+                        case HowEnded.NOT_ENDED_YET:
                             break;
-                        }
-                    case HowEnded.FAIL:
-                        {
-                            fail.Add(downloadInfo);
-                            break;
-                        }
-                    case HowEnded.NOT_ENDED_YET:
-                        break;
+                    }
                 }
 
                 if (this.current.GetCount() < this.maxCurrent && waiting.GetCount() > 0)

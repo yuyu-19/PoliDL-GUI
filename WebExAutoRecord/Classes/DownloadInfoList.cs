@@ -24,6 +24,27 @@ namespace PoliDLGUI.Classes
             }
         }
 
+        public bool Contains(DownloadInfo downloadInfo)
+        {
+            lock (this)
+            {
+                try
+                {
+                    foreach (var x in this.list)
+                    {
+                        if (x == downloadInfo)
+                            return true;
+                    }
+                }
+                catch
+                {
+                    ;
+                }
+            }
+
+            return false;
+        }
+
         internal void Add(DownloadInfo downloadInfo)
         {
             if (downloadInfo == null)
@@ -31,13 +52,11 @@ namespace PoliDLGUI.Classes
 
             lock (this)
             {
-                foreach (var x in this.list)
+                bool contained = this.Contains(downloadInfo);
+                if (!contained)
                 {
-                    if (x == downloadInfo)
-                        return;
+                    this.list.Add(downloadInfo);
                 }
-
-                this.list.Add(downloadInfo);
             }
         }
 
