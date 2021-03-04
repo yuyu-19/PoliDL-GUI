@@ -74,10 +74,12 @@ namespace PoliDLGUI.Classes
                         case HowEnded.SUCCESS:
                             {
                                 success.Add(downloadInfo);
+                                this.progressTracker.OneDownloadHasFinished();
                                 break;
                             }
                         case HowEnded.FAIL:
                             {
+                                this.progressTracker.OneDownloadHasFailed();
                                 fail.Add(downloadInfo);
                                 break;
                             }

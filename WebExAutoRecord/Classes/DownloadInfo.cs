@@ -50,7 +50,7 @@ namespace PoliDLGUI.Classes
             }
 
             this.ended = Enums.HowEnded.SUCCESS;
-            this.progressTracker.OneDownloadHasFinished();
+            
             this.owner.Ended(this, Enums.HowEnded.SUCCESS);
         }
 
@@ -78,7 +78,7 @@ namespace PoliDLGUI.Classes
             }
 
             this.ended = Enums.HowEnded.FAIL;
-            this.progressTracker.OneDownloadHasFailed();
+            
             this.owner.Ended(this, Enums.HowEnded.FAIL);
         }
     }
