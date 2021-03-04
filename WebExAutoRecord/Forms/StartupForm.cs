@@ -277,5 +277,17 @@ namespace PoliDLGUI.Forms
         {
             LocalMode_Click(sender, e);
         }
+
+        private void StartupForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            try
+            {
+                Application.Exit();
+            }
+            catch
+            {
+                ;
+            }
+        }
     }
 }

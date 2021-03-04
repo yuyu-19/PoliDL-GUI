@@ -140,11 +140,13 @@ namespace PoliDLGUI.Forms
             CheckSegmented.Location = p;
         }
 
+        public const int maxDownloadInParallel = 10;
+
         private void DLButton_Click(object sender, EventArgs e)
         {          
             if (downloadPool == null)
             {
-                downloadPool = new DownloadPool(10, this);
+                downloadPool = new DownloadPool(maxDownloadInParallel, this, this.progressTracker);
             }
 
 
@@ -594,7 +596,7 @@ namespace PoliDLGUI.Forms
                 currentfiletotal = WebexURLs + StreamURLs
             };
 
-            progressTracker.UpdateFileNum();
+            
             if (StartupForm.IsItalian)
             {
                 downloadInfo.CurrentSpeed = "Sto avviando...";

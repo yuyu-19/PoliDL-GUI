@@ -18,11 +18,13 @@ namespace PoliDLGUI.Classes
         public List<DownloadInfo> fail = new List<DownloadInfo>();
         readonly int maxCurrent;
         readonly DownloadForm downloadForm;
+        public ProgressTracker progressTracker;
 
-        public DownloadPool(int maxCurrent, DownloadForm downloadForm)
+        public DownloadPool(int maxCurrent, DownloadForm downloadForm, ProgressTracker progressTracker)
         {
             this.maxCurrent = maxCurrent;
             this.downloadForm = downloadForm;
+            this.progressTracker = progressTracker;
         }
 
         internal DownloadInfo Find(Process process)
@@ -44,12 +46,15 @@ namespace PoliDLGUI.Classes
         {
             try
             {
-                foreach (var x in current)
+                for (int i = 0; i < current.Count; i++)
                 {
+                    DownloadInfo x = current[i];
                     try
                     {
                         x.process.Kill();
                         x.process.Dispose();
+                        current.Remove(x);
+                        i--;
                     }
                     catch
                     {
@@ -96,82 +101,89 @@ namespace PoliDLGUI.Classes
 
         internal void Add(DownloadInfo downloadInfo)
         {
-            if (this.current.Count < this.maxCurrent)
+            lock (this)
             {
-                Add2(downloadInfo);
-            }
-            else
-            {
-                waiting.Add(downloadInfo);
+                if (this.current.Count < this.maxCurrent)
+                {
+                    Add2(downloadInfo);
+                }
+                else
+                {
+                    waiting.Add(downloadInfo);
+                }
             }
         }
 
         private void Add2(DownloadInfo downloadInfo)
         {
-            this.current.Add(downloadInfo);
-            bool NoOutputRedirect = false;
-            ProcessStartInfo oStartInfo;
-            downloadInfo.DLError = false;
-            if (NoOutputRedirect)
+            lock (this)
             {
-                oStartInfo = new ProcessStartInfo(downloadInfo.Command, downloadInfo.Arguments)
+                this.current.Add(downloadInfo);
+                progressTracker.UpdateFileNum();
+                bool NoOutputRedirect = false;
+                ProcessStartInfo oStartInfo;
+                downloadInfo.DLError = false;
+                if (NoOutputRedirect)
                 {
-                    RedirectStandardOutput = false,
-                    RedirectStandardError = false,
-                    RedirectStandardInput = false,
-                    UseShellExecute = true,
-                    WindowStyle = ProcessWindowStyle.Normal,
-                    CreateNoWindow = false,
-                    WorkingDirectory = downloadInfo.Command.Substring(0, downloadInfo.Command.LastIndexOf(@"\"))
-                };
-            }
-            else
-            {
-                oStartInfo = new ProcessStartInfo(downloadInfo.Command, downloadInfo.Arguments)
-                {
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true,
-                    RedirectStandardInput = true,
-                    UseShellExecute = false,
-                    WindowStyle = ProcessWindowStyle.Normal,
-                    CreateNoWindow = true,
-                    WorkingDirectory = downloadInfo.Command.Substring(0, downloadInfo.Command.LastIndexOf(@"\", downloadInfo.Command.Length - 3))
-                };
-            }
-
-            downloadInfo.process.EnableRaisingEvents = true;
-            downloadInfo.process.StartInfo = oStartInfo;
-            downloadInfo.currentprogress = downloadInfo.WebexProgress;
-            downloadInfo.NotDownloaded = -1;
-            downloadInfo.process.OutputDataReceived += this.downloadForm.OutputHandler;
-            downloadInfo.process.ErrorDataReceived += this.downloadForm.OutputHandler;
-            try
-            {
-                downloadInfo.process.Start();
-                if (!NoOutputRedirect)
-                    downloadInfo.process.BeginOutputReadLine();
-                if (!NoOutputRedirect)
-                    downloadInfo.process.BeginErrorReadLine();
-            }
-            catch (Exception ex)
-            {
-                File.WriteAllText(StartupForm.RootFolder + @"\crashreport.txt", ex.ToString());
-                if (StartupForm.IsItalian)
-                {
-                    MessageBox.Show("Errore nell'avvio del processo. Informazioni sull'errore salvate in " + StartupForm.RootFolder + @"\crashreport.txt");
+                    oStartInfo = new ProcessStartInfo(downloadInfo.Command, downloadInfo.Arguments)
+                    {
+                        RedirectStandardOutput = false,
+                        RedirectStandardError = false,
+                        RedirectStandardInput = false,
+                        UseShellExecute = true,
+                        WindowStyle = ProcessWindowStyle.Normal,
+                        CreateNoWindow = false,
+                        WorkingDirectory = downloadInfo.Command.Substring(0, downloadInfo.Command.LastIndexOf(@"\"))
+                    };
                 }
                 else
                 {
-                    MessageBox.Show("Error starting the process. Exception info saved in crashreport.txt");
+                    oStartInfo = new ProcessStartInfo(downloadInfo.Command, downloadInfo.Arguments)
+                    {
+                        RedirectStandardOutput = true,
+                        RedirectStandardError = true,
+                        RedirectStandardInput = true,
+                        UseShellExecute = false,
+                        WindowStyle = ProcessWindowStyle.Normal,
+                        CreateNoWindow = true,
+                        WorkingDirectory = downloadInfo.Command.Substring(0, downloadInfo.Command.LastIndexOf(@"\", downloadInfo.Command.Length - 3))
+                    };
                 }
 
-                if (StartupForm.IsItalian)
+                downloadInfo.process.EnableRaisingEvents = true;
+                downloadInfo.process.StartInfo = oStartInfo;
+                downloadInfo.currentprogress = downloadInfo.WebexProgress;
+                downloadInfo.NotDownloaded = -1;
+                downloadInfo.process.OutputDataReceived += this.downloadForm.OutputHandler;
+                downloadInfo.process.ErrorDataReceived += this.downloadForm.OutputHandler;
+                try
                 {
-                    downloadInfo.CurrentSpeed = "Finito.";
+                    downloadInfo.process.Start();
+                    if (!NoOutputRedirect)
+                        downloadInfo.process.BeginOutputReadLine();
+                    if (!NoOutputRedirect)
+                        downloadInfo.process.BeginErrorReadLine();
                 }
-                else
+                catch (Exception ex)
                 {
-                    downloadInfo.CurrentSpeed = "Finished.";
+                    File.WriteAllText(StartupForm.RootFolder + @"\crashreport.txt", ex.ToString());
+                    if (StartupForm.IsItalian)
+                    {
+                        MessageBox.Show("Errore nell'avvio del processo. Informazioni sull'errore salvate in " + StartupForm.RootFolder + @"\crashreport.txt");
+                    }
+                    else
+                    {
+                        MessageBox.Show("Error starting the process. Exception info saved in crashreport.txt");
+                    }
+
+                    if (StartupForm.IsItalian)
+                    {
+                        downloadInfo.CurrentSpeed = "Finito.";
+                    }
+                    else
+                    {
+                        downloadInfo.CurrentSpeed = "Finished.";
+                    }
                 }
             }
         }
