@@ -135,6 +135,7 @@
     <Import Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Classes\DownloadInfoList.cs" />
     <Compile Include="Enums\ProgressUpdate.cs" />
     <Compile Include="Forms\DownloadForm.Designer.cs">
       <DependentUpon>DownloadForm.cs</DependentUpon>

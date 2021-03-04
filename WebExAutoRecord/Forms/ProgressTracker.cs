@@ -47,8 +47,8 @@ namespace PoliDLGUI.Forms
 
         private void ProgressTracker_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            if (downloadForm.downloadPool.current.Count > 0) //downloadForm.downloadInfoList.Select(x => x.CurrentSpeed == "Processing file...").Any(x => x) ||
-                                                             //downloadForm.downloadInfoList.Select(x => x.CurrentSpeed == "Sto elaborando il file...").Any(x => x))
+            if (downloadForm.downloadPool.current.GetCount() > 0) //downloadForm.downloadInfoList.Select(x => x.CurrentSpeed == "Processing file...").Any(x => x) ||
+                                                                  //downloadForm.downloadInfoList.Select(x => x.CurrentSpeed == "Sto elaborando il file...").Any(x => x))
             {
                 // We don't want the user to stop a file whilst it's processing.
                 // TODO: Add the existing file check to poliwebex.js
@@ -60,29 +60,13 @@ namespace PoliDLGUI.Forms
                 //if (!(!downloadForm.downloadInfoList.Select(x => x.CurrentSpeed != "Finished.").Any(x => x) ||
                 //    !downloadForm.downloadInfoList.Select(x => x.CurrentSpeed != "Finito.").Any(x => x)))
                 //{
-                int ans;
-                var isSegmented = downloadForm.downloadPool.WeHaveSegmentedDownloadsCurrently();
-                if (StartupForm.IsItalian)
-                {
-                    if (isSegmented)
-                    {
-                        ans = (int)Interaction.MsgBox("Sei sicuro? Interromperà il download corrente e dovrai ricominciare da capo, dato che sei in modalità unsegmented.", MsgBoxStyle.YesNo, "Exit?");
-                    }
-                    else
-                    {
-                        ans = (int)Interaction.MsgBox("Sei sicuro? Interromperà il download corrente.", MsgBoxStyle.YesNo, "Exit?");
-                    }
-                }
-                else if (isSegmented)
-                {
-                    ans = (int)Interaction.MsgBox("Are you sure? This will stop the current download and you will have to start from scratch, since you're in unsegmented mode.", MsgBoxStyle.YesNo, "Exit?");
-                }
-                else
-                {
-                    ans = (int)Interaction.MsgBox("Are you sure? This will stop the current download.", MsgBoxStyle.YesNo, "Exit?");
-                }
+                MsgBoxResult ans = StartupForm.IsItalian
+                    ? Interaction.MsgBox("Sei sicuro? Interromperà i download correnti e dovrai ricominciare da capo", MsgBoxStyle.YesNo, "Exit?")
+                    : Interaction.MsgBox("Are you sure? This will stop all current downloads and you will have to start from scratch", MsgBoxStyle.YesNo, "Exit?");
 
-                if (ans == (int)DialogResult.Yes)
+                //bool? isSegmented = downloadForm.downloadPool.WeHaveSegmentedDownloadsCurrently();
+
+                if (ans == MsgBoxResult.Ok || ans == MsgBoxResult.Yes)
                 {
                     KillAllProcesses(this.downloadForm.downloadPool);
                 }
@@ -211,11 +195,12 @@ namespace PoliDLGUI.Forms
                     }
             }
 
-            int a = this.downloadForm.downloadPool.success.Count;
-            this.FileNum.Text = "File " + a.ToString() + "/" + (startedDownloads).ToString();
+            int? a = this.downloadForm.downloadPool.success.GetCount();
+            var a2 = a == null ? "null" : a.Value.ToString();
+            this.FileNum.Text = "File " + a2 + "/" + (startedDownloads).ToString();
             this.OverallProgressCompleted.Minimum = 0;
             this.OverallProgressCompleted.Maximum = startedDownloads;
-            this.NumDownloading.Text = this.downloadForm.downloadPool.current.Count.ToString();
+            this.NumDownloading.Text = a2;
         }
 
         private int startedDownloads = 0;
@@ -247,7 +232,7 @@ namespace PoliDLGUI.Forms
 
         private void MoreInfo(HowEnded howEnded)
         {
-            List<DownloadInfo> r = null;
+            DownloadInfoList r = null;
             switch (howEnded)
             {
                 case HowEnded.SUCCESS:
@@ -263,7 +248,7 @@ namespace PoliDLGUI.Forms
                     break;
             }
 
-            if (r == null || r.Count == 0)
+            if (r == null || r.GetCount() == 0)
             {
                 if (StartupForm.IsItalian)
                     MessageBox.Show("Nessun risultato!");
@@ -273,9 +258,13 @@ namespace PoliDLGUI.Forms
             }
 
             string s = "";
-            foreach (var r1 in r)
+            List<string> URIs = r.GetURIs();
+            if (URIs != null)
             {
-                s += r1.uri.ToString() + "\n";
+                foreach (string r1 in URIs)
+                {
+                    s += r1 + "\n";
+                }
             }
 
             s = "Here is the list:\n" + s;

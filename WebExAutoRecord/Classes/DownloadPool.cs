@@ -1,7 +1,6 @@
 ﻿using PoliDLGUI.Enums;
 using PoliDLGUI.Forms;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -11,10 +10,10 @@ namespace PoliDLGUI.Classes
 {
     public class DownloadPool
     {
-        public List<DownloadInfo> current = new List<DownloadInfo>();
-        public List<DownloadInfo> waiting = new List<DownloadInfo>();
-        public List<DownloadInfo> success = new List<DownloadInfo>();
-        public List<DownloadInfo> fail = new List<DownloadInfo>();
+        public DownloadInfoList current = new DownloadInfoList();
+        public DownloadInfoList waiting = new DownloadInfoList();
+        public DownloadInfoList success = new DownloadInfoList();
+        public DownloadInfoList fail = new DownloadInfoList();
         private readonly int maxCurrent;
         private readonly DownloadForm downloadForm;
         public ProgressTracker progressTracker;
@@ -35,45 +34,35 @@ namespace PoliDLGUI.Classes
             return current.Find(pred);
         }
 
-        internal bool WeHaveSegmentedDownloadsCurrently()
+        internal bool? WeHaveSegmentedDownloadsCurrently()
         {
-            return this.current.Select(x => x.process.StartInfo.Arguments.Contains("- s")).Any(x => x) ||
-                        this.current.Select(x => x.process.StartInfo.FileName.Contains("polidown.exe")).Any(x => x);
+            lock (this)
+            {
+                try
+                {
+                    var a1 = this.current.Select(x => x.process.StartInfo.Arguments.Contains("- s"));
+                    var a2 = this.current.Select(x => x.process.StartInfo.FileName.Contains("polidown.exe"));
+                    return a1.Any(x => (bool)x) || a2.Any(x => (bool)x);
+                }
+                catch
+                {
+                    ;
+                }
+            }
+
+            return null;
         }
 
         internal void KillAll()
         {
-            try
-            {
-                for (int i = 0; i < current.Count; i++)
-                {
-                    DownloadInfo x = current[i];
-                    try
-                    {
-                        x.process.Kill();
-                        x.process.Dispose();
-                        current.Remove(x);
-                        i--;
-                    }
-                    catch
-                    {
-                        ;
-                    }
-                }
-            }
-            catch
-            {
-                ;
-            }
+            this.current.KillAll();
         }
 
         internal void Ended(DownloadInfo downloadInfo, HowEnded howEnded)
         {
             lock (this)
             {
-                int a = this.current.IndexOf(downloadInfo);
-                if (a >= 0 && a < this.current.Count)
-                    this.current.RemoveAt(a);
+                this.current.Remove(downloadInfo);
 
                 switch (howEnded)
                 {
@@ -91,11 +80,11 @@ namespace PoliDLGUI.Classes
                         break;
                 }
 
-                if (this.current.Count < this.maxCurrent && waiting.Count > 0)
+                if (this.current.GetCount() < this.maxCurrent && waiting.GetCount() > 0)
                 {
-                    var p = this.waiting[0];
-                    this.waiting.RemoveAt(0);
-                    Add2(p);
+                    DownloadInfo p = this.waiting.GetAndRemoveFirst();
+                    if (p != null)
+                        Add2(p);
                 }
             }
         }
@@ -104,7 +93,7 @@ namespace PoliDLGUI.Classes
         {
             lock (this)
             {
-                if (this.current.Count < this.maxCurrent)
+                if (current.GetCount() < this.maxCurrent)
                 {
                     Add2(downloadInfo);
                 }
@@ -117,6 +106,9 @@ namespace PoliDLGUI.Classes
 
         private void Add2(DownloadInfo downloadInfo)
         {
+            if (downloadInfo == null)
+                return;
+
             lock (this)
             {
                 this.current.Add(downloadInfo);
