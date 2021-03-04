@@ -1,21 +1,15 @@
 ﻿using PoliDLGUI.Classes;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace PoliDLGUI.Forms
 {
     public partial class ResultsListForm : Form
     {
-        DownloadInfoList downloadInfoList;
-        Enums.HowEnded howEnded;
+        private readonly DownloadInfoList downloadInfoList;
+        private readonly Enums.HowEnded howEnded;
 
         public ResultsListForm(DownloadInfoList downloadInfoList, Enums.HowEnded howEnded)
         {
@@ -30,7 +24,7 @@ namespace PoliDLGUI.Forms
             this.Text += " [" + howEnded.ToString() + "]";
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void Button1_Click(object sender, EventArgs e)
         {
             SaveFileDialog saveFileDialog = new SaveFileDialog
             {

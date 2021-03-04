@@ -73,12 +73,13 @@ namespace PoliDLGUI.Classes
                 Text = "URL"
             };
 
-            for (int i=0; i<this.list.Count; i++)
+            for (int i = 0; i < this.list.Count; i++)
             {
-                Label label = new Label() { 
-                    Location = new System.Drawing.Point(x: 0,y: (i+1)*HEIGHT), 
-                    Size = new System.Drawing.Size(WIDTH_LABEL, HEIGHT ), 
-                    Parent = panel1, 
+                Label label = new Label()
+                {
+                    Location = new System.Drawing.Point(x: 0, y: (i + 1) * HEIGHT),
+                    Size = new System.Drawing.Size(WIDTH_LABEL, HEIGHT),
+                    Parent = panel1,
                     Text = this.list[i].uri.ToString()
                 };
             }

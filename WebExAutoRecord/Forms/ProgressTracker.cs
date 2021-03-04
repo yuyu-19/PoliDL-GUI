@@ -2,7 +2,6 @@
 using PoliDLGUI.Classes;
 using PoliDLGUI.Enums;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows.Forms;
 
@@ -260,7 +259,7 @@ namespace PoliDLGUI.Forms
                 return;
             }
 
-            ResultsListForm resultsListForm = new ResultsListForm(r);
+            ResultsListForm resultsListForm = new ResultsListForm(r, howEnded);
             resultsListForm.ShowDialog();
         }
     }
