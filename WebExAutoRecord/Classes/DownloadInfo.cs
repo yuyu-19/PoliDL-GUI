@@ -33,6 +33,7 @@ namespace PoliDLGUI.Classes
         public Uri uri;
 
         public List<string> Log = new List<string>();
+        internal string title;
 
         public DownloadInfo(ProgressTracker progressTracker, DownloadPool owner, Uri uri)
         {

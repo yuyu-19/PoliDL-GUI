@@ -54,6 +54,21 @@ namespace PoliDLGUI.Utils
                 ;
             }
 
+            string outLineData = outLine.Data.Trim();
+
+            if (outLineData == ("Video already downloaded. Skipping...") || outLineData == ("All requested videos have been downloaded!") || outLineData == "Done!")
+            {
+                downloadinfo.EndedSuccessfully(StartupForm.IsItalian);
+                return;
+            }
+
+            if (outLineData.Contains("Video title is:"))
+            {
+                var title = outLineData.Substring(("Video title is:").Length).Trim();
+                downloadinfo.title = title;
+                return;
+            }
+
             if (outLine.Data.Contains("Bad credentials"))   // Output is same on both.
             {
                 downloadForm.badCredentials = true;
