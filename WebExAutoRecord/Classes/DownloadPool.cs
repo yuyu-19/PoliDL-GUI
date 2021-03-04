@@ -1,5 +1,6 @@
 ﻿using PoliDLGUI.Enums;
 using PoliDLGUI.Forms;
+using PoliDLGUI.Utils;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -17,6 +18,7 @@ namespace PoliDLGUI.Classes
         private readonly int maxCurrent;
         private readonly DownloadForm downloadForm;
         public ProgressTracker progressTracker;
+        public OutputHandlerUtil outputHandler = null;
 
         public DownloadPool(int maxCurrent, DownloadForm downloadForm, ProgressTracker progressTracker)
         {
@@ -155,8 +157,14 @@ namespace PoliDLGUI.Classes
                 downloadInfo.process.StartInfo = oStartInfo;
                 downloadInfo.currentprogress = downloadInfo.WebexProgress;
                 downloadInfo.NotDownloaded = -1;
-                downloadInfo.process.OutputDataReceived += this.downloadForm.OutputHandler;
-                downloadInfo.process.ErrorDataReceived += this.downloadForm.OutputHandler;
+
+                if (outputHandler == null)
+                {
+                    outputHandler = new OutputHandlerUtil(this.downloadForm);
+                }
+
+                downloadInfo.process.OutputDataReceived += outputHandler.OutputHandler;
+                downloadInfo.process.ErrorDataReceived += outputHandler.OutputHandler;
                 try
                 {
                     downloadInfo.process.Start();

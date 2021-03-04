@@ -184,6 +184,7 @@
     <Compile Include="Forms\StartupForm.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Utils\OutputHandlerUtil.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Forms\DownloadForm.resx">
