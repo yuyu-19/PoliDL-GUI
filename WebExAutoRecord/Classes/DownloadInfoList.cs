@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows.Forms;
 
 namespace PoliDLGUI.Classes
 {
@@ -37,6 +38,21 @@ namespace PoliDLGUI.Classes
                 }
 
                 this.list.Add(downloadInfo);
+            }
+        }
+
+        internal void LoadPanelResults(ref Panel panel1)
+        {
+            const int HEIGHT = 20;
+            int WIDTH_LABEL = panel1.Width;
+            for (int i=0; i<this.list.Count; i++)
+            {
+                Label label = new Label() { 
+                    Location = new System.Drawing.Point(x: 0,y: i*HEIGHT), 
+                    Size = new System.Drawing.Size(WIDTH_LABEL, HEIGHT ), 
+                    Parent = panel1, 
+                    Text = this.list[i].uri.ToString()
+                };
             }
         }
 

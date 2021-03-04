@@ -158,6 +158,12 @@
     <Compile Include="Forms\InputForm.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Forms\ResultsListForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\ResultsListForm.Designer.cs">
+      <DependentUpon>ResultsListForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="My Project\AssemblyInfo.cs" />
     <Compile Include="PoliDLGUI\Enums\HowEnded.cs" />
     <Compile Include="Program.cs" />
@@ -188,6 +194,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\InputForm.resx">
       <DependentUpon>InputForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\ResultsListForm.resx">
+      <DependentUpon>ResultsListForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

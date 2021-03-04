@@ -200,7 +200,10 @@ namespace PoliDLGUI.Forms
             this.FileNum.Text = "File " + a2 + "/" + (startedDownloads).ToString();
             this.OverallProgressCompleted.Minimum = 0;
             this.OverallProgressCompleted.Maximum = startedDownloads;
-            this.NumDownloading.Text = a2;
+
+            int? b = this.downloadForm.downloadPool.current.GetCount();
+            var b2 = b == null ? "null" : b.Value.ToString();
+            this.NumDownloading.Text = b2;
         }
 
         private int startedDownloads = 0;
@@ -257,19 +260,8 @@ namespace PoliDLGUI.Forms
                 return;
             }
 
-            string s = "";
-            List<string> URIs = r.GetURIs();
-            if (URIs != null)
-            {
-                foreach (string r1 in URIs)
-                {
-                    s += r1 + "\n";
-                }
-            }
-
-            s = "Here is the list:\n" + s;
-
-            MessageBox.Show(s);
+            ResultsListForm resultsListForm = new ResultsListForm(r);
+            resultsListForm.ShowDialog();
         }
     }
 }
