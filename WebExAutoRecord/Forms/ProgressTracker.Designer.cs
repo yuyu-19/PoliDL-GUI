@@ -40,26 +40,26 @@ namespace PoliDLGUI.Forms
             this.OverallProgressCurrent = new System.Windows.Forms.ProgressBar();
             this.FileNumCurrent = new System.Windows.Forms.Label();
             this.DLspeed = new System.Windows.Forms.Label();
-            this.l1 = new System.Windows.Forms.Label();
+            this.SuccessfulDL = new System.Windows.Forms.Label();
             this.NumCompleted = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
+            this.FailedDL = new System.Windows.Forms.Label();
             this.NumFailed = new System.Windows.Forms.Label();
             this.buttonInfoCompleted = new System.Windows.Forms.Button();
             this.buttonInfoFailed = new System.Windows.Forms.Button();
-            this.label1 = new System.Windows.Forms.Label();
+            this.CurrentDL = new System.Windows.Forms.Label();
             this.NumDownloading = new System.Windows.Forms.Label();
-            this.button1 = new System.Windows.Forms.Button();
-            this.label3 = new System.Windows.Forms.Label();
+            this.buttonInfoCurrent = new System.Windows.Forms.Button();
+            this.CurrentLbl = new System.Windows.Forms.Label();
             this.FileNumTotal = new System.Windows.Forms.Label();
             this.OverallProgressTotal = new System.Windows.Forms.ProgressBar();
-            this.label5 = new System.Windows.Forms.Label();
+            this.TotalLbl = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // OverallProgressCurrent
             // 
-            this.OverallProgressCurrent.Location = new System.Drawing.Point(12, 37);
+            this.OverallProgressCurrent.Location = new System.Drawing.Point(13, 37);
             this.OverallProgressCurrent.Name = "OverallProgressCurrent";
-            this.OverallProgressCurrent.Size = new System.Drawing.Size(508, 23);
+            this.OverallProgressCurrent.Size = new System.Drawing.Size(412, 23);
             this.OverallProgressCurrent.TabIndex = 0;
             // 
             // FileNumCurrent
@@ -81,41 +81,41 @@ namespace PoliDLGUI.Forms
             this.DLspeed.Size = new System.Drawing.Size(0, 25);
             this.DLspeed.TabIndex = 2;
             // 
-            // l1
+            // SuccessfulDL
             // 
-            this.l1.AutoSize = true;
-            this.l1.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.l1.Location = new System.Drawing.Point(14, 215);
-            this.l1.Name = "l1";
-            this.l1.Size = new System.Drawing.Size(239, 25);
-            this.l1.TabIndex = 3;
-            this.l1.Text = "Completed successfully";
+            this.SuccessfulDL.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.SuccessfulDL.Location = new System.Drawing.Point(12, 215);
+            this.SuccessfulDL.Name = "SuccessfulDL";
+            this.SuccessfulDL.Size = new System.Drawing.Size(241, 25);
+            this.SuccessfulDL.TabIndex = 3;
+            this.SuccessfulDL.Text = "Completed successfully";
+            this.SuccessfulDL.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
             // NumCompleted
             // 
             this.NumCompleted.AutoSize = true;
             this.NumCompleted.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.NumCompleted.Location = new System.Drawing.Point(264, 215);
+            this.NumCompleted.Location = new System.Drawing.Point(259, 215);
             this.NumCompleted.Name = "NumCompleted";
             this.NumCompleted.Size = new System.Drawing.Size(24, 25);
             this.NumCompleted.TabIndex = 4;
             this.NumCompleted.Text = "0";
             // 
-            // label2
+            // FailedDL
             // 
-            this.label2.AutoSize = true;
-            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.Location = new System.Drawing.Point(182, 250);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(71, 25);
-            this.label2.TabIndex = 5;
-            this.label2.Text = "Failed";
+            this.FailedDL.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.FailedDL.Location = new System.Drawing.Point(18, 250);
+            this.FailedDL.Name = "FailedDL";
+            this.FailedDL.Size = new System.Drawing.Size(235, 25);
+            this.FailedDL.TabIndex = 5;
+            this.FailedDL.Text = "Failed";
+            this.FailedDL.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
             // NumFailed
             // 
             this.NumFailed.AutoSize = true;
             this.NumFailed.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.NumFailed.Location = new System.Drawing.Point(264, 250);
+            this.NumFailed.Location = new System.Drawing.Point(259, 250);
             this.NumFailed.Name = "NumFailed";
             this.NumFailed.Size = new System.Drawing.Size(24, 25);
             this.NumFailed.TabIndex = 6;
@@ -123,9 +123,9 @@ namespace PoliDLGUI.Forms
             // 
             // buttonInfoCompleted
             // 
-            this.buttonInfoCompleted.Location = new System.Drawing.Point(363, 218);
+            this.buttonInfoCompleted.Location = new System.Drawing.Point(294, 215);
             this.buttonInfoCompleted.Name = "buttonInfoCompleted";
-            this.buttonInfoCompleted.Size = new System.Drawing.Size(157, 23);
+            this.buttonInfoCompleted.Size = new System.Drawing.Size(131, 23);
             this.buttonInfoCompleted.TabIndex = 7;
             this.buttonInfoCompleted.Text = "More info";
             this.buttonInfoCompleted.UseVisualStyleBackColor = true;
@@ -133,53 +133,54 @@ namespace PoliDLGUI.Forms
             // 
             // buttonInfoFailed
             // 
-            this.buttonInfoFailed.Location = new System.Drawing.Point(363, 253);
+            this.buttonInfoFailed.Location = new System.Drawing.Point(294, 250);
             this.buttonInfoFailed.Name = "buttonInfoFailed";
-            this.buttonInfoFailed.Size = new System.Drawing.Size(157, 23);
+            this.buttonInfoFailed.Size = new System.Drawing.Size(131, 23);
             this.buttonInfoFailed.TabIndex = 8;
             this.buttonInfoFailed.Text = "More info";
             this.buttonInfoFailed.UseVisualStyleBackColor = true;
             this.buttonInfoFailed.Click += new System.EventHandler(this.ButtonInfoFailed_Click);
             // 
-            // label1
+            // CurrentDL
             // 
-            this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(27, 178);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(226, 25);
-            this.label1.TabIndex = 9;
-            this.label1.Text = "Currently downloading";
+            this.CurrentDL.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.CurrentDL.Location = new System.Drawing.Point(13, 178);
+            this.CurrentDL.Name = "CurrentDL";
+            this.CurrentDL.Size = new System.Drawing.Size(240, 25);
+            this.CurrentDL.TabIndex = 9;
+            this.CurrentDL.Text = "Currently downloading";
+            this.CurrentDL.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
             // NumDownloading
             // 
             this.NumDownloading.AutoSize = true;
             this.NumDownloading.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.NumDownloading.Location = new System.Drawing.Point(264, 178);
+            this.NumDownloading.Location = new System.Drawing.Point(259, 178);
             this.NumDownloading.Name = "NumDownloading";
             this.NumDownloading.Size = new System.Drawing.Size(24, 25);
             this.NumDownloading.TabIndex = 10;
             this.NumDownloading.Text = "0";
             // 
-            // button1
+            // buttonInfoCurrent
             // 
-            this.button1.Location = new System.Drawing.Point(363, 181);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(157, 23);
-            this.button1.TabIndex = 11;
-            this.button1.Text = "More info";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.Button1_Click);
+            this.buttonInfoCurrent.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
+            this.buttonInfoCurrent.Location = new System.Drawing.Point(294, 178);
+            this.buttonInfoCurrent.Name = "buttonInfoCurrent";
+            this.buttonInfoCurrent.Size = new System.Drawing.Size(131, 23);
+            this.buttonInfoCurrent.TabIndex = 11;
+            this.buttonInfoCurrent.Text = "More info";
+            this.buttonInfoCurrent.UseVisualStyleBackColor = true;
+            this.buttonInfoCurrent.Click += new System.EventHandler(this.Button1_Click);
             // 
-            // label3
+            // CurrentLbl
             // 
-            this.label3.AutoSize = true;
-            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.Location = new System.Drawing.Point(458, 13);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(62, 20);
-            this.label3.TabIndex = 12;
-            this.label3.Text = "Current";
+            this.CurrentLbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.CurrentLbl.Location = new System.Drawing.Point(294, 13);
+            this.CurrentLbl.Name = "CurrentLbl";
+            this.CurrentLbl.Size = new System.Drawing.Size(131, 20);
+            this.CurrentLbl.TabIndex = 12;
+            this.CurrentLbl.Text = "Current";
+            this.CurrentLbl.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
             // FileNumTotal
             // 
@@ -195,37 +196,37 @@ namespace PoliDLGUI.Forms
             // 
             this.OverallProgressTotal.Location = new System.Drawing.Point(12, 114);
             this.OverallProgressTotal.Name = "OverallProgressTotal";
-            this.OverallProgressTotal.Size = new System.Drawing.Size(508, 23);
+            this.OverallProgressTotal.Size = new System.Drawing.Size(413, 23);
             this.OverallProgressTotal.TabIndex = 13;
             // 
-            // label5
+            // TotalLbl
             // 
-            this.label5.AutoSize = true;
-            this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label5.Location = new System.Drawing.Point(476, 91);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(44, 20);
-            this.label5.TabIndex = 15;
-            this.label5.Text = "Total";
+            this.TotalLbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.TotalLbl.Location = new System.Drawing.Point(305, 91);
+            this.TotalLbl.Name = "TotalLbl";
+            this.TotalLbl.Size = new System.Drawing.Size(120, 20);
+            this.TotalLbl.TabIndex = 15;
+            this.TotalLbl.Text = "Total";
+            this.TotalLbl.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
             // ProgressTracker
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(532, 285);
-            this.Controls.Add(this.label5);
+            this.ClientSize = new System.Drawing.Size(437, 285);
+            this.Controls.Add(this.TotalLbl);
             this.Controls.Add(this.FileNumTotal);
             this.Controls.Add(this.OverallProgressTotal);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.CurrentLbl);
+            this.Controls.Add(this.buttonInfoCurrent);
             this.Controls.Add(this.NumDownloading);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.CurrentDL);
             this.Controls.Add(this.buttonInfoFailed);
             this.Controls.Add(this.buttonInfoCompleted);
             this.Controls.Add(this.NumFailed);
-            this.Controls.Add(this.label2);
+            this.Controls.Add(this.FailedDL);
             this.Controls.Add(this.NumCompleted);
-            this.Controls.Add(this.l1);
+            this.Controls.Add(this.SuccessfulDL);
             this.Controls.Add(this.DLspeed);
             this.Controls.Add(this.FileNumCurrent);
             this.Controls.Add(this.OverallProgressCurrent);
@@ -243,18 +244,18 @@ namespace PoliDLGUI.Forms
         public Label FileNumCurrent;
         public Label DLspeed;
         public ProgressBar OverallProgressCurrent;
-        public Label l1;
+        public Label SuccessfulDL;
         public Label NumCompleted;
-        public Label label2;
+        public Label FailedDL;
         public Label NumFailed;
         private Button buttonInfoCompleted;
         private Button buttonInfoFailed;
-        public Label label1;
+        public Label CurrentDL;
         public Label NumDownloading;
-        private Button button1;
-        public Label label3;
+        private Button buttonInfoCurrent;
+        public Label CurrentLbl;
         public Label FileNumTotal;
         public ProgressBar OverallProgressTotal;
-        public Label label5;
+        public Label TotalLbl;
     }
 }

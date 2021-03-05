@@ -164,7 +164,7 @@ namespace PoliDLGUI.Forms
             List<string> WebexURLs = new List<string>(), StreamURLs = new List<string>();
             if (ModeSelect.SelectedIndex == 1)
             {
-                GetAllRecordingLinks(URLlist.Text, ref WebexURLs, ref StreamURLs, txt:false);
+                GetAllRecordingLinks(URLlist.Text, ref WebexURLs, ref StreamURLs);
             }
             else
             {
@@ -209,13 +209,13 @@ namespace PoliDLGUI.Forms
                 {
                     case "txt":
                         {
-                            GetAllRecordingLinks(File.ReadAllText(FilePath.Text), ref WebexURLs, ref StreamURLs, txt: true);
+                            GetAllRecordingLinks(File.ReadAllText(FilePath.Text), ref WebexURLs, ref StreamURLs);
                             break;
                         }
                     case "html":
                     case "htm":
                         {
-                            GetAllRecordingLinks(File.ReadAllText(FilePath.Text), ref WebexURLs, ref StreamURLs, txt:false);
+                            GetAllRecordingLinks(File.ReadAllText(FilePath.Text), ref WebexURLs, ref StreamURLs);
                             break;
                         }
 
@@ -376,6 +376,9 @@ namespace PoliDLGUI.Forms
                 WebexArgs += " -e " + TempString;
             }
 
+            if (!CheckSegmented.Checked)
+                WebexArgs += " -s";
+
             WebexArgs += " -v";
             StreamArgs += " -v";
 
@@ -388,15 +391,14 @@ namespace PoliDLGUI.Forms
 
             // Time to boot up poliwebex.
 
-            if (!CheckSegmented.Checked)
-                WebexArgs += " -s";
+            
 
             if (!Directory.Exists(StartupForm.RootFolder + @"\Logs"))
                 Directory.CreateDirectory(StartupForm.RootFolder + @"\Logs");
 
             if (LogsStream == null)
             {
-                LogsStream = new StreamWriter(StartupForm.RootFolder + @"\Logs\" + @"\PoliDL-Logs_" + DateTime.Now.ToString("yyyy-MM-dd-HH-mm") + ".txt", append: false)
+                LogsStream = new StreamWriter(StartupForm.RootFolder + @"\Logs\" + @"\PoliDL-Logs_" + DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss") + ".txt", append: false)
                 {
                     AutoFlush = true
                 };
@@ -470,22 +472,19 @@ namespace PoliDLGUI.Forms
                 }
                 else
                 {
-                    GetAllRecordingLinks(File.ReadAllText(Entry.Name), ref WebexURLs, ref StreamURLs, txt: false);
+                    GetAllRecordingLinks(File.ReadAllText(Entry.Name), ref WebexURLs, ref StreamURLs);
                 }
 
                 File.Delete(FileName);
             }
         }
 
-        public void GetAllRecordingLinks(string AllText, ref List<string> WebexURLs, ref List<string> StreamURLs, bool txt) // This just takes a big ol string (file) as input and a list, and adds all links to the list.
+        public void GetAllRecordingLinks(string AllText, ref List<string> WebexURLs, ref List<string> StreamURLs) // This just takes a big ol string (file) as input and a list, and adds all links to the list.
         {
             if (string.IsNullOrEmpty(AllText))
                 return;
 
-            if (txt == false)
-            {
-                AllText = System.Net.WebUtility.UrlDecode(AllText);  // Fixes the URL encoding weirdness
-            }
+            AllText = System.Net.WebUtility.UrlDecode(AllText);  // Fixes the URL encoding weirdness
 
             AllText = AllText.Trim();
 
