@@ -323,7 +323,7 @@ namespace PoliDLGUI.Utils
 
             try
             {
-                DownloadForm.LogsStream.Write(outLine.Data + Constants.vbCrLf);
+                this.downloadForm.LogsStream.Write(outLine.Data + Constants.vbCrLf);
             }
             catch (Exception ex)
             {
