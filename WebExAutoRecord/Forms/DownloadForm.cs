@@ -376,6 +376,9 @@ namespace PoliDLGUI.Forms
                 WebexArgs += " -e " + TempString;
             }
 
+            if (!CheckSegmented.Checked)
+                WebexArgs += " -s";
+
             WebexArgs += " -v";
             StreamArgs += " -v";
 
@@ -388,8 +391,7 @@ namespace PoliDLGUI.Forms
 
             // Time to boot up poliwebex.
 
-            if (!CheckSegmented.Checked)
-                WebexArgs += " -s";
+            
 
             if (!Directory.Exists(StartupForm.RootFolder + @"\Logs"))
                 Directory.CreateDirectory(StartupForm.RootFolder + @"\Logs");

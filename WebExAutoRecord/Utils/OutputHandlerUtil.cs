@@ -33,11 +33,14 @@ namespace PoliDLGUI.Utils
                 return;
             }
 
+
             Process process = (Process)sendingProcess;
             bool segmented = process.StartInfo.Arguments.Contains(" -s");
             bool shouldLog = true;  //Removes unnecessary/spammy logs
             if (process.StartInfo.FileName.Contains("polidown.exe"))
                 segmented = true;    // polidown is always in segmented mode
+
+
 
             if (string.IsNullOrEmpty(outLine.Data))
             {
@@ -60,7 +63,19 @@ namespace PoliDLGUI.Utils
 
             string outLineData = outLine.Data.Trim();
 
-            switch(outLineData) {
+            //This should be at the bottom, but I moved it up to try and debug.
+            try {
+                if ((StartupForm.ForceLog | shouldLog) & (outLine.Data.Trim() != "")) { //Really likes printing empty lines for some reason.
+                    this.downloadForm.LogsStream.Write(outLine.Data + Constants.vbCrLf);
+                    downloadinfo.AppendLog(outLine.Data);
+                }
+            }
+            catch (Exception ex) {
+                // Error writing to the log file.
+                Console.WriteLine(ex);
+            }
+
+            switch (outLineData) {
                 case "You are not authorized to access this video.":
                     downloadinfo.Failed(segmented);
                     break;
@@ -189,7 +204,6 @@ namespace PoliDLGUI.Utils
                         }
 
                         downloadinfo.EndedSuccessfully(StartupForm.IsItalian);
-                        return;
 
                         //LogsStream.Close();
                     }
@@ -265,18 +279,7 @@ namespace PoliDLGUI.Utils
                     break;
             }
 
-            try
-            {
-                if ((StartupForm.ForceLog | shouldLog) & (outLine.Data.Trim() != "")) { //Really likes printing empty lines for some reason.
-                    this.downloadForm.LogsStream.Write(outLine.Data + Constants.vbCrLf);
-                    downloadinfo.AppendLog(outLine.Data);
-                }
-            }
-            catch (Exception ex)
-            {
-                // Error writing to the log file.
-                Console.WriteLine(ex);
-            }
+            //
         }
     }
 }

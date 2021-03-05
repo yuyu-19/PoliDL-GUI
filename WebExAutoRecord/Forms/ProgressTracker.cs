@@ -211,7 +211,12 @@ namespace PoliDLGUI.Forms
 
         private void ProgressTracker_Load(object sender, EventArgs e)
         {
-            
+            buttonInfoCurrent.Text = buttonInfoCompleted.Text = buttonInfoFailed.Text = StartupForm.IsItalian ? "Ulteriori informazioni" : "More info";
+            CurrentDL.Text = StartupForm.IsItalian ? "Download in corso" : "Currently downloading";
+            SuccessfulDL.Text = StartupForm.IsItalian ? "Download completati" : "Successfully downloaded";
+            FailedDL.Text = StartupForm.IsItalian ? "Download falliti" : "Failed";
+            CurrentLbl.Text = StartupForm.IsItalian ? "Corrente" : "Current";
+            TotalLbl.Text = StartupForm.IsItalian ? "Totale" : "Overall";
         }
     }
 }

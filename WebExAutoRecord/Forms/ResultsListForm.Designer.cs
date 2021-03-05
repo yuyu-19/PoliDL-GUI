@@ -30,7 +30,7 @@ namespace PoliDLGUI.Forms
         private void InitializeComponent()
         {
             this.panel1 = new System.Windows.Forms.Panel();
-            this.button1 = new System.Windows.Forms.Button();
+            this.saveBtn = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // panel1
@@ -41,25 +41,25 @@ namespace PoliDLGUI.Forms
             this.panel1.AutoScroll = true;
             this.panel1.Location = new System.Drawing.Point(12, 42);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(776, 396);
+            this.panel1.Size = new System.Drawing.Size(604, 339);
             this.panel1.TabIndex = 0;
             // 
-            // button1
+            // saveBtn
             // 
-            this.button1.Location = new System.Drawing.Point(12, 12);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(222, 23);
-            this.button1.TabIndex = 1;
-            this.button1.Text = "Save URLs as TXT";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.Button1_Click);
+            this.saveBtn.Location = new System.Drawing.Point(12, 12);
+            this.saveBtn.Name = "saveBtn";
+            this.saveBtn.Size = new System.Drawing.Size(222, 23);
+            this.saveBtn.TabIndex = 1;
+            this.saveBtn.Text = "Save URLs as TXT";
+            this.saveBtn.UseVisualStyleBackColor = true;
+            this.saveBtn.Click += new System.EventHandler(this.Button1_Click);
             // 
             // ResultsListForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Controls.Add(this.button1);
+            this.ClientSize = new System.Drawing.Size(628, 393);
+            this.Controls.Add(this.saveBtn);
             this.Controls.Add(this.panel1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
@@ -73,6 +73,6 @@ namespace PoliDLGUI.Forms
         #endregion
 
         private System.Windows.Forms.Panel panel1;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button saveBtn;
     }
 }

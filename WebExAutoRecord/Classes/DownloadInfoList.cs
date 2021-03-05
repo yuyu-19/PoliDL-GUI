@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using PoliDLGUI.Forms;
 using System.Windows.Forms;
 
 namespace PoliDLGUI.Classes
@@ -84,12 +85,11 @@ namespace PoliDLGUI.Classes
                     Text = p.uri.ToString()
                 };
 
-                Button b = new Button()
-                {
+                Button b = new Button() {
                     Location = new System.Drawing.Point(WIDTH_LABEL, (i + 1) * HEIGHT),
                     Size = new System.Drawing.Size(WIDTH_BUTTON, HEIGHT),
                     Parent = panel1,
-                    Text = "More info"
+                    Text = StartupForm.IsItalian ? "More info" : "Ulteriori informazioni"
                 };
 
                 b.Click += (sender, args) => p.ClickedMoreInfo();
