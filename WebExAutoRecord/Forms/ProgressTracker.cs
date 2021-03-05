@@ -210,7 +210,7 @@ namespace PoliDLGUI.Forms
             }
 
             ResultsListForm resultsListForm = new ResultsListForm(r, howEnded);
-            resultsListForm.ShowDialog();
+            resultsListForm.Show();
         }
     }
 }
