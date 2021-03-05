@@ -439,7 +439,7 @@ namespace PoliDLGUI.Forms
                 }
             }
 
-            this.Hide();
+            this.Close();
             progressTracker.Show();
         }
 
