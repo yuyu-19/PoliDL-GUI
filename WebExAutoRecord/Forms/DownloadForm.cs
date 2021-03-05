@@ -389,7 +389,7 @@ namespace PoliDLGUI.Forms
 
             if (LogsStream == null)
             {
-                LogsStream = new StreamWriter(StartupForm.RootFolder + @"\Logs\" + @"\PoliDL-Logs_" + DateTime.Now.ToString("yyyy-MM-dd-HH-mm") + ".txt", false)
+                LogsStream = new StreamWriter(StartupForm.RootFolder + @"\Logs\" + @"\PoliDL-Logs_" + DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss") + ".txt", false)
                 {
                     AutoFlush = true
                 };
@@ -432,16 +432,8 @@ namespace PoliDLGUI.Forms
                 }
             }
 
-            this.Hide();
-            progressTracker.ShowDialog();
-            try
-            {
-                this.Show();
-            }
-            catch
-            {
-                ;
-            }
+            this.Close();
+            progressTracker.Show();
         }
 
         public void GetAllLinksFromZip(ZipArchive AFile, ref List<string> WebexURLs, ref List<string> StreamURLs)
