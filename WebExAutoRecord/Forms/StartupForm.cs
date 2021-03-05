@@ -19,7 +19,7 @@ namespace PoliDLGUI.Forms
         }
 
         public static string RootFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\WebExRec";
-
+        public static bool ForceLog = Environment.CommandLine.Contains("--verboselogging"); //Debug argument to log everything
         //private readonly List<CourseData> Courses = new List<CourseData>();
         public static bool IsItalian = Thread.CurrentThread.CurrentCulture.IetfLanguageTag == "it-IT";
 

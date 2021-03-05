@@ -87,10 +87,6 @@ namespace PoliDLGUI.Forms
             }
         }
 
-        private void ProgressTracker_Load(object sender, EventArgs e)
-        {
-        }
-
         private delegate void CloseThisCallback(string text);
 
         public void CloseThis(string text)
@@ -211,6 +207,11 @@ namespace PoliDLGUI.Forms
 
             ResultsListForm resultsListForm = new ResultsListForm(r, howEnded);
             resultsListForm.Show();
+        }
+
+        private void ProgressTracker_Load(object sender, EventArgs e)
+        {
+            
         }
     }
 }

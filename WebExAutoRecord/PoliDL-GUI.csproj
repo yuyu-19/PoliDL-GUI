@@ -222,6 +222,9 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\.editorconfig">
+      <Link>.editorconfig</Link>
+    </None>
     <None Include="app.config" />
     <None Include="bin\Debug\Data.zip" />
     <None Include="My Project\app.manifest" />

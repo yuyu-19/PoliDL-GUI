@@ -48,7 +48,7 @@ namespace PoliDLGUI.Forms
             this.buttonInfoFailed = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.NumDownloading = new System.Windows.Forms.Label();
-            this.button1 = new System.Windows.Forms.Button();
+            this.buttonInfoCurrent = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
             this.FileNumTotal = new System.Windows.Forms.Label();
             this.OverallProgressTotal = new System.Windows.Forms.ProgressBar();
@@ -161,15 +161,15 @@ namespace PoliDLGUI.Forms
             this.NumDownloading.TabIndex = 10;
             this.NumDownloading.Text = "0";
             // 
-            // button1
+            // buttonInfoCurrent
             // 
-            this.button1.Location = new System.Drawing.Point(363, 181);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(157, 23);
-            this.button1.TabIndex = 11;
-            this.button1.Text = "More info";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.Button1_Click);
+            this.buttonInfoCurrent.Location = new System.Drawing.Point(363, 181);
+            this.buttonInfoCurrent.Name = "buttonInfoCurrent";
+            this.buttonInfoCurrent.Size = new System.Drawing.Size(157, 23);
+            this.buttonInfoCurrent.TabIndex = 11;
+            this.buttonInfoCurrent.Text = "More info";
+            this.buttonInfoCurrent.UseVisualStyleBackColor = true;
+            this.buttonInfoCurrent.Click += new System.EventHandler(this.Button1_Click);
             // 
             // label3
             // 
@@ -217,7 +217,7 @@ namespace PoliDLGUI.Forms
             this.Controls.Add(this.FileNumTotal);
             this.Controls.Add(this.OverallProgressTotal);
             this.Controls.Add(this.label3);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.buttonInfoCurrent);
             this.Controls.Add(this.NumDownloading);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.buttonInfoFailed);
@@ -251,7 +251,7 @@ namespace PoliDLGUI.Forms
         private Button buttonInfoFailed;
         public Label label1;
         public Label NumDownloading;
-        private Button button1;
+        private Button buttonInfoCurrent;
         public Label label3;
         public Label FileNumTotal;
         public ProgressBar OverallProgressTotal;
