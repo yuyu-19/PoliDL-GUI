@@ -101,6 +101,8 @@ namespace PoliDLGUI.Forms
             }
             else
             {
+                MessageBox.Show("Downloadform.close called");
+                this.downloadForm.Close();
                 this.Close();
             }
         }
