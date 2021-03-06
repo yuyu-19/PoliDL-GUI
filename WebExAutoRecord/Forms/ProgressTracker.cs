@@ -63,7 +63,8 @@ namespace PoliDLGUI.Forms
         {
             try
             {
-                list.KillAll();
+                if (list != null)       //Otherwise the program would crash when closing a downloadform without doing anything
+                    list.KillAll();
 
                 foreach (var proc in Process.GetProcessesByName("aria2c"))   // Stop the download.
                 {
@@ -101,7 +102,6 @@ namespace PoliDLGUI.Forms
             }
             else
             {
-                MessageBox.Show("Downloadform.close called");
                 this.downloadForm.Close();
                 this.Close();
             }

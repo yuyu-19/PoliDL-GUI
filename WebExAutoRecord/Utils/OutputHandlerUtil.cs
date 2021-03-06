@@ -240,6 +240,7 @@ namespace PoliDLGUI.Utils
                     downloadinfo.CurrentSpeed = StartupForm.IsItalian ? "Sto elaborando il file..." : "Processing file...";
                     break;
                 case var s when s.Contains("Try in non-headless mode") | s.Contains("this is not an exact science"):
+                    downloadForm.downloadPool.current.Remove(downloadinfo); //The downloadinfo this process is tied to needs to be removed.
                     if (process.StartInfo.FileName.Contains("poliwebex.exe"))
                         downloadinfo.WebexProgress = 0d;
                     downloadForm.RunCommandH(

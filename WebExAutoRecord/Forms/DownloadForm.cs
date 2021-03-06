@@ -594,7 +594,7 @@ namespace PoliDLGUI.Forms
         {
             // Console.WriteLine(Command)
             // Console.ReadLine()
-
+            //if (Command.Contains("poliwebex") & Arguments.Contains("-l false")) MessageBox.Show("Running in non-headless: " + Command + Arguments);
             if (badCredentials)
             {
                 this.Close();
