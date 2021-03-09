@@ -14,7 +14,8 @@ namespace PoliDLGUI.Classes
         public DownloadInfoList current = new DownloadInfoList();
         public DownloadInfoList waiting = new DownloadInfoList();
         public DownloadInfoList success = new DownloadInfoList();
-        public DownloadInfoList fail = new DownloadInfoList();
+        public DownloadInfoList failWithoutRetry = new DownloadInfoList();
+        public DownloadInfoList failedButRetried = new DownloadInfoList();
         private readonly int maxCurrent;
         private readonly DownloadForm downloadForm;
         public ProgressTracker progressTracker;
@@ -39,7 +40,7 @@ namespace PoliDLGUI.Classes
                         return i.process == process;
                     }
 
-                    return ((current.Find(pred) ?? waiting.Find(pred)) ?? success.Find(pred)) ?? fail.Find(pred);
+                    return ((current.Find(pred) ?? waiting.Find(pred)) ?? success.Find(pred)) ?? failWithoutRetry.Find(pred);
                 }
             }
             catch
@@ -74,16 +75,17 @@ namespace PoliDLGUI.Classes
             this.current.KillAll();
         }
 
-        internal void Ended(DownloadInfo downloadInfo, HowEnded howEnded)
+        internal void Ended(DownloadInfo downloadInfo, HowEnded howEnded, bool retry)
         {
             lock (this)
             {
                 this.current.Remove(downloadInfo);
 
                 bool b1 = success.Contains(downloadInfo);
-                bool b2 = fail.Contains(downloadInfo);
+                bool b2 = failWithoutRetry.Contains(downloadInfo);
+                bool b3 = failedButRetried.Contains(downloadInfo);
 
-                if (!b1 && !b2)
+                if (!b1 && !b2 && !b3)
                 {
                     switch (howEnded)
                     {
@@ -95,8 +97,12 @@ namespace PoliDLGUI.Classes
                             }
                         case HowEnded.FAIL:
                             {
-                                this.progressTracker.OneDownloadHasFailed();
-                                fail.Add(downloadInfo);
+                                this.progressTracker.OneDownloadHasFailed(retry);
+
+                                if (retry)
+                                    failedButRetried.Add(downloadInfo);
+                                else
+                                    failWithoutRetry.Add(downloadInfo);
                                 break;
                             }
                         case HowEnded.NOT_ENDED_YET:

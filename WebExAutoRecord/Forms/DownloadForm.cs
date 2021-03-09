@@ -391,8 +391,6 @@ namespace PoliDLGUI.Forms
 
             // Time to boot up poliwebex.
 
-            
-
             if (!Directory.Exists(StartupForm.RootFolder + @"\Logs"))
                 Directory.CreateDirectory(StartupForm.RootFolder + @"\Logs");
 

@@ -55,7 +55,7 @@ namespace PoliDLGUI.Classes
 
             this.ended = Enums.HowEnded.SUCCESS;
 
-            this.owner.Ended(this, Enums.HowEnded.SUCCESS);
+            this.owner.Ended(this, Enums.HowEnded.SUCCESS, false);
         }
 
         internal void AppendLog(string data)
@@ -66,7 +66,7 @@ namespace PoliDLGUI.Classes
             }
         }
 
-        internal void Failed(bool segmented)
+        internal void Failed(bool segmented, bool retry)
         {
             this.NotDownloaded = Math.Max(this.NotDownloaded, 0) + Math.Max(this.NotDownloadedW, 0);
             if (segmented)
@@ -91,7 +91,7 @@ namespace PoliDLGUI.Classes
 
             this.ended = Enums.HowEnded.FAIL;
 
-            this.owner.Ended(this, Enums.HowEnded.FAIL);
+            this.owner.Ended(this, Enums.HowEnded.FAIL, retry: retry);
         }
 
         internal void ClickedMoreInfo()
