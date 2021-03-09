@@ -60,21 +60,6 @@ namespace PoliDLGUI.Utils
 
             string outLineData = outLine.Data.Trim();
 
-            //This should be at the bottom, but I moved it up to try and debug.
-            try
-            {
-                if ((StartupForm.ForceLog | shouldLog) & (outLine.Data.Trim() != ""))
-                { //Really likes printing empty lines for some reason.
-                    this.downloadForm.LogsStream.Write(outLine.Data + Constants.vbCrLf);
-                    downloadinfo.AppendLog(outLine.Data);
-                }
-            }
-            catch (Exception ex)
-            {
-                // Error writing to the log file.
-                Console.WriteLine(ex);
-            }
-
             switch (outLineData)
             {
                 case "You are not authorized to access this video.":
@@ -250,8 +235,9 @@ namespace PoliDLGUI.Utils
                     }
                     break;
 
-                case var s when s.Contains("Going to the next one"):
+                case var s when s.Contains("Going to the next one") | s.Contains("TimeoutError"):
                     downloadinfo.DLError = true;
+                    downloadinfo.Failed(segmented, retry: false);
                     break;
 
                 case var s when s.Contains("This video is password protected") | s.Contains("Wrong password!"):
@@ -316,7 +302,20 @@ namespace PoliDLGUI.Utils
                     break;
             }
 
-            //
+            //This should be at the bottom, but I moved it up to try and debug.
+            try
+            {
+                if ((StartupForm.ForceLog | shouldLog) & (outLine.Data.Trim() != ""))
+                { //Really likes printing empty lines for some reason.
+                    this.downloadForm.LogsStream.Write(outLine.Data + Constants.vbCrLf);
+                    downloadinfo.AppendLog(outLine.Data);
+                }
+            }
+            catch (Exception ex)
+            {
+                // Error writing to the log file.
+                Console.WriteLine(ex);
+            }
         }
     }
 }
