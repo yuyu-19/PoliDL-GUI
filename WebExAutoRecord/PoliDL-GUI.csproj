@@ -164,6 +164,7 @@
     <Compile Include="Forms\LogViewForm.Designer.cs">
       <DependentUpon>LogViewForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Classes\ProgressUpdateClass.cs" />
     <Compile Include="Forms\ResultsListForm.cs">
       <SubType>Form</SubType>
     </Compile>

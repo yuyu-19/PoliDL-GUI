@@ -19,7 +19,7 @@ namespace PoliDLGUI.Forms
 
         internal void OneDownloadHasFinished()
         {
-            UpdateFileNum2(ProgressUpdate.COMPLETED);
+            UpdateFileNum2(new ProgressUpdateClass(ProgressUpdate.COMPLETED, false));
         }
 
         private void ProgressTracker_Closing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -54,9 +54,9 @@ namespace PoliDLGUI.Forms
             }
         }
 
-        internal void OneDownloadHasFailed()
+        internal void OneDownloadHasFailed(bool retry)
         {
-            UpdateFileNum2(ProgressUpdate.ERROR);
+            UpdateFileNum2(new ProgressUpdateClass(ProgressUpdate.ERROR, retry));
         }
 
         public static void KillAllProcesses(DownloadPool list)
@@ -107,9 +107,9 @@ namespace PoliDLGUI.Forms
             }
         }
 
-        private delegate void UpdateFileNumCallBack(ProgressUpdate text);
+        private delegate void UpdateFileNumCallBack(ProgressUpdateClass text);
 
-        public void UpdateFileNum2(ProgressUpdate text)
+        public void UpdateFileNum2(ProgressUpdateClass text)
         {
             // InvokeRequired required compares the thread ID of the
             // calling thread to the thread ID of the creating thread.
@@ -124,9 +124,9 @@ namespace PoliDLGUI.Forms
 
             var SuccessCount = this.downloadForm.downloadPool.success.GetCount();
             var CurrentCount = this.downloadForm.downloadPool.current.GetCount();
-            var FailedCount = this.downloadForm.downloadPool.fail.GetCount();
+            var FailedCount = this.downloadForm.downloadPool.failWithoutRetry.GetCount();
 
-            switch (text)
+            switch (text.progressUpdate)
             {
                 case ProgressUpdate.COMPLETED:
                     {
@@ -135,7 +135,14 @@ namespace PoliDLGUI.Forms
                     }
                 case ProgressUpdate.ERROR:
                     {
-                        this.NumFailed.Text = ((Convert.ToInt32(this.NumFailed.Text)) + 1).ToString();
+                        if (text.retry)
+                        {
+                            ; //do we something here?
+                        }
+                        else
+                        {
+                            this.NumFailed.Text = ((Convert.ToInt32(this.NumFailed.Text)) + 1).ToString();
+                        }
                         break;
                     }
                 case ProgressUpdate.STARTED:
@@ -157,7 +164,7 @@ namespace PoliDLGUI.Forms
 
         internal void UpdateFileNum()
         {
-            UpdateFileNum2(ProgressUpdate.STARTED);
+            UpdateFileNum2(new ProgressUpdateClass(ProgressUpdate.STARTED, false));
         }
 
         private void ProgressTracker_FormClosing(object sender, FormClosingEventArgs e)
@@ -190,7 +197,7 @@ namespace PoliDLGUI.Forms
                     break;
 
                 case HowEnded.FAIL:
-                    r = this.downloadForm.downloadPool.fail;
+                    r = this.downloadForm.downloadPool.failWithoutRetry;
                     break;
 
                 case HowEnded.NOT_ENDED_YET:
