@@ -90,7 +90,7 @@ namespace PoliDLGUI.Classes
                     Location = new System.Drawing.Point(WIDTH_LABEL, (i + 1) * HEIGHT),
                     Size = new System.Drawing.Size(WIDTH_BUTTON, HEIGHT),
                     Parent = panel1,
-                    Text = StartupForm.IsItalian ? "More info" : "Ulteriori informazioni"
+                    Text = StartupForm.IsItalian ? "Ulteriori informazioni" : "More info"
                 };
 
                 b.Click += (sender, args) => p.ClickedMoreInfo();
