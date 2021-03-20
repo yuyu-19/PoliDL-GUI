@@ -89,8 +89,10 @@ namespace PoliDLGUI.Forms
             this.Controls.Add(this.localmode);
             this.Controls.Add(this.Question);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.MaximizeBox = false;
             this.Name = "StartupForm";
             this.Text = "PoliDL-GUI";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.StartupForm_FormClosing);
             this.Load += new System.EventHandler(this.StartupForm_Load);
             this.ResumeLayout(false);
 

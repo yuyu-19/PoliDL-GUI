@@ -37,89 +37,225 @@ namespace PoliDLGUI.Forms
         [DebuggerStepThrough()]
         private void InitializeComponent()
         {
-            components = new System.ComponentModel.Container();
-            OverallProgress = new ProgressBar();
-            FileNum = new Label();
-            DLspeed = new Label();
-            _Timer = new Timer(components);
-            _Timer.Tick += new EventHandler(Timer_Tick);
-            SuspendLayout();
+            this.OverallProgressCurrent = new System.Windows.Forms.ProgressBar();
+            this.FileNumCurrent = new System.Windows.Forms.Label();
+            this.DLspeed = new System.Windows.Forms.Label();
+            this.SuccessfulDL = new System.Windows.Forms.Label();
+            this.NumCompleted = new System.Windows.Forms.Label();
+            this.FailedDL = new System.Windows.Forms.Label();
+            this.NumFailed = new System.Windows.Forms.Label();
+            this.buttonInfoCompleted = new System.Windows.Forms.Button();
+            this.buttonInfoFailed = new System.Windows.Forms.Button();
+            this.CurrentDL = new System.Windows.Forms.Label();
+            this.NumDownloading = new System.Windows.Forms.Label();
+            this.buttonInfoCurrent = new System.Windows.Forms.Button();
+            this.CurrentLbl = new System.Windows.Forms.Label();
+            this.FileNumTotal = new System.Windows.Forms.Label();
+            this.OverallProgressTotal = new System.Windows.Forms.ProgressBar();
+            this.TotalLbl = new System.Windows.Forms.Label();
+            this.SuspendLayout();
             // 
-            // OverallProgress
+            // OverallProgressCurrent
             // 
-            OverallProgress.Location = new Point(12, 37);
-            OverallProgress.Name = "OverallProgress";
-            OverallProgress.Size = new Size(424, 23);
-            OverallProgress.TabIndex = 0;
+            this.OverallProgressCurrent.Location = new System.Drawing.Point(13, 37);
+            this.OverallProgressCurrent.Name = "OverallProgressCurrent";
+            this.OverallProgressCurrent.Size = new System.Drawing.Size(412, 23);
+            this.OverallProgressCurrent.TabIndex = 0;
             // 
-            // FileNum
+            // FileNumCurrent
             // 
-            FileNum.AutoSize = true;
-            FileNum.Font = new Font("Microsoft Sans Serif", 15.75f, FontStyle.Regular, GraphicsUnit.Point, Conversions.ToByte(0));
-            FileNum.Location = new Point(7, 9);
-            FileNum.Name = "FileNum";
-            FileNum.Size = new Size(88, 25);
-            FileNum.TabIndex = 1;
-            FileNum.Text = "File X/Y";
+            this.FileNumCurrent.AutoSize = true;
+            this.FileNumCurrent.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.FileNumCurrent.Location = new System.Drawing.Point(7, 9);
+            this.FileNumCurrent.Name = "FileNumCurrent";
+            this.FileNumCurrent.Size = new System.Drawing.Size(88, 25);
+            this.FileNumCurrent.TabIndex = 1;
+            this.FileNumCurrent.Text = "File X/Y";
             // 
             // DLspeed
             // 
-            DLspeed.AutoSize = true;
-            DLspeed.Font = new Font("Microsoft Sans Serif", 15.75f, FontStyle.Regular, GraphicsUnit.Point, Conversions.ToByte(0));
-            DLspeed.Location = new Point(337, 9);
-            DLspeed.Name = "DLspeed";
-            DLspeed.Size = new Size(0, 25);
-            DLspeed.TabIndex = 2;
+            this.DLspeed.AutoSize = true;
+            this.DLspeed.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.DLspeed.Location = new System.Drawing.Point(337, 9);
+            this.DLspeed.Name = "DLspeed";
+            this.DLspeed.Size = new System.Drawing.Size(0, 25);
+            this.DLspeed.TabIndex = 2;
             // 
-            // Timer
+            // SuccessfulDL
             // 
-            _Timer.Enabled = true;
-            _Timer.Interval = 500;
+            this.SuccessfulDL.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.SuccessfulDL.Location = new System.Drawing.Point(12, 215);
+            this.SuccessfulDL.Name = "SuccessfulDL";
+            this.SuccessfulDL.Size = new System.Drawing.Size(241, 25);
+            this.SuccessfulDL.TabIndex = 3;
+            this.SuccessfulDL.Text = "Completed successfully";
+            this.SuccessfulDL.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // NumCompleted
+            // 
+            this.NumCompleted.AutoSize = true;
+            this.NumCompleted.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.NumCompleted.Location = new System.Drawing.Point(259, 215);
+            this.NumCompleted.Name = "NumCompleted";
+            this.NumCompleted.Size = new System.Drawing.Size(24, 25);
+            this.NumCompleted.TabIndex = 4;
+            this.NumCompleted.Text = "0";
+            // 
+            // FailedDL
+            // 
+            this.FailedDL.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.FailedDL.Location = new System.Drawing.Point(18, 250);
+            this.FailedDL.Name = "FailedDL";
+            this.FailedDL.Size = new System.Drawing.Size(235, 25);
+            this.FailedDL.TabIndex = 5;
+            this.FailedDL.Text = "Failed";
+            this.FailedDL.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // NumFailed
+            // 
+            this.NumFailed.AutoSize = true;
+            this.NumFailed.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.NumFailed.Location = new System.Drawing.Point(259, 250);
+            this.NumFailed.Name = "NumFailed";
+            this.NumFailed.Size = new System.Drawing.Size(24, 25);
+            this.NumFailed.TabIndex = 6;
+            this.NumFailed.Text = "0";
+            // 
+            // buttonInfoCompleted
+            // 
+            this.buttonInfoCompleted.Location = new System.Drawing.Point(294, 215);
+            this.buttonInfoCompleted.Name = "buttonInfoCompleted";
+            this.buttonInfoCompleted.Size = new System.Drawing.Size(131, 23);
+            this.buttonInfoCompleted.TabIndex = 7;
+            this.buttonInfoCompleted.Text = "More info";
+            this.buttonInfoCompleted.UseVisualStyleBackColor = true;
+            this.buttonInfoCompleted.Click += new System.EventHandler(this.ButtonInfoCompleted_Click);
+            // 
+            // buttonInfoFailed
+            // 
+            this.buttonInfoFailed.Location = new System.Drawing.Point(294, 250);
+            this.buttonInfoFailed.Name = "buttonInfoFailed";
+            this.buttonInfoFailed.Size = new System.Drawing.Size(131, 23);
+            this.buttonInfoFailed.TabIndex = 8;
+            this.buttonInfoFailed.Text = "More info";
+            this.buttonInfoFailed.UseVisualStyleBackColor = true;
+            this.buttonInfoFailed.Click += new System.EventHandler(this.ButtonInfoFailed_Click);
+            // 
+            // CurrentDL
+            // 
+            this.CurrentDL.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.CurrentDL.Location = new System.Drawing.Point(13, 178);
+            this.CurrentDL.Name = "CurrentDL";
+            this.CurrentDL.Size = new System.Drawing.Size(240, 25);
+            this.CurrentDL.TabIndex = 9;
+            this.CurrentDL.Text = "Currently downloading";
+            this.CurrentDL.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // NumDownloading
+            // 
+            this.NumDownloading.AutoSize = true;
+            this.NumDownloading.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.NumDownloading.Location = new System.Drawing.Point(259, 178);
+            this.NumDownloading.Name = "NumDownloading";
+            this.NumDownloading.Size = new System.Drawing.Size(24, 25);
+            this.NumDownloading.TabIndex = 10;
+            this.NumDownloading.Text = "0";
+            // 
+            // buttonInfoCurrent
+            // 
+            this.buttonInfoCurrent.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
+            this.buttonInfoCurrent.Location = new System.Drawing.Point(294, 178);
+            this.buttonInfoCurrent.Name = "buttonInfoCurrent";
+            this.buttonInfoCurrent.Size = new System.Drawing.Size(131, 23);
+            this.buttonInfoCurrent.TabIndex = 11;
+            this.buttonInfoCurrent.Text = "More info";
+            this.buttonInfoCurrent.UseVisualStyleBackColor = true;
+            this.buttonInfoCurrent.Click += new System.EventHandler(this.Button1_Click);
+            // 
+            // CurrentLbl
+            // 
+            this.CurrentLbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.CurrentLbl.Location = new System.Drawing.Point(294, 13);
+            this.CurrentLbl.Name = "CurrentLbl";
+            this.CurrentLbl.Size = new System.Drawing.Size(131, 20);
+            this.CurrentLbl.TabIndex = 12;
+            this.CurrentLbl.Text = "Current";
+            this.CurrentLbl.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // FileNumTotal
+            // 
+            this.FileNumTotal.AutoSize = true;
+            this.FileNumTotal.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.FileNumTotal.Location = new System.Drawing.Point(7, 86);
+            this.FileNumTotal.Name = "FileNumTotal";
+            this.FileNumTotal.Size = new System.Drawing.Size(88, 25);
+            this.FileNumTotal.TabIndex = 14;
+            this.FileNumTotal.Text = "File X/Y";
+            // 
+            // OverallProgressTotal
+            // 
+            this.OverallProgressTotal.Location = new System.Drawing.Point(12, 114);
+            this.OverallProgressTotal.Name = "OverallProgressTotal";
+            this.OverallProgressTotal.Size = new System.Drawing.Size(413, 23);
+            this.OverallProgressTotal.TabIndex = 13;
+            // 
+            // TotalLbl
+            // 
+            this.TotalLbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.TotalLbl.Location = new System.Drawing.Point(305, 91);
+            this.TotalLbl.Name = "TotalLbl";
+            this.TotalLbl.Size = new System.Drawing.Size(120, 20);
+            this.TotalLbl.TabIndex = 15;
+            this.TotalLbl.Text = "Total";
+            this.TotalLbl.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
             // ProgressTracker
             // 
-            AutoScaleDimensions = new SizeF(6.0f, 13.0f);
-            AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(448, 72);
-            Controls.Add(DLspeed);
-            Controls.Add(FileNum);
-            Controls.Add(OverallProgress);
-            FormBorderStyle = FormBorderStyle.FixedDialog;
-            Name = "ProgressTracker";
-            StartPosition = FormStartPosition.CenterParent;
-            Closing += new System.ComponentModel.CancelEventHandler(ProgressTracker_Closing);
-            Load += new EventHandler(ProgressTracker_Load);
-            ResumeLayout(false);
-            PerformLayout();
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.ClientSize = new System.Drawing.Size(437, 285);
+            this.Controls.Add(this.TotalLbl);
+            this.Controls.Add(this.FileNumTotal);
+            this.Controls.Add(this.OverallProgressTotal);
+            this.Controls.Add(this.CurrentLbl);
+            this.Controls.Add(this.buttonInfoCurrent);
+            this.Controls.Add(this.NumDownloading);
+            this.Controls.Add(this.CurrentDL);
+            this.Controls.Add(this.buttonInfoFailed);
+            this.Controls.Add(this.buttonInfoCompleted);
+            this.Controls.Add(this.NumFailed);
+            this.Controls.Add(this.FailedDL);
+            this.Controls.Add(this.NumCompleted);
+            this.Controls.Add(this.SuccessfulDL);
+            this.Controls.Add(this.DLspeed);
+            this.Controls.Add(this.FileNumCurrent);
+            this.Controls.Add(this.OverallProgressCurrent);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.Name = "ProgressTracker";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+            this.Closing += new System.ComponentModel.CancelEventHandler(this.ProgressTracker_Closing);
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ProgressTracker_FormClosing);
+            this.Load += new System.EventHandler(this.ProgressTracker_Load);
+            this.ResumeLayout(false);
+            this.PerformLayout();
+
         }
 
-        public Label FileNum;
+        public Label FileNumCurrent;
         public Label DLspeed;
-        public ProgressBar OverallProgress;
-        private Timer _Timer;
-
-        internal Timer Timer
-        {
-            [MethodImpl(MethodImplOptions.Synchronized)]
-            get
-            {
-                return _Timer;
-            }
-
-            [MethodImpl(MethodImplOptions.Synchronized)]
-            set
-            {
-                if (_Timer != null)
-                {
-                    _Timer.Tick -= Timer_Tick;
-                }
-
-                _Timer = value;
-                if (_Timer != null)
-                {
-                    _Timer.Tick += Timer_Tick;
-                }
-            }
-        }
+        public ProgressBar OverallProgressCurrent;
+        public Label SuccessfulDL;
+        public Label NumCompleted;
+        public Label FailedDL;
+        public Label NumFailed;
+        private Button buttonInfoCompleted;
+        private Button buttonInfoFailed;
+        public Label CurrentDL;
+        public Label NumDownloading;
+        private Button buttonInfoCurrent;
+        public Label CurrentLbl;
+        public Label FileNumTotal;
+        public ProgressBar OverallProgressTotal;
+        public Label TotalLbl;
     }
 }

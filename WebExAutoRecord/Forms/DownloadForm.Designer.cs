@@ -37,150 +37,156 @@ namespace PoliDLGUI.Forms
         [DebuggerStepThrough()]
         private void InitializeComponent()
         {
-            ModeLbl = new Label();
-            _ModeSelect = new ComboBox();
-            _ModeSelect.SelectedIndexChanged += new EventHandler(ModeSelect_SelectedIndexChanged);
-            _Browse = new Button();
-            _Browse.Click += new EventHandler(Browse_Click);
-            FilePath = new TextBox();
-            _DLButton = new Button();
-            _DLButton.Click += new EventHandler(DLButton_Click);
-            URLlist = new TextBox();
-            ExtensionInfo = new Label();
-            DLfolderlabel = new Label();
-            FolderPath = new TextBox();
-            _BrowseFolder = new Button();
-            _BrowseFolder.Click += new EventHandler(BrowseFolder_Click);
-            _CheckSegmented = new CheckBox();
-            _CheckSegmented.CheckedChanged += new EventHandler(CheckSegmented_CheckedChanged);
-            SuspendLayout();
+            this.ModeLbl = new System.Windows.Forms.Label();
+            this._ModeSelect = new System.Windows.Forms.ComboBox();
+            this._Browse = new System.Windows.Forms.Button();
+            this.FilePath = new System.Windows.Forms.TextBox();
+            this._DLButton = new System.Windows.Forms.Button();
+            this.URLlist = new System.Windows.Forms.TextBox();
+            this.ExtensionInfo = new System.Windows.Forms.Label();
+            this.DLfolderlabel = new System.Windows.Forms.Label();
+            this.FolderPath = new System.Windows.Forms.TextBox();
+            this._BrowseFolder = new System.Windows.Forms.Button();
+            this._CheckSegmented = new System.Windows.Forms.CheckBox();
+            this.SuspendLayout();
             // 
             // ModeLbl
             // 
-            ModeLbl.AutoSize = true;
-            ModeLbl.Font = new Font("Microsoft Sans Serif", 14.25f, FontStyle.Regular, GraphicsUnit.Point, Conversions.ToByte(0));
-            ModeLbl.Location = new Point(12, 30);
-            ModeLbl.Name = "ModeLbl";
-            ModeLbl.Size = new Size(64, 24);
-            ModeLbl.TabIndex = 0;
-            ModeLbl.Text = "Mode:";
+            this.ModeLbl.AutoSize = true;
+            this.ModeLbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ModeLbl.Location = new System.Drawing.Point(12, 30);
+            this.ModeLbl.Name = "ModeLbl";
+            this.ModeLbl.Size = new System.Drawing.Size(64, 24);
+            this.ModeLbl.TabIndex = 0;
+            this.ModeLbl.Text = "Mode:";
             // 
-            // ModeSelect
+            // _ModeSelect
             // 
-            _ModeSelect.DropDownStyle = ComboBoxStyle.DropDownList;
-            _ModeSelect.FormattingEnabled = true;
-            _ModeSelect.Items.AddRange(new object[] { "File", "Text", "Folder" });
-            _ModeSelect.Location = new Point(82, 35);
-            _ModeSelect.Name = "_ModeSelect";
-            _ModeSelect.Size = new Size(91, 21);
-            _ModeSelect.TabIndex = 1;
+            this._ModeSelect.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this._ModeSelect.FormattingEnabled = true;
+            this._ModeSelect.Items.AddRange(new object[] {
+            "File",
+            "Text",
+            "Folder"});
+            this._ModeSelect.Location = new System.Drawing.Point(82, 35);
+            this._ModeSelect.Name = "_ModeSelect";
+            this._ModeSelect.Size = new System.Drawing.Size(91, 21);
+            this._ModeSelect.TabIndex = 1;
+            this._ModeSelect.SelectedIndexChanged += new System.EventHandler(this.ModeSelect_SelectedIndexChanged);
             // 
-            // Browse
+            // _Browse
             // 
-            _Browse.Location = new Point(282, 67);
-            _Browse.Name = "_Browse";
-            _Browse.Size = new Size(75, 23);
-            _Browse.TabIndex = 2;
-            _Browse.Text = "Browse";
-            _Browse.UseVisualStyleBackColor = true;
+            this._Browse.Location = new System.Drawing.Point(282, 67);
+            this._Browse.Name = "_Browse";
+            this._Browse.Size = new System.Drawing.Size(75, 23);
+            this._Browse.TabIndex = 2;
+            this._Browse.Text = "Browse";
+            this._Browse.UseVisualStyleBackColor = true;
+            this._Browse.Click += new System.EventHandler(this.Browse_Click);
             // 
             // FilePath
             // 
-            FilePath.AllowDrop = true;
-            FilePath.Location = new Point(16, 69);
-            FilePath.Name = "FilePath";
-            FilePath.Size = new Size(260, 20);
-            FilePath.TabIndex = 3;
+            this.FilePath.AllowDrop = true;
+            this.FilePath.Location = new System.Drawing.Point(16, 69);
+            this.FilePath.Name = "FilePath";
+            this.FilePath.Size = new System.Drawing.Size(260, 20);
+            this.FilePath.TabIndex = 3;
             // 
-            // DLButton
+            // _DLButton
             // 
-            _DLButton.Location = new Point(480, 67);
-            _DLButton.Name = "_DLButton";
-            _DLButton.Size = new Size(75, 23);
-            _DLButton.TabIndex = 4;
-            _DLButton.Text = "Download";
-            _DLButton.UseVisualStyleBackColor = true;
+            this._DLButton.Location = new System.Drawing.Point(480, 67);
+            this._DLButton.Name = "_DLButton";
+            this._DLButton.Size = new System.Drawing.Size(75, 23);
+            this._DLButton.TabIndex = 4;
+            this._DLButton.Text = "Download";
+            this._DLButton.UseVisualStyleBackColor = true;
+            this._DLButton.Click += new System.EventHandler(this.DLButton_Click);
             // 
             // URLlist
             // 
-            URLlist.AcceptsReturn = true;
-            URLlist.AllowDrop = true;
-            URLlist.Location = new Point(16, 67);
-            URLlist.Multiline = true;
-            URLlist.Name = "URLlist";
-            URLlist.ScrollBars = ScrollBars.Vertical;
-            URLlist.Size = new Size(539, 307);
-            URLlist.TabIndex = 5;
-            URLlist.Visible = false;
+            this.URLlist.AcceptsReturn = true;
+            this.URLlist.AllowDrop = true;
+            this.URLlist.Location = new System.Drawing.Point(16, 67);
+            this.URLlist.Multiline = true;
+            this.URLlist.Name = "URLlist";
+            this.URLlist.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.URLlist.Size = new System.Drawing.Size(539, 307);
+            this.URLlist.TabIndex = 5;
+            this.URLlist.Visible = false;
+            this.URLlist.TextChanged += new System.EventHandler(this.URLlist_TextChanged);
             // 
             // ExtensionInfo
             // 
-            ExtensionInfo.AutoSize = true;
-            ExtensionInfo.Font = new Font("Microsoft Sans Serif", 9.75f, FontStyle.Regular, GraphicsUnit.Point, Conversions.ToByte(0));
-            ExtensionInfo.Location = new Point(179, 38);
-            ExtensionInfo.Name = "ExtensionInfo";
-            ExtensionInfo.Size = new Size(346, 16);
-            ExtensionInfo.TabIndex = 6;
-            ExtensionInfo.Text = "Supported file types: html, xlsx, docx, zip (of the other files)" + '\r' + '\n';
+            this.ExtensionInfo.AutoSize = true;
+            this.ExtensionInfo.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ExtensionInfo.Location = new System.Drawing.Point(179, 38);
+            this.ExtensionInfo.Name = "ExtensionInfo";
+            this.ExtensionInfo.Size = new System.Drawing.Size(346, 16);
+            this.ExtensionInfo.TabIndex = 6;
+            this.ExtensionInfo.Text = "Supported file types: html, xlsx, docx, zip (of the other files)\r\n";
             // 
             // DLfolderlabel
             // 
-            DLfolderlabel.AutoSize = true;
-            DLfolderlabel.Font = new Font("Microsoft Sans Serif", 14.25f, FontStyle.Regular, GraphicsUnit.Point, Conversions.ToByte(0));
-            DLfolderlabel.Location = new Point(12, 8);
-            DLfolderlabel.Name = "DLfolderlabel";
-            DLfolderlabel.Size = new Size(160, 24);
-            DLfolderlabel.TabIndex = 7;
-            DLfolderlabel.Text = "Download Folder:";
+            this.DLfolderlabel.AutoSize = true;
+            this.DLfolderlabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.DLfolderlabel.Location = new System.Drawing.Point(12, 8);
+            this.DLfolderlabel.Name = "DLfolderlabel";
+            this.DLfolderlabel.Size = new System.Drawing.Size(160, 24);
+            this.DLfolderlabel.TabIndex = 7;
+            this.DLfolderlabel.Text = "Download Folder:";
             // 
             // FolderPath
             // 
-            FolderPath.Location = new Point(178, 13);
-            FolderPath.Name = "FolderPath";
-            FolderPath.Size = new Size(260, 20);
-            FolderPath.TabIndex = 8;
+            this.FolderPath.Location = new System.Drawing.Point(178, 13);
+            this.FolderPath.Name = "FolderPath";
+            this.FolderPath.Size = new System.Drawing.Size(260, 20);
+            this.FolderPath.TabIndex = 8;
             // 
-            // BrowseFolder
+            // _BrowseFolder
             // 
-            _BrowseFolder.Location = new Point(444, 12);
-            _BrowseFolder.Name = "_BrowseFolder";
-            _BrowseFolder.Size = new Size(75, 23);
-            _BrowseFolder.TabIndex = 9;
-            _BrowseFolder.Text = "Browse";
-            _BrowseFolder.UseVisualStyleBackColor = true;
+            this._BrowseFolder.Location = new System.Drawing.Point(444, 12);
+            this._BrowseFolder.Name = "_BrowseFolder";
+            this._BrowseFolder.Size = new System.Drawing.Size(75, 23);
+            this._BrowseFolder.TabIndex = 9;
+            this._BrowseFolder.Text = "Browse";
+            this._BrowseFolder.UseVisualStyleBackColor = true;
+            this._BrowseFolder.Click += new System.EventHandler(this.BrowseFolder_Click);
             // 
-            // CheckSegmented
+            // _CheckSegmented
             // 
-            _CheckSegmented.AutoSize = true;
-            _CheckSegmented.Location = new Point(16, 382);
-            _CheckSegmented.Name = "_CheckSegmented";
-            _CheckSegmented.Size = new Size(113, 30);
-            _CheckSegmented.TabIndex = 10;
-            _CheckSegmented.Text = "Run unsegmented" + '\r' + '\n' + "(Fallback option)";
-            _CheckSegmented.UseVisualStyleBackColor = true;
+            this._CheckSegmented.AutoSize = true;
+            this._CheckSegmented.Location = new System.Drawing.Point(16, 382);
+            this._CheckSegmented.Name = "_CheckSegmented";
+            this._CheckSegmented.Size = new System.Drawing.Size(113, 30);
+            this._CheckSegmented.TabIndex = 10;
+            this._CheckSegmented.Text = "Run unsegmented\r\n(Fallback option)";
+            this._CheckSegmented.UseVisualStyleBackColor = true;
+            this._CheckSegmented.CheckedChanged += new System.EventHandler(this.CheckSegmented_CheckedChanged);
             // 
             // DownloadForm
             // 
-            AutoScaleDimensions = new SizeF(6.0f, 13.0f);
-            AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(567, 424);
-            Controls.Add(_CheckSegmented);
-            Controls.Add(_BrowseFolder);
-            Controls.Add(FolderPath);
-            Controls.Add(DLfolderlabel);
-            Controls.Add(ExtensionInfo);
-            Controls.Add(_DLButton);
-            Controls.Add(FilePath);
-            Controls.Add(_Browse);
-            Controls.Add(_ModeSelect);
-            Controls.Add(ModeLbl);
-            Controls.Add(URLlist);
-            FormBorderStyle = FormBorderStyle.FixedDialog;
-            Name = "DownloadForm";
-            StartPosition = FormStartPosition.CenterParent;
-            Load += new EventHandler(DownloadForm_Load);
-            ResumeLayout(false);
-            PerformLayout();
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.ClientSize = new System.Drawing.Size(567, 424);
+            this.Controls.Add(this._CheckSegmented);
+            this.Controls.Add(this._BrowseFolder);
+            this.Controls.Add(this.FolderPath);
+            this.Controls.Add(this.DLfolderlabel);
+            this.Controls.Add(this.ExtensionInfo);
+            this.Controls.Add(this._DLButton);
+            this.Controls.Add(this.FilePath);
+            this.Controls.Add(this._Browse);
+            this.Controls.Add(this._ModeSelect);
+            this.Controls.Add(this.ModeLbl);
+            this.Controls.Add(this.URLlist);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.Name = "DownloadForm";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.DownloadForm_FormClosing);
+            this.Load += new System.EventHandler(this.DownloadForm_Load);
+            this.ResumeLayout(false);
+            this.PerformLayout();
+
         }
 
         internal Label ModeLbl;
