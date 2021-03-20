@@ -517,7 +517,18 @@ namespace PoliDLGUI.Forms
 
                 var r = new Regex("([^a-zA-Z0-9]+)|$");
                 string NewURL;
-                if (AllText.IndexOf("/playback/", i) == -1 | AllText.IndexOf("/play/", i) < AllText.IndexOf("/playback/", i))
+                if (AllText.IndexOf("/recording/", i) + "/recording/".Length != AllText.IndexOf("playback/", i) & AllText.IndexOf("/recording/", i) + "/recording/".Length != AllText.IndexOf("play/", i)) {
+                    NewURL = AllText.Substring(i, AllText.IndexOf("/playback", i) - i + "/playback".Length).Trim();
+                }
+                else {
+                    if (AllText.IndexOf("/playback/", i) == -1 | (AllText.IndexOf("/play/", i) < AllText.IndexOf("/playback/", i) & AllText.IndexOf("/play/") > -1))
+                        NewURL = AllText.Substring(i, r.Match(AllText, AllText.IndexOf("/play/", i) + "/play/".Length).Index - i).Trim();
+                    else
+                        NewURL = AllText.Substring(i, r.Match(AllText, AllText.IndexOf("/playback/", i) + "/playback/".Length).Index - i).Trim();
+                }
+
+
+                if (AllText.IndexOf("/playback/", i) == -1 | (AllText.IndexOf("/play/", i) < AllText.IndexOf("/playback/", i) & AllText.IndexOf("/play/", i) != -1))
                 {
                     NewURL = AllText.Substring(i, r.Match(AllText, AllText.IndexOf("/play/", i) + "/play/".Length).Index - i).Trim();
                 }

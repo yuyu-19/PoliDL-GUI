@@ -69,7 +69,15 @@ namespace PoliDLGUI.Classes
         internal void Failed(bool segmented, bool retry)
         {
             this.NotDownloaded = Math.Max(this.NotDownloaded, 0) + Math.Max(this.NotDownloadedW, 0);
-            if (segmented)
+            if (retry) {
+                if (StartupForm.IsItalian) {
+                    Console.WriteLine("È fallito il download di " + this.NotDownloaded + " video. È un bug noto, riprovo in modalità non-headless.");
+                }
+                else {
+                    Console.WriteLine("Could not download " + this.NotDownloaded + " videos. This is a known bug. Retrying in non-headless mode.");
+                }
+            }
+            else if (segmented)
             {
                 if (StartupForm.IsItalian)
                 {
