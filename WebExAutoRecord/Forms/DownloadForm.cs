@@ -499,7 +499,7 @@ namespace PoliDLGUI.Forms
                 i = AllText.IndexOf("politecnicomilano.webex.com/", i + 1);
             }
 
-            // This was it should just keep working no matter the link format.
+            // This way it should just keep working no matter the link format.
             // Why did I do this you ask? Because I've stumbled across a fourth goddamn URL format, and with the way I've been doing I would've had to add support for each fucking URL scheme
             // And I've just about had it with this thing
 
@@ -521,10 +521,12 @@ namespace PoliDLGUI.Forms
                     NewURL = AllText.Substring(i, AllText.IndexOf("/playback", i) - i + "/playback".Length).Trim();
                 }
                 else {
-                    if (AllText.IndexOf("/playback/", i) == -1 | (AllText.IndexOf("/play/", i) < AllText.IndexOf("/playback/", i) & AllText.IndexOf("/play/") > -1))
+                    if ((AllText.IndexOf("/playback/", i) == -1 | (AllText.IndexOf("/play/", i) < AllText.IndexOf("/playback/", i))) & AllText.IndexOf("/play/",i) > -1)
                         NewURL = AllText.Substring(i, r.Match(AllText, AllText.IndexOf("/play/", i) + "/play/".Length).Index - i).Trim();
-                    else
+                    else if (AllText.IndexOf("/playback/", i) > -1)
                         NewURL = AllText.Substring(i, r.Match(AllText, AllText.IndexOf("/playback/", i) + "/playback/".Length).Index - i).Trim();
+                    else
+                        NewURL = "";
                 }
 
 
