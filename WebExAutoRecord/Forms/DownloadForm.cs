@@ -67,6 +67,7 @@ namespace PoliDLGUI.Forms
             {
                 FilePath.Text = COPF.FileName;
             }
+            this.BringToFront();
         }
 
         private void BrowseFolder_Click(object sender, EventArgs e)
@@ -81,6 +82,7 @@ namespace PoliDLGUI.Forms
             {
                 FolderPath.Text = COPF.FileName;
             }
+            this.BringToFront();
         }
 
         private void DownloadForm_Load(object sender, EventArgs e)
