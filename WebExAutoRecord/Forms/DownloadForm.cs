@@ -431,6 +431,9 @@ namespace PoliDLGUI.Forms
                 }
             }
 
+            foreach (var x in WebexURLs)
+                LogsStream.WriteLine(x);
+
             if (WebexURLs != null && WebexURLs.Count > 0)
             {
                 foreach (var x in WebexURLs)
@@ -507,9 +510,11 @@ namespace PoliDLGUI.Forms
 
             // Also if you're actually reading these comments god bless your soul and I apologize for the profanity (not really, bugger off)
             // I've also been experiencing a bug which seems to be related to the virtual desktop program I'm using so whatever
-            // I'm keeping the following parts (even if they're theoretically not necessary) JUST IN CASE SOMEONE IS BRIGHT ENOUGH TO FOLLOW A LINK UP WITH ONE OF THE ADDITIONAL SYMBOLS I EXCLUDED.
-            // JUST IN CASE. Nothing could surprise me at this point. I saw a link that had https spelt wrong, which is why I'm no longer looking for "https://politecnico."
+            
+            //This is old code that looked for specific link formats. Has since been scrapped.
 
+
+            /*
             i = AllText.IndexOf("politecnicomilano.webex.com/recordingservice/");
             // It may seem like a waste of resources to just check every time, but we can't be sure if the links are hyperlinks or not, so we'll just grab everything and see
             while (i != -1)
@@ -548,6 +553,8 @@ namespace PoliDLGUI.Forms
                 // CourseLine.Substring(startindex, CourseLine.IndexOf("-", startindex) - startindex).Trim()
                 i = AllText.IndexOf("politecnicomilano.webex.com/recordingservice/", i + 1);
             }
+            
+
 
             // Second loop, for the RCID type links.
             i = AllText.IndexOf("politecnicomilano.webex.com/politecnicomilano/");
@@ -562,6 +569,8 @@ namespace PoliDLGUI.Forms
                 // CourseLine.Substring(startindex, CourseLine.IndexOf("-", startindex) - startindex).Trim()
                 i = AllText.IndexOf("politecnicomilano.webex.com/politecnicomilano/", i + 1);
             }
+            */
+
 
             // Another loop, this time for msstream links
             i = AllText.IndexOf("web.microsoftstream.com");
