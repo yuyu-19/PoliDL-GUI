@@ -60,7 +60,11 @@ namespace PoliDLGUI.Forms
             }
 
             while (string.IsNullOrEmpty(InputText.Text) | InputText.Text is null)
+            {
                 ShowDialog();
+                Activate();
+            }
+               
             if (Query.Contains("video:"))
             {
                 Skip.Visible = false;

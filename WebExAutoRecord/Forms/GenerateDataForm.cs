@@ -1195,7 +1195,7 @@ namespace PoliDLGUI.Forms
                 IsFolderPicker = false,
                 EnsureFileExists = true
             };
-            COPF.Filters.Add(new CommonFileDialogFilter("HTML file", ".html"));
+            COPF.Filters.Add(new CommonFileDialogFilter("HTML file", "html,htm"));
             if (COPF.ShowDialog() == CommonFileDialogResult.Ok)
             {
                 HtmlPath.Text = COPF.FileName;

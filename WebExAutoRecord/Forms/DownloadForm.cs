@@ -24,6 +24,7 @@ namespace PoliDLGUI.Forms
             _DLButton.Name = "DLButton";
             _BrowseFolder.Name = "BrowseFolder";
             _CheckSegmented.Name = "CheckSegmented";
+            _CheckSegmented.Checked = true;
         }
 
         public DownloadPool downloadPool = null;
@@ -94,7 +95,7 @@ namespace PoliDLGUI.Forms
                 ModeLbl.Text = "Modalità:";
                 var CFont = new Font(ModeLbl.Font.FontFamily, 12f, ModeLbl.Font.Style);
                 ModeLbl.Font = CFont;
-                CheckSegmented.Text = "Usa unsegmented" + Constants.vbCrLf + "(Compatibilità)";
+                CheckSegmented.Text = "Unsegmented" + Constants.vbCrLf + "(Più affidabile)";
                 DLfolderlabel.Text = "Cartella Download";
                 var p = ModeLbl.Location;
                 p.Y += 5;
@@ -677,21 +678,21 @@ namespace PoliDLGUI.Forms
 
         private void CheckSegmented_CheckedChanged(object sender, EventArgs e)
         {
-            if (CheckSegmented.Checked == true)
+            if (CheckSegmented.Checked == false)
             {
                 int ans;
                 if (StartupForm.IsItalian)
                 {
-                    ans = (int)Interaction.MsgBox("Sei sicuro? Questo renderà il download più lento e la barra di download meno precisa." + " È consigliato solo se stai avendo problemi.", MsgBoxStyle.YesNo, "Download non segmentato?");
+                    ans = (int)Interaction.MsgBox("Sei sicuro? Questo renderà il download più veloce su PC veloci, ma meno affidabile.", MsgBoxStyle.YesNo, "Download segmentato?");
                 }
                 else
                 {
-                    ans = (int)Interaction.MsgBox("Are you sure? This will make the download slower and the progress bar less accurate." + " It's only recommended if you're experiencing issues.", MsgBoxStyle.YesNo, "Unsegmented download?");
+                    ans = (int)Interaction.MsgBox("Are you sure? This will make the download faster on good computers, but less reliable.", MsgBoxStyle.YesNo, "Segmented download?");
                 }
 
                 if (ans != (int)DialogResult.Yes)
                 {
-                    CheckSegmented.Checked = false;
+                    CheckSegmented.Checked = true;
                 }
             }
         }
