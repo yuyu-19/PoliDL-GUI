@@ -252,7 +252,7 @@ namespace PoliDLGUI.Forms
                 virtualclassroommark = "Virtual Classroom - ";
             }
 
-            var Lines = File.ReadAllLines(HtmlPath.Text, System.Text.Encoding.Default).ToList();
+            var Lines = File.ReadAllLines(HtmlPath.Text).ToList();
             int startindex;
             int LastCourseIndex = 0;
             foreach (var Line in Lines)
@@ -294,6 +294,8 @@ namespace PoliDLGUI.Forms
                 }
                 else if (Line.Contains("<ul style=\"margin-top: 0px; margin-bottom: 0px;"))     // Assume that line contains day data, since that's the only unhandled type
                 {
+                    if (Line.Contains("Nessun orario definito"))
+                        continue;
                     int i = 0;
                     while (Line.IndexOf(":5px;\">", i) != -1)
                     {
@@ -301,7 +303,7 @@ namespace PoliDLGUI.Forms
                         var NewDay = new StartupForm.DayData()
                         {
                             TempDisabled = false,
-                            DayName = Line.Substring(i, Line.IndexOf(frommark, i) - i).Trim()
+                            DayName = Line.Substring(i, Line.IndexOf(frommark, i) - i).Trim().Replace("�", "ì")
                         };
                         i = Line.IndexOf(frommark, i) + frommark.Length;
                         NewDay.StartTime = Line.Substring(i, Line.IndexOf(tomark, i) - i).Trim();
@@ -332,19 +334,18 @@ namespace PoliDLGUI.Forms
 
             // Debug coursedata printout.
 
-            // Dim asda As String
+            /*string asda = "";
 
-            // For Each course In Courses
-            // asda = course.Name & "-" & course.ID
-            // For Each professor In course.Professors
-            // asda = asda & vbCrLf & professor.Key & " - " & professor.Value
-            // Next
+            foreach (var course in Courses)
+            {
+                asda = course.Name + "-" + course.ID;
+                foreach (var professor in course.Professors)
+                    asda = asda + Constants.vbCrLf + professor.Key + " - " + professor.Value;
 
-            // For Each day In course.Days
-            // asda = asda & vbCrLf & day.DayName & "-" & day.StartTime & "-" & day.EndTime
-            // Next
-            // MessageBox.Show(asda)
-            // Next
+                foreach (var day in course.Days)
+                    asda = asda + Constants.vbCrLf + day.DayName + "-" + day.StartTime + "-" + day.EndTime;
+                MessageBox.Show(asda);
+            }*/
 
             // Now we ask the user to assign a name to every day, of every course.
 
@@ -398,13 +399,14 @@ namespace PoliDLGUI.Forms
                     foreach (var day in Course.Days)
                     {
                         fourAMbodgebelike = fourAMbodgebelike + new List<string>().IndexOf(day.DayName) + "," + day.StartTime + "," + day.EndTime + "," + day.WebExLink + ",0" + Constants.vbCrLf;
+                        
                         // Write all the links with the day/time in the corresponding folder
 
                         // There's probably a billion better ways to do this but it's 3am and I'm tired
                         // ERROR HERE???
                         var WT = new WeeklyTrigger()
                         {
-                            DaysOfWeek = (DaysOfTheWeek)Enum.Parse(typeof(DaysOfTheWeek), DayNamesEN[new List<string>().IndexOf(day.DayName)]), // This looks stupid, but it at least works regardless of langauge
+                            DaysOfWeek = (DaysOfTheWeek)Enum.Parse(typeof(DaysOfTheWeek), DayNamesEN[DayNames.IndexOf(day.DayName)]), // This looks stupid, but it at least works regardless of langauge
                             StartBoundary = DateTime.ParseExact(Course.StartDate + " " + day.StartTime + ":59", "dd/MM/yyyy HH:mm:ss", Thread.CurrentThread.CurrentCulture),
                             EndBoundary = DateTime.ParseExact(Course.EndDate + " " + day.EndTime, "dd/MM/yyyy HH:mm", Thread.CurrentThread.CurrentCulture),
                             WeeksInterval = 1
@@ -561,6 +563,17 @@ namespace PoliDLGUI.Forms
             if (IsItalian)
                 f.Text = "Programma di " + CurrentCourse.Name;
             f.Tag = Courses.IndexOf(CurrentCourse);
+
+            if (CurrentCourse.Days.Count == 0)
+            {
+                if (StartupForm.IsItalian)
+                    MessageBox.Show("Il corso non ha orari.");
+                else
+                    MessageBox.Show("Course does not have any set times.");
+
+                return;
+            }
+
             foreach (var Day in CurrentCourse.Days)
             {
                 p.X = 15;
@@ -612,6 +625,9 @@ namespace PoliDLGUI.Forms
                 p.X = p.X + RTB.Width + 10;
                 CB.Location = p;
                 CB.TextChanged += ComboBox_ChangeElement;
+                if (CB.Items.Count == 1)
+                    CB.SelectedIndex = 0;   //If there's just one item, select it.
+
                 var DB = new Button() { Text = "Delete" };
                 if (IsItalian)
                     DB.Text = "Elimina";
@@ -1185,6 +1201,7 @@ namespace PoliDLGUI.Forms
             {
                 SavePath.Text = COPF.FileName;
             }
+            this.Activate();
         }
 
         private void BrowseFile_Click(object sender, EventArgs e)

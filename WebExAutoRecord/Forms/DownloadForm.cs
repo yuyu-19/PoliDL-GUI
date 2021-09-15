@@ -26,7 +26,7 @@ namespace PoliDLGUI.Forms
             _CheckSegmented.Name = "CheckSegmented";
             _CheckSegmented.Checked = true;
         }
-
+        public string lastUsedVideoPW = "";
         public DownloadPool downloadPool = null;
 
         public StreamWriter LogsStream = null;
@@ -683,11 +683,11 @@ namespace PoliDLGUI.Forms
                 int ans;
                 if (StartupForm.IsItalian)
                 {
-                    ans = (int)Interaction.MsgBox("Sei sicuro? Questo renderà il download più veloce su PC veloci, ma meno affidabile.", MsgBoxStyle.YesNo, "Download segmentato?");
+                    ans = (int)Interaction.MsgBox("Sei sicuro? Questo renderà il download più veloce su PC sufficientemente potenti, ma meno affidabile.", MsgBoxStyle.YesNo, "Download segmentato?");
                 }
                 else
                 {
-                    ans = (int)Interaction.MsgBox("Are you sure? This will make the download faster on good computers, but less reliable.", MsgBoxStyle.YesNo, "Segmented download?");
+                    ans = (int)Interaction.MsgBox("Are you sure? This will make the download faster on good enough computers, but less reliable.", MsgBoxStyle.YesNo, "Segmented download?");
                 }
 
                 if (ans != (int)DialogResult.Yes)

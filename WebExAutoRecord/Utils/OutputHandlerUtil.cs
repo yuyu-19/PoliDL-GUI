@@ -17,7 +17,6 @@ namespace PoliDLGUI.Utils
         {
             this.downloadForm = downloadForm;
         }
-
         public void OutputHandler(object sendingProcess, DataReceivedEventArgs outLine)
         {
             if (downloadForm.badCredentials)
@@ -236,13 +235,38 @@ namespace PoliDLGUI.Utils
                     break;
 
                 case var s when s.Contains("Going to the next one") | s.Contains("TimeoutError"):
-                    downloadinfo.DLError = true;
-                    downloadinfo.Failed(segmented, retry: false);
+                    if (downloadinfo.Arguments.IndexOf("-l false") != -1)
+                    {
+                        downloadinfo.DLError = true;
+                        downloadinfo.Failed(segmented, retry: false);
+                    }
+                    else { 
+                        downloadForm.RunCommandH(
+                            process.StartInfo.FileName,
+                            process.StartInfo.Arguments.Replace("-i 3", "-i 10") + " -l false",
+                            downloadinfo.currentfiletotalS, downloadinfo.currentfiletotal,
+                            downloadinfo.uri
+                        );
+
+                        downloadinfo.Failed(segmented, retry: true);
+                    }
+
                     break;
 
                 case var s when s.Contains("This video is password protected") | s.Contains("Wrong password!"):
                     if (outLine.Data.Contains("Wrong password!"))
+                    {
                         MessageBox.Show("Previous password was incorrect. Please try again.");
+                        if (this.downloadForm.lastUsedVideoPW != "")
+                            this.downloadForm.lastUsedVideoPW = "";
+                    }
+                    
+                    if (this.downloadForm.lastUsedVideoPW != "")
+                    {
+                        process.StandardInput.WriteLine(this.downloadForm.lastUsedVideoPW);
+                        break;  //Re-use the password.
+                    }
+
                     string Password = StartupForm.IsItalian
                         ? Conversions.ToString(
                             InputForm.AskForInput(
@@ -254,6 +278,13 @@ namespace PoliDLGUI.Utils
                                 "Please input the password for this video: " +
                                 Constants.vbCrLf + outLine.Data.Substring(outLine.Data.LastIndexOf("/") + 1), this.downloadForm.Location)
                             );
+
+                    if (Password.Contains("_ReUseForAllVideos!"))
+                    {
+                        this.downloadForm.lastUsedVideoPW = Password.Substring(0, Password.Length - "_ReUseForAllVideos!".Length);
+                        Password = this.downloadForm.lastUsedVideoPW;
+                    }
+
                     process.StandardInput.WriteLine(Password);
                     // MessageBox.Show("Input Sent!")
                     break;

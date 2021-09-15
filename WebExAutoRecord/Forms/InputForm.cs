@@ -36,15 +36,14 @@ namespace PoliDLGUI.Forms
 
         public object AskForInputInternal(string Query)
         {
+            //Should I fix this so it uses anchors instead of this weird position jank? Yes.
+            //Am I going to? No.
+
             Label1.Text = Query;
-            if (Query.Contains("password"))
-            {
+            if (Query.Contains("password") & !Query.Contains("video:"))
                 InputText.PasswordChar = '*';
-            }
             else
-            {
                 InputText.PasswordChar = default;
-            }
 
             InputText.Text = "";
             int OldHeight = InputText.Location.Y;
@@ -53,10 +52,12 @@ namespace PoliDLGUI.Forms
                 var p = InputText.Location;
                 p.Y = p.Y + InputText.Height + 5;
                 InputText.Location = p;
+                p.Y += 20;
                 p.X = OK.Location.X;
                 OK.Location = p;
                 Skip.Visible = true;
-                Height = Height + InputText.Height + 10;
+                Height = Height + InputText.Height + 10 + 20;
+                reUsePW.Visible = true;
             }
 
             while (string.IsNullOrEmpty(InputText.Text) | InputText.Text is null)
@@ -74,10 +75,12 @@ namespace PoliDLGUI.Forms
                 InputText.Location = p;
                 p.X = OK.Location.X;
                 OK.Location = p;
-                Height = Height - InputText.Height - 10;
+                Height = Height - InputText.Height - 10 - 20;
             }
-
-            return InputText.Text;
+            if (!reUsePW.Checked)
+                return InputText.Text;
+            else
+                return InputText.Text + "_ReUseForAllVideos!";  //Is this jank? 
         }
 
         private void Skip_Click(object sender, EventArgs e)
@@ -91,7 +94,13 @@ namespace PoliDLGUI.Forms
             if (StartupForm.IsItalian)
             {
                 Skip.Text = "Salta";
+                reUsePW.Text = "Riutilizza password?";
             }
+        }
+
+        private void reUsePW_CheckedChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }
