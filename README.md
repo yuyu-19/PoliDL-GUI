@@ -20,7 +20,13 @@ Questo programma ha due funzionalità principali:
   - Registrare lezioni in locale automaticamente (Locale)
  
 ### Download
-Può estrarre link di webex da un paio di tipi di file:
+NB: Di default i download avvengono in modalità non-segmentata. La modalità segmentata è più veloce su computer sufficientemente potenti, ma è meno affidabile. È presente una casella per modificare l'impostazione per il download corrente.
+
+Nella modalità non-segmentata se esiste già il file corrispondente ad un video, verrà riscaricato comunque, ondevitare download parziali, con un suffisso (.1, .2, etc). È quindi consigliato, nel caso siano falliti dei download, di reinserire solo i link il cui download è fallito. 
+
+È possibile salvare i link ai video che non sono scaricati cliccando su "Ulteriori informazioni" di fianco al numero di download falliti, e cliccando su "Salva link in un .txt"
+
+Il programma può estrarre link di webex da un paio di tipi di file:
   - .xlsx
   - .docx
   - .html
@@ -78,7 +84,13 @@ This tool has two main functions:
   - Automatically recording lessons locally  (Local)
 
 ### Download
-It can extract webex links from a couple of filetypes:
+Note: By default downloads are in unsegmented mode. Segmented mode is faster on sufficiently powerful computers, but is less reliable. There is a checkbox to change this setting for the current download.
+
+In unsegmented mode if the video file already exists, it's downloaded again and a suffix is added. Should some downloads have failed it's therefore suggested that you only redownload the failed ones.
+
+The links to all failed downloads can be saved by clicking on "More information" next to the number of failed downloads, and clicking "Save links to .txt".
+
+The program can extract webex links from a couple of filetypes:
   - .xlsx
   - .docx
   - .html
