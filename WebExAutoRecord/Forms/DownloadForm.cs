@@ -587,7 +587,8 @@ namespace PoliDLGUI.Forms
                 i = AllText.IndexOf("web.microsoftstream.com", i + 1);
             }
 
-            // And another one, for sharepoint links.
+            // And another one, for
+            // links.
             i = AllText.IndexOf("polimi365-my.sharepoint.com");
             while (i != -1)
             {
@@ -610,6 +611,20 @@ namespace PoliDLGUI.Forms
 
                 // CourseLine.Substring(startindex, CourseLine.IndexOf("-", startindex) - startindex).Trim()
                 i = AllText.IndexOf("polimi365-my.sharepoint.com", i + 1);
+            }
+
+            i = AllText.IndexOf("polimi365.sharepoint.com");
+            while (i != -1)
+            {
+                var r = new Regex("([^a-zA-Z0-9-_]+)|$");    // This one excludes the - and _ characters from the match
+                string NewURL;
+                NewURL = AllText.Substring(i, r.Match(AllText, AllText.IndexOf("?uniqueId=", i) + "?uniqueId=".Length).Index - i).Trim();
+                NewURL = "https://" + NewURL;
+                if (!StreamURLs.Contains(NewURL))
+                    StreamURLs.Add(NewURL);
+
+                // CourseLine.Substring(startindex, CourseLine.IndexOf("-", startindex) - startindex).Trim()
+                i = AllText.IndexOf("polimi365.sharepoint.com", i + 1);
             }
         }
 
