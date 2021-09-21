@@ -159,6 +159,7 @@ namespace PoliDLGUI.Forms
             this.NumDownloading.Text = CurrentCount.ToString();
             this.FileNumCurrent.Text = "File " + (CurrentCount + SuccessCount + FailedCount) + "/" + (startedDownloads - FailedRetried).ToString();
             this.FileNumTotal.Text = "File " + (SuccessCount + FailedCount).ToString() + "/" + (this.downloadForm.downloadPool.total).ToString();
+            this.Text = "File " + (SuccessCount + FailedCount).ToString() + "/" + (this.downloadForm.downloadPool.total).ToString();
             this.OverallProgressCurrent.Maximum = startedDownloads - FailedRetried;
             this.OverallProgressCurrent.Value = (CurrentCount + SuccessCount + FailedCount);
             this.OverallProgressTotal.Value = (SuccessCount + FailedCount);
