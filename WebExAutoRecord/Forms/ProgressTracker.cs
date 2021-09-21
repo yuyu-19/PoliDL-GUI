@@ -65,22 +65,25 @@ namespace PoliDLGUI.Forms
             {
                 if (list != null)       //Otherwise the program would crash when closing a downloadform without doing anything
                     list.KillAll();
-
-                foreach (var proc in Process.GetProcessesByName("aria2c"))   // Stop the download.
-                {
-                    try
+                foreach (var processName in new[] {"chrome","poliwebex","aria2c"}) {
+                    foreach (var proc in Process.GetProcessesByName("processName"))   // Stop the download.
                     {
-                        if (proc.MainModule.FileName.Contains(StartupForm.RootFolder))
+                        try
                         {
-                            proc.Kill();
-                            proc.Dispose();
+                            if (proc.MainModule.FileName.Contains(StartupForm.RootFolder))
+                            {
+                                proc.Kill();
+                                proc.Dispose();
+                            }
+                        }
+                        catch
+                        {
+                            ;
                         }
                     }
-                    catch
-                    {
-                        ;
-                    }
                 }
+
+                
             }
             catch (Exception ex)
             {
