@@ -161,6 +161,7 @@ namespace PoliDLGUI.Forms
             this._CheckSegmented.TabIndex = 10;
             this._CheckSegmented.Text = "Run unsegmented\r\n(Fallback option)";
             this._CheckSegmented.UseVisualStyleBackColor = true;
+            this._CheckSegmented.Visible = false;
             this._CheckSegmented.CheckedChanged += new System.EventHandler(this.CheckSegmented_CheckedChanged);
             // 
             // DownloadForm

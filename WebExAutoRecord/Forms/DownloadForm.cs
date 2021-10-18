@@ -379,8 +379,6 @@ namespace PoliDLGUI.Forms
                 WebexArgs += " -e " + TempString;
             }
 
-            if (!CheckSegmented.Checked)
-                WebexArgs += " -s";
 
             WebexArgs += " -v";
             StreamArgs += " -v";

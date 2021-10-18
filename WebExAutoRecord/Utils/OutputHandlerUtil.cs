@@ -33,7 +33,7 @@ namespace PoliDLGUI.Utils
             }
 
             Process process = (Process)sendingProcess;
-            bool segmented = process.StartInfo.Arguments.Contains(" -s");
+            bool segmented = false;
             bool shouldLog = true;  //Removes unnecessary/spammy logs
             if (process.StartInfo.FileName.Contains("polidown.exe"))
                 segmented = true;    // polidown is always in segmented mode
