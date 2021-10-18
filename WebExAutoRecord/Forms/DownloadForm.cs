@@ -88,6 +88,19 @@ namespace PoliDLGUI.Forms
 
         private void DownloadForm_Load(object sender, EventArgs e)
         {
+            DateTime SPIDswitchDate = new DateTime(2021, 10, 31);
+            if (DateTime.Now > SPIDswitchDate)
+            {
+                if (StartupForm.IsItalian)
+                {
+                    MessageBox.Show("Login now requires SPID! There should be a new version of poliDL available on github (or there will be one soon), so be sure to check.");
+                }
+                else
+                {
+                    MessageBox.Show("Il login ora richiede lo SPID! Dovrebbe esserci una nuova versione di poliDL sul github (o ci sarà a breve), assicurati di controllare.");
+                }
+            }
+
             if (StartupForm.IsItalian)
             {
                 BrowseFolder.Text = "Esplora";
@@ -208,62 +221,78 @@ namespace PoliDLGUI.Forms
                 // That is peak laziness, I know, but I just want to be done with this goddamn thing.
 
                 string extension = FilePath.Text.Substring(FilePath.Text.LastIndexOf(".") + 1).ToLower().Trim();
-                switch (extension ?? "")
+                ZipArchive XFile = null;
+                try
                 {
-                    case "txt":
-                        {
-                            GetAllRecordingLinks(File.ReadAllText(FilePath.Text), ref WebexURLs, ref StreamURLs);
-                            break;
-                        }
-                    case "html":
-                    case "htm":
-                        {
-                            GetAllRecordingLinks(File.ReadAllText(FilePath.Text), ref WebexURLs, ref StreamURLs);
-                            break;
-                        }
-
-                    case "xlsx":
-                    case "docx":
-                    case "zip":
-                        {
-                            // We're going to treat them as zip archives, and just read the xml files directly. It's simpler that way.
-                            ZipArchive XFile;
-                            try
+                    switch (extension ?? "")
+                    {
+                        case "txt":
                             {
-                                XFile = ZipFile.OpenRead(FilePath.Text);
+                                GetAllRecordingLinks(File.ReadAllText(FilePath.Text), ref WebexURLs, ref StreamURLs);
+                                break;
                             }
-                            catch (Exception ex)
+                        case "html":
+                        case "htm":
                             {
-                                MessageBox.Show(ex.Message);
+                                GetAllRecordingLinks(File.ReadAllText(FilePath.Text), ref WebexURLs, ref StreamURLs);
+                                break;
+                            }
+
+                        case "xlsx":
+                        case "docx":
+                        case "zip":
+                            {
+                                // We're going to treat them as zip archives, and just read the xml files directly. It's simpler that way.
+                                try
+                                {
+                                    XFile = ZipFile.OpenRead(FilePath.Text);
+                                }
+                                catch (Exception ex)
+                                {
+                                    MessageBox.Show(ex.Message);
+                                    return;
+                                }
+                                GetAllLinksFromZip(XFile, ref WebexURLs, ref StreamURLs);
+                                break;
+                            }
+
+                        default:
+                            {
+                                if (StartupForm.IsItalian)
+                                {
+                                    MessageBox.Show("Tipo di file non supportato. Riprova.");
+                                }
+                                else
+                                {
+                                    MessageBox.Show("Unsupported file type. Please retry.");
+                                }
+
                                 return;
                             }
-
-                            GetAllLinksFromZip(XFile, ref WebexURLs, ref StreamURLs);
-                            XFile.Dispose();
-                            break;
-                        }
-
-                    default:
-                        {
-                            if (StartupForm.IsItalian)
-                            {
-                                MessageBox.Show("Tipo di file non supportato. Riprova.");
-                            }
-                            else
-                            {
-                                MessageBox.Show("Unsupported file type. Please retry.");
-                            }
-
-                            return;
-                        }
+                    }
+                } 
+                catch (InvalidOperationException ex)
+                {
+                    if (StartupForm.IsItalian)
+                    {
+                        MessageBox.Show("Rilevato link recman. Per scaricare video dall'archivio registrazioni, devi andare nella pagina webeep del tuo corso, e copiare il link \"Archivio registrazioni\" cliccando con il tasto destro.");
+                    }
+                    else
+                    {
+                        MessageBox.Show("Detected a recman link. In order to download videos from the recording archive, you must go on the webeep page for your course, and copy the \"Recordings archive\" link by right clicking.");
+                    }
+                    WebexURLs.Clear();
+                    StreamURLs.Clear();
+                } 
+                finally
+                {
+                    if (XFile != null)
+                    {
+                        XFile.Dispose();
+                    }
                 }
             }
-
-            if (ModeSelect.SelectedIndex == 2)
-            {
-                File.Delete(FilePath.Text);
-            }
-
+            
             if (WebexURLs.Count == 0 & StreamURLs.Count == 0)
             {
                 if (StartupForm.IsItalian)
@@ -278,13 +307,25 @@ namespace PoliDLGUI.Forms
                 return;
             }
 
+            if (ModeSelect.SelectedIndex == 2)
+            {
+                File.Delete(FilePath.Text);
+            }
+
             // poliwebex.exe -v [URL ARRAY] -o [OUTPUT DIR] -s
             // We're calling it with the -v [URL ARRAY] option, so let's build the string.
 
             // Check if config.json exists. If it does, get the email and ID from it, as well as if the password is saved or not.
 
             string WebexArgs = "-t -i 3 -o \"" + FolderPath.Text + "\"";
+            
             string StreamArgs = "-t -q 5 -i 3 -o \"" + FolderPath.Text + "\"";
+            DateTime SPIDswitchDate = new DateTime(2021, 10, 31);
+            if (DateTime.Now > SPIDswitchDate)
+            {
+                StreamArgs.Replace("-i 3", "-i 3 -l false");        //Must run in non-headless mode once the spid changeover happens.
+            }
+
             string TempString;
             if (File.Exists(StartupForm.RootFolder + @"\Poli-pkg\dist\config.json"))
             {
@@ -375,8 +416,6 @@ namespace PoliDLGUI.Forms
                         TempString = Conversions.ToString(InputForm.AskForInput("Please input your email (name.surname@mail.polimi.it)", this.Location));
                     }
                 }
-
-                WebexArgs += " -e " + TempString;
             }
 
 
@@ -403,7 +442,36 @@ namespace PoliDLGUI.Forms
                 };
             }
 
-            int total = 0;
+            //We need to ensure the recman links are properly converted, and for that we need the username/password, so we will run the extraction here.
+            foreach (var x in WebexURLs)
+            {
+                if (x.Contains("aunicalogin.polimi.it/aunicalogin/getservizio.xml"))
+                {
+                    //Extract links from every URL.
+                    var extrInfo = new ProcessStartInfo(StartupForm.RootFolder + @"\Poli-pkg\dist\polidown.exe", WebexArgs + " \"" + x + "\" -e true");
+                    extrInfo.RedirectStandardOutput = true;
+                    extrInfo.UseShellExecute = false;
+                    extrInfo.CreateNoWindow = true;
+
+                    var extract = new Process();
+                    extract.StartInfo = extrInfo;
+                    extract.Start();
+
+                    extract.WaitForExit();
+                    StreamReader stdOut = extract.StandardOutput;
+                    string tmp;
+                    while(!stdOut.EndOfStream)
+                    {
+                        tmp = stdOut.ReadLine();
+                        MessageBox.Show(tmp);
+                        //LogsStream.WriteLine(tmp);
+                    }
+                }
+            }
+            //Cleanup time. Remove all recman links.
+            WebexURLs.RemoveAll(x => x.Contains("aunicalogin.polimi.it/aunicalogin/getservizio.xml")); 
+
+                int total = 0;
             if (StreamURLs != null)
             {
                 total += StreamURLs.Count;
@@ -483,6 +551,12 @@ namespace PoliDLGUI.Forms
 
         public void GetAllRecordingLinks(string AllText, ref List<string> WebexURLs, ref List<string> StreamURLs) // This just takes a big ol string (file) as input and a list, and adds all links to the list.
         {
+            //Check if there's a recman link, if there is clear the list, pop up an explenation and return.
+            if (AllText.Contains("recman_frontend"))
+            {
+                throw new InvalidOperationException("Recman link detected. Warn user.");
+            }
+
             if (string.IsNullOrEmpty(AllText))
                 return;
 
@@ -510,67 +584,6 @@ namespace PoliDLGUI.Forms
             // Also if you're actually reading these comments god bless your soul and I apologize for the profanity (not really, bugger off)
             // I've also been experiencing a bug which seems to be related to the virtual desktop program I'm using so whatever
             
-            //This is old code that looked for specific link formats. Has since been scrapped.
-
-
-            /*
-            i = AllText.IndexOf("politecnicomilano.webex.com/recordingservice/");
-            // It may seem like a waste of resources to just check every time, but we can't be sure if the links are hyperlinks or not, so we'll just grab everything and see
-            while (i != -1)
-            {
-                // We're going to use regex to check for the index of the first non-alphanumerical after the /playback/ in the link
-                // This (SHOULD) let us handle most if not all cases? Since I'm assuming there'll at least be a space or something.
-
-                var r = new Regex("([^a-zA-Z0-9]+)|$");
-                string NewURL;
-                if (AllText.IndexOf("/recording/", i) + "/recording/".Length != AllText.IndexOf("playback/", i) & AllText.IndexOf("/recording/", i) + "/recording/".Length != AllText.IndexOf("play/", i)) {
-                    NewURL = AllText.Substring(i, AllText.IndexOf("/playback", i) - i + "/playback".Length).Trim();
-                }
-                else {
-                    if ((AllText.IndexOf("/playback/", i) == -1 | (AllText.IndexOf("/play/", i) < AllText.IndexOf("/playback/", i))) & AllText.IndexOf("/play/",i) > -1)
-                        NewURL = AllText.Substring(i, r.Match(AllText, AllText.IndexOf("/play/", i) + "/play/".Length).Index - i).Trim();
-                    else if (AllText.IndexOf("/playback/", i) > -1)
-                        NewURL = AllText.Substring(i, r.Match(AllText, AllText.IndexOf("/playback/", i) + "/playback/".Length).Index - i).Trim();
-                    else
-                        NewURL = "";
-                }
-
-
-                if (AllText.IndexOf("/playback/", i) == -1 | (AllText.IndexOf("/play/", i) < AllText.IndexOf("/playback/", i) & AllText.IndexOf("/play/", i) != -1))
-                {
-                    NewURL = AllText.Substring(i, r.Match(AllText, AllText.IndexOf("/play/", i) + "/play/".Length).Index - i).Trim();
-                }
-                else
-                {
-                    NewURL = AllText.Substring(i, r.Match(AllText, AllText.IndexOf("/playback/", i) + "/playback/".Length).Index - i).Trim();
-                }
-
-                NewURL = "https://" + NewURL;
-                if (!WebexURLs.Contains(NewURL))
-                    WebexURLs.Add(NewURL);
-
-                // CourseLine.Substring(startindex, CourseLine.IndexOf("-", startindex) - startindex).Trim()
-                i = AllText.IndexOf("politecnicomilano.webex.com/recordingservice/", i + 1);
-            }
-            
-
-
-            // Second loop, for the RCID type links.
-            i = AllText.IndexOf("politecnicomilano.webex.com/politecnicomilano/");
-            while (i != -1)
-            {
-                var r = new Regex("([^a-zA-Z0-9]+)|$");
-                string NewURL = AllText.Substring(i, r.Match(AllText, AllText.IndexOf("RCID=", i) + "RCID=".Length).Index - i).Trim();
-                NewURL = "https://" + NewURL;
-                if (!WebexURLs.Contains(NewURL))
-                    WebexURLs.Add(NewURL);
-
-                // CourseLine.Substring(startindex, CourseLine.IndexOf("-", startindex) - startindex).Trim()
-                i = AllText.IndexOf("politecnicomilano.webex.com/politecnicomilano/", i + 1);
-            }
-            */
-
-
             // Another loop, this time for msstream links
             i = AllText.IndexOf("web.microsoftstream.com");
             while (i != -1)
@@ -585,8 +598,7 @@ namespace PoliDLGUI.Forms
                 i = AllText.IndexOf("web.microsoftstream.com", i + 1);
             }
 
-            // And another one, for
-            // links.
+            // And another one, for sharepoint links.
             i = AllText.IndexOf("polimi365-my.sharepoint.com");
             while (i != -1)
             {
@@ -624,6 +636,25 @@ namespace PoliDLGUI.Forms
                 // CourseLine.Substring(startindex, CourseLine.IndexOf("-", startindex) - startindex).Trim()
                 i = AllText.IndexOf("polimi365.sharepoint.com", i + 1);
             }
+
+            //One more loop, for CORRECT recman links - turn them immediately into the corresponding webex links and save them.
+            i = AllText.IndexOf("aunicalogin.polimi.it/aunicalogin/getservizio.xml");
+            while (i != -1)
+            {
+                var r = new Regex("([^a-zA-Z0-9-_]+)|$");    // This one excludes the - and _ characters from the match
+                string NewURL;
+                NewURL = AllText.Substring(i, r.Match(AllText, AllText.IndexOf("c_classe_webeep=", i) + "?c_classe_webeep=".Length).Index - i).Trim();
+                NewURL = "https://" + NewURL;
+
+                MessageBox.Show(NewURL);
+
+                if (!WebexURLs.Contains(NewURL))
+                    WebexURLs.Add(NewURL);
+
+                // CourseLine.Substring(startindex, CourseLine.IndexOf("-", startindex) - startindex).Trim()
+                i = AllText.IndexOf("aunicalogin.polimi.it/aunicalogin/getservizio.xml", i + 1);
+            }
+
         }
 
         public void RunCommandH(string Command, string Arguments, int StreamURLs, int WebexURLs, Uri uri)
