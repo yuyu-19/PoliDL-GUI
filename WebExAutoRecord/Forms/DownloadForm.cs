@@ -180,7 +180,23 @@ namespace PoliDLGUI.Forms
             List<string> WebexURLs = new List<string>(), StreamURLs = new List<string>();
             if (ModeSelect.SelectedIndex == 1)
             {
-                GetAllRecordingLinks(URLlist.Text, ref WebexURLs, ref StreamURLs);
+                try
+                {
+                    GetAllRecordingLinks(URLlist.Text, ref WebexURLs, ref StreamURLs);
+                } catch (InvalidOperationException ex)
+                {
+                    if (StartupForm.IsItalian)
+                    {
+                        MessageBox.Show("Rilevato link recman. Per scaricare video dall'archivio registrazioni, devi andare nella pagina webeep del tuo corso, e copiare il link \"Archivio registrazioni\" cliccando con il tasto destro.");
+                    }
+                    else
+                    {
+                        MessageBox.Show("Detected a recman link. In order to download videos from the recording archive, you must go on the webeep page for your course, and copy the \"Recordings archive\" link by right clicking.");
+                    }
+                    WebexURLs.Clear();
+                    StreamURLs.Clear();
+                }
+                
             }
             else
             {
@@ -293,19 +309,7 @@ namespace PoliDLGUI.Forms
                 }
             }
             
-            if (WebexURLs.Count == 0 & StreamURLs.Count == 0)
-            {
-                if (StartupForm.IsItalian)
-                {
-                    MessageBox.Show("Nessun URL trovato.");
-                }
-                else
-                {
-                    MessageBox.Show("No URLs found.");
-                }
-
-                return;
-            }
+            
 
             if (ModeSelect.SelectedIndex == 2)
             {
@@ -443,35 +447,71 @@ namespace PoliDLGUI.Forms
             }
 
             //We need to ensure the recman links are properly converted, and for that we need the username/password, so we will run the extraction here.
+            List <string> tempURLs = new List<string>();
             foreach (var x in WebexURLs)
             {
                 if (x.Contains("aunicalogin.polimi.it/aunicalogin/getservizio.xml"))
                 {
                     //Extract links from every URL.
-                    var extrInfo = new ProcessStartInfo(StartupForm.RootFolder + @"\Poli-pkg\dist\polidown.exe", WebexArgs + " \"" + x + "\" -e true");
+                    var extrInfo = new ProcessStartInfo(StartupForm.RootFolder + @"\Poli-pkg\dist\poliwebex.exe", WebexArgs + " \"" + x + "\" -e true");
                     extrInfo.RedirectStandardOutput = true;
                     extrInfo.UseShellExecute = false;
                     extrInfo.CreateNoWindow = true;
+                    extrInfo.WorkingDirectory = StartupForm.RootFolder + @"\Poli-pkg\dist\";
 
                     var extract = new Process();
                     extract.StartInfo = extrInfo;
+
+                    if (StartupForm.IsItalian)
+                    {
+                        MessageBox.Show("Rilevato link recman. Premi OK per avviare l'estrazione dei link (potrebbe richiedere qualche minuto).");
+                    }
+                    else
+                    {
+                        MessageBox.Show("Detected a recman link. Press OK to begin the link extraction (it could take a couple minutes).");
+                    }
                     extract.Start();
 
                     extract.WaitForExit();
                     StreamReader stdOut = extract.StandardOutput;
-                    string tmp;
+                    string tmp = "";
+                    int readLinks = 0;
                     while(!stdOut.EndOfStream)
                     {
-                        tmp = stdOut.ReadLine();
-                        MessageBox.Show(tmp);
-                        //LogsStream.WriteLine(tmp);
+                        tmp = stdOut.ReadLine().Trim();
+                        //MessageBox.Show(tmp);
+                        if (tmp == "]")
+                            readLinks = 0;
+
+                        if (readLinks == 2)
+                        {
+                            tempURLs.Add(tmp.Replace("'", "").Replace(",", ""));
+                        }
+                            
+                        if (tmp == "Extracted links:" || tmp == "[")
+                            readLinks++; //Make sure we're pulling from the correct list.
+
                     }
                 }
             }
             //Cleanup time. Remove all recman links.
-            WebexURLs.RemoveAll(x => x.Contains("aunicalogin.polimi.it/aunicalogin/getservizio.xml")); 
+            WebexURLs.RemoveAll(x => x.Contains("aunicalogin.polimi.it/aunicalogin/getservizio.xml"));
+            WebexURLs.AddRange(tempURLs);
+            if (WebexURLs.Count == 0 & StreamURLs.Count == 0)
+            {
+                if (StartupForm.IsItalian)
+                {
+                    MessageBox.Show("Nessun URL trovato.");
+                }
+                else
+                {
+                    MessageBox.Show("No URLs found.");
+                }
 
-                int total = 0;
+                return;
+            }
+
+            int total = 0;
             if (StreamURLs != null)
             {
                 total += StreamURLs.Count;
@@ -645,8 +685,6 @@ namespace PoliDLGUI.Forms
                 string NewURL;
                 NewURL = AllText.Substring(i, r.Match(AllText, AllText.IndexOf("c_classe_webeep=", i) + "?c_classe_webeep=".Length).Index - i).Trim();
                 NewURL = "https://" + NewURL;
-
-                MessageBox.Show(NewURL);
 
                 if (!WebexURLs.Contains(NewURL))
                     WebexURLs.Add(NewURL);
