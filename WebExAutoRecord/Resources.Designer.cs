@@ -111,7 +111,7 @@ namespace PoliDLGUI.My.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 92.
+        ///   Looks up a localized string similar to 96.
         /// </summary>
         internal static string Version {
             get {

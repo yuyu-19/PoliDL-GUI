@@ -349,21 +349,15 @@ namespace PoliDLGUI.Forms
                     StreamArgs += " -u " + TempString;
                 }
 
-                if (!Config.Contains("email") & WebexURLs.Count > 0)    // If it's webex
+                if (!Config.Contains("email") && WebexURLs.Count > 0)
                 {
                     if (StartupForm.IsItalian)
                     {
-                        WebexArgs = Conversions.ToString(WebexArgs + Operators.ConcatenateObject(
-                                " -e ",
-                                InputForm.AskForInput("Inserisci la tua email (nome.cognome@mail.polimi.it)", this.Location))
-                            );
+                        WebexArgs += " -e " + Conversions.ToString(InputForm.AskForInput("Inserisci la tua email (nome.cognome@mail.polimi.it)", this.Location));
                     }
                     else
                     {
-                        WebexArgs = Conversions.ToString(WebexArgs + Operators.ConcatenateObject(
-                                " -e ",
-                                InputForm.AskForInput("Please input your email (name.surname@mail.polimi.it)", this.Location))
-                            );
+                        WebexArgs += " -e " + Conversions.ToString(InputForm.AskForInput("Please input your email (name.surname@mail.polimi.it)", this.Location));
                     }
                 }
 
@@ -413,11 +407,11 @@ namespace PoliDLGUI.Forms
                 {
                     if (StartupForm.IsItalian)
                     {
-                        TempString = Conversions.ToString(InputForm.AskForInput("Inserisci la tua email (nome.cognome@mail.polimi.it)", this.Location));
+                        WebexArgs += " -e " + Conversions.ToString(InputForm.AskForInput("Inserisci la tua email (nome.cognome@mail.polimi.it)", this.Location));
                     }
                     else
                     {
-                        TempString = Conversions.ToString(InputForm.AskForInput("Please input your email (name.surname@mail.polimi.it)", this.Location));
+                        WebexArgs += " -e " + Conversions.ToString(InputForm.AskForInput("Please input your email (name.surname@mail.polimi.it)", this.Location));
                     }
                 }
             }
@@ -453,10 +447,13 @@ namespace PoliDLGUI.Forms
                 if (x.Contains("aunicalogin.polimi.it/aunicalogin/getservizio.xml"))
                 {
                     //Extract links from every URL.
-                    var extrInfo = new ProcessStartInfo(StartupForm.RootFolder + @"\Poli-pkg\dist\poliwebex.exe", WebexArgs + " \"" + x + "\" -e true");
-                    extrInfo.RedirectStandardOutput = true;
+                    var extrInfo = new ProcessStartInfo(StartupForm.RootFolder + @"\Poli-pkg\dist\poliwebex.exe", WebexArgs + " \"" + x + "\" -x true");
+                    LogsStream.WriteLine(WebexArgs);
+
+                    bool debugOut = false;
+                    extrInfo.RedirectStandardOutput = !debugOut;
                     extrInfo.UseShellExecute = false;
-                    extrInfo.CreateNoWindow = true;
+                    extrInfo.CreateNoWindow = !debugOut;
                     extrInfo.WorkingDirectory = StartupForm.RootFolder + @"\Poli-pkg\dist\";
 
                     var extract = new Process();
@@ -484,19 +481,20 @@ namespace PoliDLGUI.Forms
                             readLinks = 0;
 
                         if (readLinks == 2)
-                        {
                             tempURLs.Add(tmp.Replace("'", "").Replace(",", ""));
-                        }
                             
                         if (tmp == "Extracted links:" || tmp == "[")
                             readLinks++; //Make sure we're pulling from the correct list.
-
+                        LogsStream.WriteLine(tmp);
                     }
                 }
             }
+
             //Cleanup time. Remove all recman links.
             WebexURLs.RemoveAll(x => x.Contains("aunicalogin.polimi.it/aunicalogin/getservizio.xml"));
+
             WebexURLs.AddRange(tempURLs);
+
             if (WebexURLs.Count == 0 & StreamURLs.Count == 0)
             {
                 if (StartupForm.IsItalian)
