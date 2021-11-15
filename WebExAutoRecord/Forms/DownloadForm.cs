@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.IO.Compression;
+using System.Json;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
@@ -88,19 +89,6 @@ namespace PoliDLGUI.Forms
 
         private void DownloadForm_Load(object sender, EventArgs e)
         {
-            DateTime SPIDswitchDate = new DateTime(2021, 10, 31);
-            if (DateTime.Now > SPIDswitchDate)
-            {
-                if (StartupForm.IsItalian)
-                {
-                    MessageBox.Show("Login now requires SPID! There should be a new version of poliDL available on github (or there will be one soon), so be sure to check.");
-                }
-                else
-                {
-                    MessageBox.Show("Il login ora richiede lo SPID! Dovrebbe esserci una nuova versione di poliDL sul github (o ci sarà a breve), assicurati di controllare.");
-                }
-            }
-
             if (StartupForm.IsItalian)
             {
                 BrowseFolder.Text = "Esplora";
@@ -321,28 +309,36 @@ namespace PoliDLGUI.Forms
 
             // Check if config.json exists. If it does, get the email and ID from it, as well as if the password is saved or not.
 
-            string WebexArgs = "-t -i 3 -o \"" + FolderPath.Text + "\"";
+            string WebexArgs = "-t -i 3 -l false -o \"" + FolderPath.Text + "\"";
             
-            string StreamArgs = "-t -q 5 -i 3 -o \"" + FolderPath.Text + "\"";
-            DateTime SPIDswitchDate = new DateTime(2021, 10, 31);
-            if (DateTime.Now > SPIDswitchDate)
-            {
-                StreamArgs.Replace("-i 3", "-i 3 -l false");        //Must run in non-headless mode once the spid changeover happens.
-            }
+            string StreamArgs = "-t -q 5 -i 3 -l false -o \"" + FolderPath.Text + "\"";
 
             string TempString;
+            
+            try
+            {
+                var tmpObj = JsonValue.Parse(File.ReadAllText(StartupForm.RootFolder + @"\Poli-pkg\dist\config.json"));
+            } catch
+            {
+                //Config is fucked, delete it.
+                File.Delete(StartupForm.RootFolder + @"\Poli-pkg\dist\config.json");
+            }
+            
             if (File.Exists(StartupForm.RootFolder + @"\Poli-pkg\dist\config.json"))
             {
                 string Config = File.ReadAllText(StartupForm.RootFolder + @"\Poli-pkg\dist\config.json");
+                if (!Config.Contains("SPID")) {
+                    Config = ""; //Erase the config.
+                }
                 if (!Config.Contains("codicePersona"))
                 {
                     if (StartupForm.IsItalian)
                     {
-                        TempString = Conversions.ToString(InputForm.AskForInput("Inserisci il tuo codice persona", this.Location));
+                        TempString = Conversions.ToString(InputForm.AskForInput("Inserisci il tuo nome utente per SPID", this.Location));
                     }
                     else
                     {
-                        TempString = Conversions.ToString(InputForm.AskForInput("Please input your person code", this.Location));
+                        TempString = Conversions.ToString(InputForm.AskForInput("Please input your SPID username", this.Location));
                     }
 
                     WebexArgs += " -u " + TempString;
@@ -368,11 +364,11 @@ namespace PoliDLGUI.Forms
                     // Checking the position in this way also checks wheter or not it's set to true.
                     if (StartupForm.IsItalian)
                     {
-                        TempString = Conversions.ToString(InputForm.AskForInput("Inserisci la tua password", this.Location));
+                        TempString = Conversions.ToString(InputForm.AskForInput("Inserisci la tua password SPID", this.Location));
                     }
                     else
                     {
-                        TempString = Conversions.ToString(InputForm.AskForInput("Please input your password", this.Location));
+                        TempString = Conversions.ToString(InputForm.AskForInput("Please input your SPID password", this.Location));
                     }
 
                     WebexArgs += " -p " + TempString;
@@ -383,22 +379,22 @@ namespace PoliDLGUI.Forms
             {
                 if (StartupForm.IsItalian)
                 {
-                    TempString = Conversions.ToString(InputForm.AskForInput("Inserisci il tuo codice persona", this.Location));
+                    TempString = Conversions.ToString(InputForm.AskForInput("Inserisci il tuo nome utente SPID", this.Location));
                 }
                 else
                 {
-                    TempString = Conversions.ToString(InputForm.AskForInput("Please input your person code", this.Location));
+                    TempString = Conversions.ToString(InputForm.AskForInput("Please input your SPID username", this.Location));
                 }
 
                 WebexArgs += " -u " + TempString;
                 StreamArgs += " -u " + TempString;
                 if (StartupForm.IsItalian)
                 {
-                    TempString = Conversions.ToString(InputForm.AskForInput("Inserisci la tua password", this.Location));
+                    TempString = Conversions.ToString(InputForm.AskForInput("Inserisci la tua password SPID", this.Location));
                 }
                 else
                 {
-                    TempString = Conversions.ToString(InputForm.AskForInput("Please input your password", this.Location));
+                    TempString = Conversions.ToString(InputForm.AskForInput("Please input your SPID password", this.Location));
                 }
 
                 WebexArgs += " -p " + TempString;
