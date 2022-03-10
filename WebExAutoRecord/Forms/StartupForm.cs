@@ -99,6 +99,11 @@ namespace PoliDLGUI.Forms
                 File.WriteAllBytes(CurrentFolder + @"\System.IO.Compression.ZipFile.dll", My.Resources.Resources.System_IO_Compression_ZipFile);
             }
 
+            if (!File.Exists(CurrentFolder + @"\System.Json.dll"))
+            {
+                File.WriteAllBytes(CurrentFolder + @"\System.Json.dll", My.Resources.Resources.System_Json);
+            }
+
             if (Directory.Exists(appData) && !File.Exists(appData + @"\version.txt"))
             {
                 File.WriteAllText(appData + @"\version.txt", "1");  // We don't have a version number, so that means the version unpacked must've been v1

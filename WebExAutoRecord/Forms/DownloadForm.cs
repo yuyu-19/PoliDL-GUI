@@ -440,10 +440,10 @@ namespace PoliDLGUI.Forms
             List <string> tempURLs = new List<string>();
             foreach (var x in WebexURLs)
             {
-                if (x.Contains("aunicalogin.polimi.it/aunicalogin/getservizio.xml"))
+                if (x.Contains("webeep.polimi.it"))
                 {
                     //Extract links from every URL.
-                    var extrInfo = new ProcessStartInfo(StartupForm.RootFolder + @"\Poli-pkg\dist\poliwebex.exe", WebexArgs + " \"" + x + "\" -x true");
+                    var extrInfo = new ProcessStartInfo(StartupForm.RootFolder + @"\Poli-pkg\dist\poliwebex.exe", "-x true " + WebexArgs + " \"" + x + "\"");
                     LogsStream.WriteLine(WebexArgs);
 
                     bool debugOut = false;
@@ -461,18 +461,18 @@ namespace PoliDLGUI.Forms
                     }
                     else
                     {
-                        MessageBox.Show("Detected a recman link. Press OK to begin the link extraction (it could take a couple minutes).");
+                        MessageBox.Show("Detected a recman link. Press OK to begin the link extraction (it could take a few minutes).");
                     }
                     extract.Start();
 
-                    extract.WaitForExit();
+                    //extract.WaitForExit();
                     StreamReader stdOut = extract.StandardOutput;
                     string tmp = "";
                     int readLinks = 0;
+                    //MessageBox.Show("Reading links from output.");
                     while(!stdOut.EndOfStream)
                     {
                         tmp = stdOut.ReadLine().Trim();
-                        //MessageBox.Show(tmp);
                         if (tmp == "]")
                             readLinks = 0;
 
@@ -487,7 +487,7 @@ namespace PoliDLGUI.Forms
             }
 
             //Cleanup time. Remove all recman links.
-            WebexURLs.RemoveAll(x => x.Contains("aunicalogin.polimi.it/aunicalogin/getservizio.xml"));
+            WebexURLs.RemoveAll(x => x.Contains("webeep.polimi.it"));
 
             WebexURLs.AddRange(tempURLs);
 
@@ -672,14 +672,13 @@ namespace PoliDLGUI.Forms
             }
 
             //One more loop, for CORRECT recman links - turn them immediately into the corresponding webex links and save them.
-            i = AllText.IndexOf("aunicalogin.polimi.it/aunicalogin/getservizio.xml");
+            i = AllText.IndexOf("webeep.polimi.it");
             while (i != -1)
             {
                 var r = new Regex("([^a-zA-Z0-9-_]+)|$");    // This one excludes the - and _ characters from the match
                 string NewURL;
-                NewURL = AllText.Substring(i, r.Match(AllText, AllText.IndexOf("c_classe_webeep=", i) + "?c_classe_webeep=".Length).Index - i).Trim();
+                NewURL = AllText.Substring(i, r.Match(AllText, AllText.IndexOf("view.php?id=", i) + "view.php?id=".Length).Index - i).Trim();
                 NewURL = "https://" + NewURL;
-
                 if (!WebexURLs.Contains(NewURL))
                     WebexURLs.Add(NewURL);
 

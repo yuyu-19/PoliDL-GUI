@@ -111,7 +111,17 @@ namespace PoliDLGUI.My.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 100.
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] System_Json {
+            get {
+                object obj = ResourceManager.GetObject("System_Json", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 103.
         /// </summary>
         internal static string Version {
             get {

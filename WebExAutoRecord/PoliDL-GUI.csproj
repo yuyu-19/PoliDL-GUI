@@ -231,6 +231,7 @@
     </None>
     <None Include="app.config" />
     <None Include="bin\Debug\Data.zip" />
+    <None Include="bin\Release\Data.zip" />
     <None Include="My Project\app.manifest" />
     <None Include="packages.config" />
     <None Include="WebExAutoRecord_1_TemporaryKey.pfx" />
@@ -284,6 +285,8 @@
   <ItemGroup>
     <None Include="Resources\Microsoft.WindowsAPICodePack.Shell.dll" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="bin\Release\System.Json.dll" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
