@@ -22,7 +22,7 @@ namespace PoliDLGUI.Forms
         {
             this.downloadInfoList.LoadPanelResults(ref this.panel1);
             this.Text += " [" + howEnded.ToString() + "]";
-            saveBtn.Text = StartupForm.IsItalian ? "Salva link in un .txt" : "Save URLs as .txt";
+            saveBtn.Text = Program.IsItalian ? "Salva link in un .txt" : "Save URLs as .txt";
         }
 
         private void Button1_Click(object sender, EventArgs e)

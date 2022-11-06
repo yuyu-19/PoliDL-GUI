@@ -53,8 +53,8 @@ namespace PoliDLGUI.Forms
             this.FileNumTotal = new System.Windows.Forms.Label();
             this.OverallProgressTotal = new System.Windows.Forms.ProgressBar();
             this.TotalLbl = new System.Windows.Forms.Label();
-            if (this.downloadForm.downloadPool != null)  //Honestly, not sure why this became necessary, but it started freaking out for some reason.
-                this.Text = "File 0/" + (this.downloadForm.downloadPool.total).ToString();
+            //if (this.downloadForm.downloadPool != null)  //Honestly, not sure why this became necessary, but it started freaking out for some reason.
+            //    this.Text = "File 0/" + (this.downloadForm.downloadPool.total).ToString();
             this.SuspendLayout();
             // 
             // OverallProgressCurrent

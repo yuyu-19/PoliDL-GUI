@@ -68,7 +68,7 @@ namespace PoliDLGUI.Utils
                 case "Video already downloaded. Skipping...":
                 case "All requested videos have been downloaded!":
                 case "Done!":
-                    downloadinfo.EndedSuccessfully(StartupForm.IsItalian);
+                    downloadinfo.EndedSuccessfully(Program.IsItalian);
                     break;
 
                 case var s when s.Contains("Video title is:"):
@@ -90,15 +90,15 @@ namespace PoliDLGUI.Utils
 
                     try
                     {
-                        File.Delete(StartupForm.RootFolder + @"\Poli-pkg\dist\config.json");
+                        File.Delete(Program.RootFolder + @"\Poli-pkg\dist\config.json");
                         MessageBox.Show(
-                            StartupForm.IsItalian ?
+                            Program.IsItalian ?
                             "Credenziali errate. Riprova, ti verrà chiesto di reinserirle." :
                             @"Bad credentials. Please try again, you will be prompted to input them. If that didn't happen, please delete the file at %APPDATA%\WebExRec\Poli-pkg\dist\config.json");
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show(StartupForm.IsItalian ?
+                        MessageBox.Show(Program.IsItalian ?
                             @"Credenziali errate. Non è stato possibile cancellare il file %APPDATA%\WebExRec\Poli-pkg\dist\config.json, per favore fallo manualmente" :
                             @"Bad credentials. We could not delete the file at %APPDATA%\WebExRec\Poli-pkg\dist\config.json, please do so manually");
 
@@ -107,7 +107,7 @@ namespace PoliDLGUI.Utils
 
                     // Might as well stay on the safe side - if one of them is outdated, it's likely the other one is as well.
 
-                    downloadinfo.CurrentSpeed = StartupForm.IsItalian ? "Finito." : "Finished.";
+                    downloadinfo.CurrentSpeed = Program.IsItalian ? "Finito." : "Finished.";
                     downloadinfo.ended = Enums.HowEnded.FAIL;
 
                     // I'm just going to completely erase the config.json file and kick the user back to the form.
@@ -161,7 +161,7 @@ namespace PoliDLGUI.Utils
                         downloadinfo.CurrentSpeed = outLine.Data.Substring("[DL:".Length, outLine.Data.IndexOf("]") - "[DL:".Length) + "/s";
                         if (downloadinfo.CurrentSpeed == "0B/s")
                         {
-                            downloadinfo.CurrentSpeed = StartupForm.IsItalian ? "Sto leggendo dal disco..." : "Reading from disk...";
+                            downloadinfo.CurrentSpeed = Program.IsItalian ? "Sto leggendo dal disco..." : "Reading from disk...";
                         }
                         shouldLog = false;
                     }
@@ -211,14 +211,14 @@ namespace PoliDLGUI.Utils
                     if (process.StartInfo.FileName.Contains("polidown.exe") || downloadinfo.currentfiletotalS == 0)
                     {
                         // Either we've finished polidown, or there's no msstream links to download.
-                        downloadinfo.CurrentSpeed = StartupForm.IsItalian ? "Finito." : "Finished.";
+                        downloadinfo.CurrentSpeed = Program.IsItalian ? "Finito." : "Finished.";
 
                         if (downloadinfo.NotDownloaded != -1 | downloadinfo.NotDownloadedW != -1)
                         {
                             downloadinfo.Failed(segmented, false);
                         }
 
-                        downloadinfo.EndedSuccessfully(StartupForm.IsItalian);
+                        downloadinfo.EndedSuccessfully(Program.IsItalian);
 
                         //LogsStream.Close();
                     }
@@ -267,7 +267,7 @@ namespace PoliDLGUI.Utils
                         break;  //Re-use the password.
                     }
 
-                    string Password = StartupForm.IsItalian
+                    string Password = Program.IsItalian
                         ? Conversions.ToString(
                             InputForm.AskForInput(
                                 "Inserisci la password per questo video: " +
@@ -290,7 +290,7 @@ namespace PoliDLGUI.Utils
                     break;
 
                 case var s when s.Contains("ffmpeg version") & downloadinfo.CurrentSpeed != "Setting up..." & downloadinfo.CurrentSpeed != "Sto avviando...":
-                    downloadinfo.CurrentSpeed = StartupForm.IsItalian ? "Sto elaborando il file..." : "Processing file...";
+                    downloadinfo.CurrentSpeed = Program.IsItalian ? "Sto elaborando il file..." : "Processing file...";
                     break;
 
                 case var s when s.Contains("Try in non-headless mode") | s.Contains("this is not an exact science"):
@@ -313,17 +313,17 @@ namespace PoliDLGUI.Utils
                     // If this happens, let's just ask the user to try again.
                     // I can't really fix this as it doesn't really make any sense? And I really don't have enough info.
 
-                    MessageBox.Show(StartupForm.IsItalian ?
+                    MessageBox.Show(Program.IsItalian ?
                         "Qualcosa è andato storto. Per favore riprova." :
                         "Something went wrong. Please try again.");
 
-                    downloadinfo.EndedSuccessfully(StartupForm.IsItalian);
+                    downloadinfo.EndedSuccessfully(Program.IsItalian);
                     break;
 
                 case var s when s.Contains("We're already in non-headless mode"):
-                    MessageBox.Show(StartupForm.IsItalian ?
-                    "Qualcosa è andato storto! Per favore crea un issue su github, e allega il file PoliDL-Logs.txt che puoi trovare in " + StartupForm.RootFolder :
-                    "Something went wrong! Please file a github issue, and attach the PoliDL-Logs.txt file you can find in " + StartupForm.RootFolder);
+                    MessageBox.Show(Program.IsItalian ?
+                    "Qualcosa è andato storto! Per favore crea un issue su github, e allega il file PoliDL-Logs.txt che puoi trovare in " + Program.RootFolder :
+                    "Something went wrong! Please file a github issue, and attach the PoliDL-Logs.txt file you can find in " + Program.RootFolder);
 
                     Application.Exit();
                     break;
@@ -333,10 +333,10 @@ namespace PoliDLGUI.Utils
                     break;
             }
 
-            //This should be at the bottom, but I moved it up to try and debug.
+
             try
             {
-                if ((StartupForm.ForceLog | shouldLog) & (outLine.Data.Trim() != ""))
+                if ((Program.ForceLog | shouldLog) & (outLine.Data.Trim() != ""))
                 { //Really likes printing empty lines for some reason.
                     this.downloadForm.LogsStream.Write(outLine.Data + Constants.vbCrLf);
                     downloadinfo.AppendLog(outLine.Data);

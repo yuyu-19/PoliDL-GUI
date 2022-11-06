@@ -198,17 +198,17 @@ namespace PoliDLGUI.Classes
                 }
                 catch (Exception ex)
                 {
-                    File.WriteAllText(StartupForm.RootFolder + @"\crashreport.txt", ex.ToString());
-                    if (StartupForm.IsItalian)
+                    File.WriteAllText(Program.RootFolder + @"\crashreport.txt", ex.ToString());
+                    if (Program.IsItalian)
                     {
-                        MessageBox.Show("Errore nell'avvio del processo. Informazioni sull'errore salvate in " + StartupForm.RootFolder + @"\crashreport.txt");
+                        MessageBox.Show("Errore nell'avvio del processo. Informazioni sull'errore salvate in " + Program.RootFolder + @"\crashreport.txt");
                     }
                     else
                     {
                         MessageBox.Show("Error starting the process. Exception info saved in crashreport.txt");
                     }
 
-                    if (StartupForm.IsItalian)
+                    if (Program.IsItalian)
                     {
                         downloadInfo.CurrentSpeed = "Finito.";
                     }

@@ -70,7 +70,7 @@ namespace PoliDLGUI.Classes
         {
             this.NotDownloaded = Math.Max(this.NotDownloaded, 0) + Math.Max(this.NotDownloadedW, 0);
             if (retry) {
-                if (StartupForm.IsItalian) {
+                if (Program.IsItalian) {
                     Console.WriteLine("È fallito il download di " + this.NotDownloaded + " video. È un bug noto, riprovo in modalità non-headless.");
                 }
                 else {
@@ -79,7 +79,7 @@ namespace PoliDLGUI.Classes
             }
             else if (segmented)
             {
-                if (StartupForm.IsItalian)
+                if (Program.IsItalian)
                 {
                     Console.WriteLine("È fallito il download di " + this.NotDownloaded + " video. Riprova più tardi, oppure prova in modalità unsegmented.");
                 }
@@ -88,7 +88,7 @@ namespace PoliDLGUI.Classes
                     Console.WriteLine("Could not download " + this.NotDownloaded + " videos. Please try again later, or try unsegmented mode.");
                 }
             }
-            else if (StartupForm.IsItalian)
+            else if (Program.IsItalian)
             {
                 Console.WriteLine("È fallito il download di " + this.NotDownloaded + " video. Riprova più tardi.");
             }

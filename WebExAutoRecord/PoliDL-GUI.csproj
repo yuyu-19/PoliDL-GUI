@@ -148,13 +148,6 @@
     </Compile>
     <Compile Include="Classes\DownloadInfo.cs" />
     <Compile Include="Classes\DownloadPool.cs" />
-    <Compile Include="Forms\GenerateDataForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\GenerateDataForm.Designer.cs">
-      <DependentUpon>GenerateDataForm.cs</DependentUpon>
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="Forms\InputForm.Designer.cs">
       <DependentUpon>InputForm.cs</DependentUpon>
     </Compile>
@@ -177,31 +170,28 @@
     <Compile Include="My Project\AssemblyInfo.cs" />
     <Compile Include="PoliDLGUI\Enums\HowEnded.cs" />
     <Compile Include="Program.cs" />
-    <Compile Include="Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
     <Compile Include="Forms\ProgressTracker.Designer.cs">
       <DependentUpon>ProgressTracker.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\ProgressTracker.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\StartupForm.Designer.cs">
-      <DependentUpon>StartupForm.cs</DependentUpon>
+    <Compile Include="Forms\SetupForm.Designer.cs">
+      <DependentUpon>SetupForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\StartupForm.cs">
+    <Compile Include="Forms\SetupForm.cs">
       <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Utils\OutputHandlerUtil.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Forms\DownloadForm.resx">
       <DependentUpon>DownloadForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\GenerateDataForm.resx">
-      <DependentUpon>GenerateDataForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\InputForm.resx">
       <DependentUpon>InputForm.cs</DependentUpon>
@@ -214,15 +204,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <CustomToolNamespace>PoliDLGUI.My.Resources</CustomToolNamespace>
       <SubType>Designer</SubType>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\ProgressTracker.resx">
       <DependentUpon>ProgressTracker.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\StartupForm.resx">
-      <DependentUpon>StartupForm.cs</DependentUpon>
+    <EmbeddedResource Include="Forms\SetupForm.resx">
+      <DependentUpon>SetupForm.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
@@ -250,9 +240,6 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\System.IO.Compression.ZipFile.dll" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="bin\Debug\Microsoft.WindowsAPICodePack.dll" />
   </ItemGroup>
   <ItemGroup>
@@ -265,28 +252,22 @@
     <None Include="bin\Debug\Microsoft.Win32.TaskScheduler.dll" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="WebExRecResources\Microsoft.Win32.TaskScheduler.dll" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="WebExRecResources\Microsoft.WindowsAPICodePack.dll" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="WebExRecResources\Microsoft.WindowsAPICodePack.Shell.dll" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="WebExRecResources\System.IO.Compression.ZipFile.dll" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Microsoft.Win32.TaskScheduler.dll" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Microsoft.WindowsAPICodePack.dll" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Microsoft.WindowsAPICodePack.Shell.dll" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="bin\Release\System.Json.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="bin\Release\Microsoft.WindowsAPICodePack.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="bin\Release\Microsoft.WindowsAPICodePack.Shell.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="bin\Release\System.IO.Compression.ZipFile.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="bin\Release\Microsoft.Win32.TaskScheduler.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Resources\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

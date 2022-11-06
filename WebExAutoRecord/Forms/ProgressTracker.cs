@@ -37,7 +37,7 @@ namespace PoliDLGUI.Forms
                 //if (!(!downloadForm.downloadInfoList.Select(x => x.CurrentSpeed != "Finished.").Any(x => x) ||
                 //    !downloadForm.downloadInfoList.Select(x => x.CurrentSpeed != "Finito.").Any(x => x)))
                 //{
-                MsgBoxResult ans = StartupForm.IsItalian
+                MsgBoxResult ans = Program.IsItalian
                     ? Interaction.MsgBox("Sei sicuro? Interromperà i download correnti e dovrai ricominciare da capo", MsgBoxStyle.YesNo, "Exit?")
                     : Interaction.MsgBox("Are you sure? This will stop all current downloads and you will have to start from scratch", MsgBoxStyle.YesNo, "Exit?");
 
@@ -70,7 +70,7 @@ namespace PoliDLGUI.Forms
                     {
                         try
                         {
-                            if (proc.MainModule.FileName.Contains(StartupForm.RootFolder))
+                            if (proc.MainModule.FileName.Contains(Program.RootFolder))
                             {
                                 proc.Kill();
                                 proc.Dispose();
@@ -212,7 +212,7 @@ namespace PoliDLGUI.Forms
 
             if (r == null || r.GetCount() == 0)
             {
-                if (StartupForm.IsItalian)
+                if (Program.IsItalian)
                     MessageBox.Show("Nessun risultato!");
                 else
                     MessageBox.Show("No results!");
@@ -225,12 +225,12 @@ namespace PoliDLGUI.Forms
 
         private void ProgressTracker_Load(object sender, EventArgs e)
         {
-            buttonInfoCurrent.Text = buttonInfoCompleted.Text = buttonInfoFailed.Text = StartupForm.IsItalian ? "Ulteriori informazioni" : "More info";
-            CurrentDL.Text = StartupForm.IsItalian ? "Download in corso" : "Currently downloading";
-            SuccessfulDL.Text = StartupForm.IsItalian ? "Download completati" : "Successfully downloaded";
-            FailedDL.Text = StartupForm.IsItalian ? "Download falliti" : "Failed";
-            CurrentLbl.Text = StartupForm.IsItalian ? "Corrente" : "Current";
-            TotalLbl.Text = StartupForm.IsItalian ? "Totale" : "Overall";
+            buttonInfoCurrent.Text = buttonInfoCompleted.Text = buttonInfoFailed.Text = Program.IsItalian ? "Ulteriori informazioni" : "More info";
+            CurrentDL.Text = Program.IsItalian ? "Download in corso" : "Currently downloading";
+            SuccessfulDL.Text = Program.IsItalian ? "Download completati" : "Successfully downloaded";
+            FailedDL.Text = Program.IsItalian ? "Download falliti" : "Failed";
+            CurrentLbl.Text = Program.IsItalian ? "Corrente" : "Current";
+            TotalLbl.Text = Program.IsItalian ? "Totale" : "Overall";
         }
     }
 }

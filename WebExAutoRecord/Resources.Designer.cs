@@ -73,16 +73,6 @@ namespace PoliDLGUI.My.Resources {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        internal static byte[] Microsoft_Win32_TaskScheduler {
-            get {
-                object obj = ResourceManager.GetObject("Microsoft_Win32_TaskScheduler", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
         internal static byte[] Microsoft_WindowsAPICodePack {
             get {
                 object obj = ResourceManager.GetObject("Microsoft_WindowsAPICodePack", resourceCulture);
@@ -121,7 +111,7 @@ namespace PoliDLGUI.My.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 103.
+        ///   Looks up a localized string similar to 110.
         /// </summary>
         internal static string Version {
             get {

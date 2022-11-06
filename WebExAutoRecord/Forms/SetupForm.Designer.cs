@@ -7,7 +7,7 @@ using Microsoft.VisualBasic.CompilerServices;
 namespace PoliDLGUI.Forms
 {
     [DesignerGenerated()]
-    public partial class StartupForm : Form
+    public partial class SetupForm : Form
     {
 
         // Form overrides dispose to clean up the component list.
@@ -37,70 +37,53 @@ namespace PoliDLGUI.Forms
         private void InitializeComponent()
         {
             this.Question = new System.Windows.Forms.Label();
-            this.localmode = new System.Windows.Forms.Button();
-            this.downloadmode = new System.Windows.Forms.Button();
             this.CreditLabel = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // Question
             // 
-            this.Question.Location = new System.Drawing.Point(324, 19);
+            this.Question.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.Question.AutoSize = true;
+            this.Question.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.Question.Location = new System.Drawing.Point(47, 9);
             this.Question.Name = "Question";
-            this.Question.Size = new System.Drawing.Size(39, 13);
+            this.Question.Size = new System.Drawing.Size(346, 17);
             this.Question.TabIndex = 0;
-            this.Question.Text = "This is a test to see how the text displays";
-            // 
-            // localmode
-            // 
-            this.localmode.Location = new System.Drawing.Point(656, 46);
-            this.localmode.Name = "localmode";
-            this.localmode.Size = new System.Drawing.Size(77, 19);
-            this.localmode.TabIndex = 1;
-            this.localmode.Text = "Local";
-            this.localmode.UseVisualStyleBackColor = true;
-            this.localmode.Click += new System.EventHandler(this.Localmode_Click_1);
-            // 
-            // downloadmode
-            // 
-            this.downloadmode.Location = new System.Drawing.Point(3, 46);
-            this.downloadmode.Name = "downloadmode";
-            this.downloadmode.Size = new System.Drawing.Size(77, 19);
-            this.downloadmode.TabIndex = 2;
-            this.downloadmode.Text = "Download";
-            this.downloadmode.UseVisualStyleBackColor = true;
-            this.downloadmode.Click += new System.EventHandler(this.Downloadmode_Click_1);
+            this.Question.Text = "Performing first time setup. Please wait a few minutes.";
             // 
             // CreditLabel
             // 
+            this.CreditLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.CreditLabel.AutoSize = true;
             this.CreditLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.CreditLabel.Location = new System.Drawing.Point(201, 46);
+            this.CreditLabel.Location = new System.Drawing.Point(23, 38);
             this.CreditLabel.Name = "CreditLabel";
-            this.CreditLabel.Size = new System.Drawing.Size(299, 42);
+            this.CreditLabel.Size = new System.Drawing.Size(388, 18);
             this.CreditLabel.TabIndex = 3;
             this.CreditLabel.Text = "PoliWebex and PoliDown by @sup3rgiu GUI by @yuyu-19";
             // 
-            // StartupForm
+            // SetupForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 89);
-            this.Controls.Add(this.CreditLabel);
-            this.Controls.Add(this.downloadmode);
-            this.Controls.Add(this.localmode);
+            this.ClientSize = new System.Drawing.Size(434, 89);
             this.Controls.Add(this.Question);
+            this.Controls.Add(this.CreditLabel);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
-            this.Name = "StartupForm";
+            this.Name = "SetupForm";
             this.Text = "PoliDL-GUI";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.StartupForm_FormClosing);
-            this.Load += new System.EventHandler(this.StartupForm_Load);
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.SetupForm_FormClosing);
+            this.Shown += new System.EventHandler(this.SetupForm_Shown);
+            this.Load += new System.EventHandler(this.SetupForm_Load);
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
         internal Label Question;
-        internal Button localmode;
-        internal Button downloadmode;
         internal Label CreditLabel;
     }
 }

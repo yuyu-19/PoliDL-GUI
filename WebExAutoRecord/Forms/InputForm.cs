@@ -91,7 +91,7 @@ namespace PoliDLGUI.Forms
 
         private void InputForm_Load(object sender, EventArgs e)
         {
-            if (StartupForm.IsItalian)
+            if (Program.IsItalian)
             {
                 Skip.Text = "Salta";
                 reUsePW.Text = "Riutilizza password?";

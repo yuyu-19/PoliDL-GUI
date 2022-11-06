@@ -42,7 +42,7 @@ namespace PoliDLGUI.Forms
             {
                 COPF.IsFolderPicker = false;
                 COPF.EnsureFileExists = true;
-                if (StartupForm.IsItalian)
+                if (Program.IsItalian)
                 {
                     COPF.Filters.Add(new CommonFileDialogFilter("File HTML", "html,htm"));
                     COPF.Filters.Add(new CommonFileDialogFilter("File Excel", "xlsx"));
@@ -89,7 +89,7 @@ namespace PoliDLGUI.Forms
 
         private void DownloadForm_Load(object sender, EventArgs e)
         {
-            if (StartupForm.IsItalian)
+            if (Program.IsItalian)
             {
                 BrowseFolder.Text = "Esplora";
                 Browse.Text = "Esplora";
@@ -109,6 +109,20 @@ namespace PoliDLGUI.Forms
             }
 
             ModeSelect.SelectedIndex = 0;
+
+            string appData = Program.RootFolder;
+            /*If:
+             *  The appData directory doesn't exist
+             *  An update was interrupted
+             *  There is a file missing
+             *  The version numbers don't match
+             * Call setupForm to clean up.
+             */
+            if (!Directory.Exists(appData) || 
+            File.Exists(appData + @"\temp.zip") ||
+            !File.Exists(appData + @"\Poli-pkg\dist\poliwebex.exe") ||
+            My.Resources.Resources.Version != (File.ReadAllText(appData + @"\version.txt") ?? "1"))
+                new SetupForm().ShowDialog();
         }
 
         private void ModeSelect_SelectedIndexChanged(object sender, EventArgs e)
@@ -117,7 +131,7 @@ namespace PoliDLGUI.Forms
             if (Index == 2)
             {
                 Index = 0; // Keep the same setup as the file if the user picked the "Folder" option
-                if (StartupForm.IsItalian)
+                if (Program.IsItalian)
                 {
                     MessageBox.Show("Assicurati che la cartella e le sue sottocartelle contengano solo i tipi di file supportati (xlsx/docx/html/zip)");
                 }
@@ -153,7 +167,7 @@ namespace PoliDLGUI.Forms
 
             if (string.IsNullOrEmpty(FolderPath.Text))
             {
-                if (StartupForm.IsItalian)
+                if (Program.IsItalian)
                 {
                     MessageBox.Show("Per favore inserisci la cartella di download");
                 }
@@ -173,7 +187,7 @@ namespace PoliDLGUI.Forms
                     GetAllRecordingLinks(URLlist.Text, ref WebexURLs, ref StreamURLs);
                 } catch (InvalidOperationException ex)
                 {
-                    if (StartupForm.IsItalian)
+                    if (Program.IsItalian)
                     {
                         MessageBox.Show("Rilevato link recman. Per scaricare video dall'archivio registrazioni, devi andare nella pagina webeep del tuo corso, e copiare il link \"Archivio registrazioni\" cliccando con il tasto destro.");
                     }
@@ -190,7 +204,7 @@ namespace PoliDLGUI.Forms
             {
                 if (string.IsNullOrEmpty(FilePath.Text) & ModeSelect.SelectedIndex == 0)
                 {
-                    if (StartupForm.IsItalian)
+                    if (Program.IsItalian)
                     {
                         MessageBox.Show("Per favore seleziona un file.");
                     }
@@ -203,7 +217,7 @@ namespace PoliDLGUI.Forms
                 }
                 else if (string.IsNullOrEmpty(FilePath.Text) & ModeSelect.SelectedIndex == 2)
                 {
-                    if (StartupForm.IsItalian)
+                    if (Program.IsItalian)
                     {
                         MessageBox.Show("Per favore inserisci la cartella.");
                     }
@@ -262,7 +276,7 @@ namespace PoliDLGUI.Forms
 
                         default:
                             {
-                                if (StartupForm.IsItalian)
+                                if (Program.IsItalian)
                                 {
                                     MessageBox.Show("Tipo di file non supportato. Riprova.");
                                 }
@@ -277,7 +291,7 @@ namespace PoliDLGUI.Forms
                 } 
                 catch (InvalidOperationException ex)
                 {
-                    if (StartupForm.IsItalian)
+                    if (Program.IsItalian)
                     {
                         MessageBox.Show("Rilevato link recman. Per scaricare video dall'archivio registrazioni, devi andare nella pagina webeep del tuo corso, e copiare il link \"Archivio registrazioni\" cliccando con il tasto destro.");
                     }
@@ -317,22 +331,22 @@ namespace PoliDLGUI.Forms
             
             try
             {
-                var tmpObj = JsonValue.Parse(File.ReadAllText(StartupForm.RootFolder + @"\Poli-pkg\dist\config.json"));
+                var tmpObj = JsonValue.Parse(File.ReadAllText(Program.RootFolder + @"\Poli-pkg\dist\config.json"));
             } catch
             {
                 //Config is fucked, delete it.
-                File.Delete(StartupForm.RootFolder + @"\Poli-pkg\dist\config.json");
+                File.Delete(Program.RootFolder + @"\Poli-pkg\dist\config.json");
             }
             
-            if (File.Exists(StartupForm.RootFolder + @"\Poli-pkg\dist\config.json"))
+            if (File.Exists(Program.RootFolder + @"\Poli-pkg\dist\config.json"))
             {
-                string Config = File.ReadAllText(StartupForm.RootFolder + @"\Poli-pkg\dist\config.json");
+                string Config = File.ReadAllText(Program.RootFolder + @"\Poli-pkg\dist\config.json");
                 if (!Config.Contains("SPID")) {
                     Config = ""; //Erase the config.
                 }
                 if (!Config.Contains("codicePersona"))
                 {
-                    if (StartupForm.IsItalian)
+                    if (Program.IsItalian)
                     {
                         TempString = Conversions.ToString(InputForm.AskForInput("Inserisci il tuo nome utente per SPID", this.Location));
                     }
@@ -347,7 +361,7 @@ namespace PoliDLGUI.Forms
 
                 if (!Config.Contains("email") && WebexURLs.Count > 0)
                 {
-                    if (StartupForm.IsItalian)
+                    if (Program.IsItalian)
                     {
                         WebexArgs += " -e " + Conversions.ToString(InputForm.AskForInput("Inserisci la tua email (nome.cognome@mail.polimi.it)", this.Location));
                     }
@@ -362,7 +376,7 @@ namespace PoliDLGUI.Forms
                     // Does the passwordsaved value exist?
                     // Is the true right after the passwordSaved keyword?
                     // Checking the position in this way also checks wheter or not it's set to true.
-                    if (StartupForm.IsItalian)
+                    if (Program.IsItalian)
                     {
                         TempString = Conversions.ToString(InputForm.AskForInput("Inserisci la tua password SPID", this.Location));
                     }
@@ -377,7 +391,7 @@ namespace PoliDLGUI.Forms
             }
             else    // Nothing is saved, ask everything to make sure.
             {
-                if (StartupForm.IsItalian)
+                if (Program.IsItalian)
                 {
                     TempString = Conversions.ToString(InputForm.AskForInput("Inserisci il tuo nome utente SPID", this.Location));
                 }
@@ -388,7 +402,7 @@ namespace PoliDLGUI.Forms
 
                 WebexArgs += " -u " + TempString;
                 StreamArgs += " -u " + TempString;
-                if (StartupForm.IsItalian)
+                if (Program.IsItalian)
                 {
                     TempString = Conversions.ToString(InputForm.AskForInput("Inserisci la tua password SPID", this.Location));
                 }
@@ -401,7 +415,7 @@ namespace PoliDLGUI.Forms
                 StreamArgs += " -p " + TempString;
                 if (WebexURLs.Count > 0)
                 {
-                    if (StartupForm.IsItalian)
+                    if (Program.IsItalian)
                     {
                         WebexArgs += " -e " + Conversions.ToString(InputForm.AskForInput("Inserisci la tua email (nome.cognome@mail.polimi.it)", this.Location));
                     }
@@ -425,12 +439,12 @@ namespace PoliDLGUI.Forms
 
             // Time to boot up poliwebex.
 
-            if (!Directory.Exists(StartupForm.RootFolder + @"\Logs"))
-                Directory.CreateDirectory(StartupForm.RootFolder + @"\Logs");
+            if (!Directory.Exists(Program.RootFolder + @"\Logs"))
+                Directory.CreateDirectory(Program.RootFolder + @"\Logs");
 
             if (LogsStream == null)
             {
-                LogsStream = new StreamWriter(StartupForm.RootFolder + @"\Logs\" + @"\PoliDL-Logs_" + DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss") + ".txt", append: false)
+                LogsStream = new StreamWriter(Program.RootFolder + @"\Logs\" + @"\PoliDL-Logs_" + DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss") + ".txt", append: false)
                 {
                     AutoFlush = true
                 };
@@ -443,19 +457,19 @@ namespace PoliDLGUI.Forms
                 if (x.Contains("webeep.polimi.it"))
                 {
                     //Extract links from every URL.
-                    var extrInfo = new ProcessStartInfo(StartupForm.RootFolder + @"\Poli-pkg\dist\poliwebex.exe", "-x true " + WebexArgs + " \"" + x + "\"");
+                    var extrInfo = new ProcessStartInfo(Program.RootFolder + @"\Poli-pkg\dist\poliwebex.exe", "-x true " + WebexArgs + " \"" + x + "\"");
                     LogsStream.WriteLine(WebexArgs);
 
                     bool debugOut = false;
                     extrInfo.RedirectStandardOutput = !debugOut;
                     extrInfo.UseShellExecute = false;
                     extrInfo.CreateNoWindow = !debugOut;
-                    extrInfo.WorkingDirectory = StartupForm.RootFolder + @"\Poli-pkg\dist\";
+                    extrInfo.WorkingDirectory = Program.RootFolder + @"\Poli-pkg\dist\";
 
                     var extract = new Process();
                     extract.StartInfo = extrInfo;
 
-                    if (StartupForm.IsItalian)
+                    if (Program.IsItalian)
                     {
                         MessageBox.Show("Rilevato link recman. Premi OK per avviare l'estrazione dei link (potrebbe richiedere qualche minuto).");
                     }
@@ -493,7 +507,7 @@ namespace PoliDLGUI.Forms
 
             if (WebexURLs.Count == 0 & StreamURLs.Count == 0)
             {
-                if (StartupForm.IsItalian)
+                if (Program.IsItalian)
                 {
                     MessageBox.Show("Nessun URL trovato.");
                 }
@@ -528,7 +542,7 @@ namespace PoliDLGUI.Forms
                 {
                     string s2 = StreamArgs;
                     s2 += " \"" + x + "\"";
-                    RunCommandH(StartupForm.RootFolder + @"\Poli-pkg\dist\polidown.exe", s2, StreamURLs.Count, WebexURLs.Count, new Uri(x));
+                    RunCommandH(Program.RootFolder + @"\Poli-pkg\dist\polidown.exe", s2, StreamURLs.Count, WebexURLs.Count, new Uri(x));
                 }
             }
 
@@ -541,7 +555,7 @@ namespace PoliDLGUI.Forms
                 {
                     string s2 = WebexArgs;
                     s2 += " \"" + x + "\"";
-                    RunCommandH(StartupForm.RootFolder + @"\Poli-pkg\dist\poliwebex.exe", s2, StreamURLs.Count, WebexURLs.Count, new Uri(x));
+                    RunCommandH(Program.RootFolder + @"\Poli-pkg\dist\poliwebex.exe", s2, StreamURLs.Count, WebexURLs.Count, new Uri(x));
                 }
             }
 
@@ -708,7 +722,7 @@ namespace PoliDLGUI.Forms
                 currentfiletotal = WebexURLs + StreamURLs
             };
 
-            if (StartupForm.IsItalian)
+            if (Program.IsItalian)
             {
                 downloadInfo.CurrentSpeed = "Sto avviando...";
             }
@@ -756,7 +770,7 @@ namespace PoliDLGUI.Forms
             if (CheckSegmented.Checked == false)
             {
                 int ans;
-                if (StartupForm.IsItalian)
+                if (Program.IsItalian)
                 {
                     ans = (int)Interaction.MsgBox("Sei sicuro? Questo renderà il download più veloce su PC sufficientemente potenti, ma meno affidabile.", MsgBoxStyle.YesNo, "Download segmentato?");
                 }
