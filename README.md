@@ -15,12 +15,14 @@ PoliDown: https://github.com/sup3rgiu/PoliDown
 
 Richiede .NET framework v4.6
 
-Questo programma permette di scaricare molteplici lezioni da Webex
+Questo programma permette di scaricare molteplici lezioni da Webex e tutti i corsi nella sezione Registrazioni di un corso Webeep
  
 ### Download
 Se esiste già il file corrispondente ad un video il download continuerà da dove è stato interrotto, saltandolo nel caso il file sia stato scaricato completamente.
 
 Una volta che il programma ha cercato di scaricare tutti i link forniti verrà chiesto all'utente se vuole riprovare a scaricare quelli falliti.
+
+È possibile scaricare tutte le registrazioni di un corso (se sono state salvate utilizzando il sito del poli, recman) inserendo il link al corso webeep (https://webeep.polimi.it/course/view.php?id=XXX)
 
 Il programma può estrarre link di webex da un paio di tipi di file:
   - .xlsx
@@ -65,6 +67,8 @@ This tool allows you to donwload lessons from Webex in bulk
 If the video file already exists, the download will be resumed from where it was interrupted, and skipped entirely if it was already completed.
 
 Once the program has attempted to download all the given videos, it will prompt the user and ask them if they would like to retry the failed ones.
+
+It's possible to download all recordings of a course (if they were stored using the poli's own recman site) by adding the link to the webeep course (https://webeep.polimi.it/course/view.php?id=XXX)
 
 The program can extract webex links from a couple of filetypes:
   - .xlsx
