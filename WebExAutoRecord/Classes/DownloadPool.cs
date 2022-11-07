@@ -97,12 +97,11 @@ namespace PoliDLGUI.Classes
                             }
                         case HowEnded.FAIL:
                             {
-                                this.progressTracker.OneDownloadHasFailed(retry);
-
                                 if (retry)
                                     failedButRetried.Add(downloadInfo);
                                 else
                                     failWithoutRetry.Add(downloadInfo);
+                                this.progressTracker.OneDownloadHasFailed(retry);
                                 break;
                             }
                         case HowEnded.NOT_ENDED_YET:

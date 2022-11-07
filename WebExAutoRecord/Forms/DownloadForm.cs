@@ -4,6 +4,7 @@ using Microsoft.WindowsAPICodePack.Dialogs;
 using PoliDLGUI.Classes;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
@@ -24,14 +25,14 @@ namespace PoliDLGUI.Forms
             _Browse.Name = "Browse";
             _DLButton.Name = "DLButton";
             _BrowseFolder.Name = "BrowseFolder";
-            _CheckSegmented.Name = "CheckSegmented";
-            _CheckSegmented.Checked = true;
+            _CheckResetCredentials.Name = "CheckResetCredentials";
+            _CheckResetCredentials.Checked = false;
         }
         public string lastUsedVideoPW = "";
         public DownloadPool downloadPool = null;
 
         public StreamWriter LogsStream = null;
-        private readonly ProgressTracker progressTracker;
+        private ProgressTracker progressTracker;
 
         //private readonly ProgressTracker progressTracker;
 
@@ -42,22 +43,24 @@ namespace PoliDLGUI.Forms
             {
                 COPF.IsFolderPicker = false;
                 COPF.EnsureFileExists = true;
+
                 if (Program.IsItalian)
                 {
+                    COPF.Filters.Add(new CommonFileDialogFilter("File di testo", "txt"));
                     COPF.Filters.Add(new CommonFileDialogFilter("File HTML", "html,htm"));
                     COPF.Filters.Add(new CommonFileDialogFilter("File Excel", "xlsx"));
                     COPF.Filters.Add(new CommonFileDialogFilter("File Word", "docx"));
                     COPF.Filters.Add(new CommonFileDialogFilter("Zip (di file docx/xlsx/html)", "zip"));
-                    COPF.Filters.Add(new CommonFileDialogFilter("TXT", "txt"));
                 }
                 else
                 {
+                    COPF.Filters.Add(new CommonFileDialogFilter("Text file", "txt"));
                     COPF.Filters.Add(new CommonFileDialogFilter("HTML file", "html,htm"));
                     COPF.Filters.Add(new CommonFileDialogFilter("Excel file", "xlsx"));
                     COPF.Filters.Add(new CommonFileDialogFilter("Word file", "docx"));
                     COPF.Filters.Add(new CommonFileDialogFilter("Zip (of docx/xlsx/html files)", "zip"));
-                    COPF.Filters.Add(new CommonFileDialogFilter("TXT", "txt"));
                 }
+
             }
             else
             {
@@ -96,7 +99,7 @@ namespace PoliDLGUI.Forms
                 ModeLbl.Text = "Modalità:";
                 var CFont = new Font(ModeLbl.Font.FontFamily, 12f, ModeLbl.Font.Style);
                 ModeLbl.Font = CFont;
-                CheckSegmented.Text = "Unsegmented" + Constants.vbCrLf + "(Più affidabile)";
+                CheckResetCredentials.Text = "Reimposta le credenziali";
                 DLfolderlabel.Text = "Cartella Download";
                 var p = ModeLbl.Location;
                 p.Y += 5;
@@ -141,29 +144,37 @@ namespace PoliDLGUI.Forms
                 }
             }
 
-            // I just didn't want to do a pointless conversion to boolean when I can just do it implicitly, sue me
-            FilePath.Visible = Conversions.ToBoolean(Math.Abs(Index - 1));
-            Browse.Visible = Conversions.ToBoolean(Math.Abs(Index - 1));
-            ExtensionInfo.Visible = Conversions.ToBoolean(Math.Abs(Index - 1));
-            URLlist.Visible = Conversions.ToBoolean(Index);
+            Boolean fileMode = (Index == 0 || Index == 2);
+            FilePath.Visible = fileMode;
+            Browse.Visible = fileMode;
+            ExtensionInfo.Visible = fileMode;
+
+            URLlist.Visible = !fileMode;
+
             Height = 135 + 320 * Index;
             var p = DLButton.Location;
             p.Y = 67 + 322 * Index;
             DLButton.Location = p;
-            p = CheckSegmented.Location;
+            p = CheckResetCredentials.Location;
             p.Y = 64 + 318 * Index;
             p.X = 361 * Math.Abs(Index - 1) + 16 * Index;
-            CheckSegmented.Location = p;
+            CheckResetCredentials.Location = p;
+            CheckResetCredentials.Text = fileMode ? (Program.IsItalian ? "" : "") : (Program.IsItalian ? "" : "");
+            if (fileMode)
+                CheckResetCredentials.Text = Program.IsItalian ? "Reimposta le\ncredenziali" : "Reset\ncredentials";
+            else
+                CheckResetCredentials.Text = Program.IsItalian ? "Reimposta le credenziali" : "Reset credentials";
         }
 
         public const int maxDownloadInParallel = 7;
 
         private void DLButton_Click(object sender, EventArgs e)
         {
+            if (progressTracker == null)
+                progressTracker = new ProgressTracker(this);
+
             if (downloadPool == null)
-            {
                 downloadPool = new DownloadPool(maxDownloadInParallel, this, this.progressTracker);
-            }
 
             if (string.IsNullOrEmpty(FolderPath.Text))
             {
@@ -344,7 +355,7 @@ namespace PoliDLGUI.Forms
                 if (!Config.Contains("SPID")) {
                     Config = ""; //Erase the config.
                 }
-                if (!Config.Contains("codicePersona"))
+                if (CheckResetCredentials.Checked || !Config.Contains("codicePersona"))
                 {
                     if (Program.IsItalian)
                     {
@@ -359,7 +370,7 @@ namespace PoliDLGUI.Forms
                     StreamArgs += " -u " + TempString;
                 }
 
-                if (!Config.Contains("email") && WebexURLs.Count > 0)
+                if (CheckResetCredentials.Checked || (!Config.Contains("email") && WebexURLs.Count > 0))
                 {
                     if (Program.IsItalian)
                     {
@@ -371,7 +382,7 @@ namespace PoliDLGUI.Forms
                     }
                 }
 
-                if (!Config.Contains("passwordSaved") || !(Config.IndexOf("true", Config.IndexOf("passwordSaved")) == Config.IndexOf("passwordSaved") + "passwordSaved\": ".Length))
+                if (CheckResetCredentials.Checked || !Config.Contains("passwordSaved") || !(Config.IndexOf("true", Config.IndexOf("passwordSaved")) == Config.IndexOf("passwordSaved") + "passwordSaved\": ".Length))
                 {
                     // Does the passwordsaved value exist?
                     // Is the true right after the passwordSaved keyword?
@@ -559,8 +570,11 @@ namespace PoliDLGUI.Forms
                 }
             }
 
-            this.Hide();
-            progressTracker.Show();
+            //this.Hide();
+            progressTracker.ShowDialog();
+            progressTracker.CloseThis("");
+            progressTracker = null;
+            downloadPool = null;
         }
 
         public void GetAllLinksFromZip(ZipArchive AFile, ref List<string> WebexURLs, ref List<string> StreamURLs)
@@ -740,6 +754,20 @@ namespace PoliDLGUI.Forms
 
         private delegate void CloseThisCallback(string text);
 
+        public void setText(HashSet<string> newURLList)
+        {
+            ModeSelect.SelectedIndex = 1;
+            string[] lines = new string[newURLList.Count];
+            string text = "";
+
+            foreach (string s in newURLList) 
+                text += s + "\n";
+            
+            newURLList.CopyTo(lines);
+            URLlist.Lines = lines;
+        
+        }
+
         public void CloseThis(string text)
         {
             // InvokeRequired required compares the thread ID of the
@@ -762,27 +790,6 @@ namespace PoliDLGUI.Forms
                 }
 
                 this.Close();
-            }
-        }
-
-        private void CheckSegmented_CheckedChanged(object sender, EventArgs e)
-        {
-            if (CheckSegmented.Checked == false)
-            {
-                int ans;
-                if (Program.IsItalian)
-                {
-                    ans = (int)Interaction.MsgBox("Sei sicuro? Questo renderà il download più veloce su PC sufficientemente potenti, ma meno affidabile.", MsgBoxStyle.YesNo, "Download segmentato?");
-                }
-                else
-                {
-                    ans = (int)Interaction.MsgBox("Are you sure? This will make the download faster on good enough computers, but less reliable.", MsgBoxStyle.YesNo, "Segmented download?");
-                }
-
-                if (ans != (int)DialogResult.Yes)
-                {
-                    CheckSegmented.Checked = true;
-                }
             }
         }
 

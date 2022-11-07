@@ -248,7 +248,7 @@ namespace PoliDLGUI.Utils
                             downloadinfo.uri
                         );
 
-                        downloadinfo.Failed(segmented, retry: true);
+                        downloadinfo.Failed(segmented, retry: false);
                     }
 
                     break;
@@ -304,7 +304,7 @@ namespace PoliDLGUI.Utils
                         downloadinfo.uri
                     );
 
-                    downloadinfo.Failed(segmented, retry: true);
+                    downloadinfo.Failed(segmented, retry: false);
 
                     break;
 

@@ -47,7 +47,7 @@ namespace PoliDLGUI.Forms
             this.DLfolderlabel = new System.Windows.Forms.Label();
             this.FolderPath = new System.Windows.Forms.TextBox();
             this._BrowseFolder = new System.Windows.Forms.Button();
-            this._CheckSegmented = new System.Windows.Forms.CheckBox();
+            this._CheckResetCredentials = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // ModeLbl
@@ -152,24 +152,22 @@ namespace PoliDLGUI.Forms
             this._BrowseFolder.UseVisualStyleBackColor = true;
             this._BrowseFolder.Click += new System.EventHandler(this.BrowseFolder_Click);
             // 
-            // _CheckSegmented
+            // _CheckResetCredentials
             // 
-            this._CheckSegmented.AutoSize = true;
-            this._CheckSegmented.Location = new System.Drawing.Point(16, 382);
-            this._CheckSegmented.Name = "_CheckSegmented";
-            this._CheckSegmented.Size = new System.Drawing.Size(113, 30);
-            this._CheckSegmented.TabIndex = 10;
-            this._CheckSegmented.Text = "Run unsegmented\r\n(Fallback option)";
-            this._CheckSegmented.UseVisualStyleBackColor = true;
-            this._CheckSegmented.Visible = false;
-            this._CheckSegmented.CheckedChanged += new System.EventHandler(this.CheckSegmented_CheckedChanged);
+            this._CheckResetCredentials.AutoSize = true;
+            this._CheckResetCredentials.Location = new System.Drawing.Point(16, 382);
+            this._CheckResetCredentials.Name = "_CheckResetCredentials";
+            this._CheckResetCredentials.Size = new System.Drawing.Size(108, 17);
+            this._CheckResetCredentials.TabIndex = 10;
+            this._CheckResetCredentials.Text = "Reset credentials";
+            this._CheckResetCredentials.UseVisualStyleBackColor = true;
             // 
             // DownloadForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(567, 424);
-            this.Controls.Add(this._CheckSegmented);
+            this.Controls.Add(this._CheckResetCredentials);
             this.Controls.Add(this._BrowseFolder);
             this.Controls.Add(this.FolderPath);
             this.Controls.Add(this.DLfolderlabel);
@@ -300,29 +298,20 @@ namespace PoliDLGUI.Forms
             }
         }
 
-        private CheckBox _CheckSegmented;
+        private CheckBox _CheckResetCredentials;
 
-        internal CheckBox CheckSegmented
+        internal CheckBox CheckResetCredentials
         {
             [MethodImpl(MethodImplOptions.Synchronized)]
             get
             {
-                return _CheckSegmented;
+                return _CheckResetCredentials;
             }
 
             [MethodImpl(MethodImplOptions.Synchronized)]
             set
             {
-                if (_CheckSegmented != null)
-                {
-                    _CheckSegmented.CheckedChanged -= CheckSegmented_CheckedChanged;
-                }
-
-                _CheckSegmented = value;
-                if (_CheckSegmented != null)
-                {
-                    _CheckSegmented.CheckedChanged += CheckSegmented_CheckedChanged;
-                }
+                _CheckResetCredentials = value;
             }
         }
     }

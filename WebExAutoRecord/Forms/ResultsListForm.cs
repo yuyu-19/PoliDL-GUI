@@ -25,6 +25,7 @@ namespace PoliDLGUI.Forms
             saveBtn.Text = Program.IsItalian ? "Salva link in un .txt" : "Save URLs as .txt";
         }
 
+
         private void Button1_Click(object sender, EventArgs e)
         {
             SaveFileDialog saveFileDialog = new SaveFileDialog

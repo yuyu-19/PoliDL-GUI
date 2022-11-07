@@ -2,6 +2,7 @@
 using PoliDLGUI.Classes;
 using PoliDLGUI.Enums;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows.Forms;
 
@@ -105,7 +106,7 @@ namespace PoliDLGUI.Forms
             }
             else
             {
-                this.downloadForm.Close();
+                //this.downloadForm.Close();
                 this.Close();
             }
         }
@@ -139,14 +140,7 @@ namespace PoliDLGUI.Forms
                     }
                 case ProgressUpdate.ERROR:
                     {
-                        if (text.retry)
-                        {
-                            ; //do we something here?
-                        }
-                        else
-                        {
-                            this.NumFailed.Text = ((Convert.ToInt32(this.NumFailed.Text)) + 1).ToString();
-                        }
+                        this.NumFailed.Text = ((Convert.ToInt32(this.NumFailed.Text)) + 1).ToString();
                         break;
                     }
                 case ProgressUpdate.STARTED:
@@ -161,8 +155,46 @@ namespace PoliDLGUI.Forms
             this.FileNumTotal.Text = "File " + (SuccessCount + FailedCount).ToString() + "/" + (this.downloadForm.downloadPool.total).ToString();
             this.Text = "File " + (SuccessCount + FailedCount).ToString() + "/" + (this.downloadForm.downloadPool.total).ToString();
             this.OverallProgressCurrent.Maximum = startedDownloads - FailedRetried;
-            this.OverallProgressCurrent.Value = (CurrentCount + SuccessCount + FailedCount);
-            this.OverallProgressTotal.Value = (SuccessCount + FailedCount);
+            this.OverallProgressCurrent.Value = CurrentCount + SuccessCount + FailedCount;
+            this.OverallProgressTotal.Value = SuccessCount + FailedCount;
+
+            int notDownloaded = this.downloadForm.downloadPool.total - SuccessCount;
+            int waitingOrInProgress = this.downloadForm.downloadPool.waiting.GetCount() + this.downloadForm.downloadPool.current.GetCount();
+            //MessageBox.Show("Files left: " + waitingOrInProgress + "\n Not downloaded: "+notDownloaded);
+            //If there are no downloads waiting and we've failed at least 1
+            int failedButRetried = downloadForm.downloadPool.failedButRetried.GetURIs().Count;
+            int failedWithoutRetry = downloadForm.downloadPool.failWithoutRetry.GetURIs().Count;
+            /*MessageBox.Show("" +
+                "failedButRetried " + failedButRetried +
+                "\ncurrent " +downloadForm.downloadPool.current.GetURIs().Count+
+                "\nfailedWithoutRetry: " + failedWithoutRetry+
+                "\ntotal: " + downloadForm.downloadPool.total
+                );*/
+
+            if (waitingOrInProgress == 0 && notDownloaded > 0 && text.progressUpdate != ProgressUpdate.STARTED && Convert.ToInt32(this.NumFailed.Text) > 0)
+            {
+                MsgBoxResult ans = Program.IsItalian
+                    ? Interaction.MsgBox("Hai "+ notDownloaded + " download falliti. Vuoi riprovare?", MsgBoxStyle.YesNo, "Riprova?")
+                    : Interaction.MsgBox("There are " + notDownloaded + " failed downloads. Would you like to retry them?", MsgBoxStyle.YesNo, "Retry?");
+                if (ans == MsgBoxResult.Ok || ans == MsgBoxResult.Yes)
+                {
+                    //Let's take only the downloads that have failed and were NOT completed.
+                    HashSet<string> failedCompletely = new HashSet<string>();
+                    
+                    foreach (string s in downloadForm.downloadPool.failedButRetried.GetURIs())
+                        failedCompletely.Add(s);
+
+                    foreach (string s in downloadForm.downloadPool.failWithoutRetry.GetURIs())
+                        failedCompletely.Add(s);
+                        
+                    foreach (string s in downloadForm.downloadPool.success.GetURIs())
+                        failedCompletely.Remove(s);
+
+                        
+                    downloadForm.setText(failedCompletely);
+                    CloseThis("");
+                }
+            }
         }
 
         private int startedDownloads = 0;
