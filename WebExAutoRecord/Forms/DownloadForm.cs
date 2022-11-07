@@ -198,14 +198,8 @@ namespace PoliDLGUI.Forms
                     GetAllRecordingLinks(URLlist.Text, ref WebexURLs, ref StreamURLs);
                 } catch (InvalidOperationException ex)
                 {
-                    if (Program.IsItalian)
-                    {
-                        MessageBox.Show("Rilevato link recman. Per scaricare video dall'archivio registrazioni, devi andare nella pagina webeep del tuo corso, e copiare il link \"Archivio registrazioni\" cliccando con il tasto destro.");
-                    }
-                    else
-                    {
-                        MessageBox.Show("Detected a recman link. In order to download videos from the recording archive, you must go on the webeep page for your course, and copy the \"Recordings archive\" link by right clicking.");
-                    }
+                    MessageBox.Show(Program.IsItalian ? "Rilevato link recman. Per scaricare video dall'archivio registrazioni, devi andare nella pagina webeep del tuo corso, e copiare il link del corso (https://webeep.polimi.it/course/view.php?id=XXX)."
+                        : "Detected a recman link. In order to download videos from the recording archive, you must go on the webeep page for your course, and copy the URL (https://webeep.polimi.it/course/view.php?id=XXX)");
                     WebexURLs.Clear();
                     StreamURLs.Clear();
                 }
@@ -302,14 +296,9 @@ namespace PoliDLGUI.Forms
                 } 
                 catch (InvalidOperationException ex)
                 {
-                    if (Program.IsItalian)
-                    {
-                        MessageBox.Show("Rilevato link recman. Per scaricare video dall'archivio registrazioni, devi andare nella pagina webeep del tuo corso, e copiare il link \"Archivio registrazioni\" cliccando con il tasto destro.");
-                    }
-                    else
-                    {
-                        MessageBox.Show("Detected a recman link. In order to download videos from the recording archive, you must go on the webeep page for your course, and copy the \"Recordings archive\" link by right clicking.");
-                    }
+                    MessageBox.Show(Program.IsItalian ? "Rilevato link recman. Per scaricare video dall'archivio registrazioni, devi andare nella pagina webeep del tuo corso, e copiare il link del corso (https://webeep.polimi.it/course/view.php?id=XXX)."
+                    : "Detected a recman link. In order to download videos from the recording archive, you must go on the webeep page for your course, and copy the URL (https://webeep.polimi.it/course/view.php?id=XXX)");
+
                     WebexURLs.Clear();
                     StreamURLs.Clear();
                 } 
@@ -482,11 +471,11 @@ namespace PoliDLGUI.Forms
 
                     if (Program.IsItalian)
                     {
-                        MessageBox.Show("Rilevato link recman. Premi OK per avviare l'estrazione dei link (potrebbe richiedere qualche minuto).");
+                        MessageBox.Show("Rilevato link a corso webeep. Premi OK per avviare l'estrazione dei link (potrebbe richiedere qualche minuto).");
                     }
                     else
                     {
-                        MessageBox.Show("Detected a recman link. Press OK to begin the link extraction (it could take a few minutes).");
+                        MessageBox.Show("Detected a webeep course link. Press OK to begin the link extraction (it could take a few minutes).");
                     }
                     extract.Start();
 
