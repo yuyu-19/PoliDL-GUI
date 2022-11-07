@@ -39,8 +39,8 @@ namespace PoliDLGUI.Forms
                 //    !downloadForm.downloadInfoList.Select(x => x.CurrentSpeed != "Finito.").Any(x => x)))
                 //{
                 MsgBoxResult ans = Program.IsItalian
-                    ? Interaction.MsgBox("Sei sicuro? Interromperà i download correnti (certe volte è possible che non interrompa tutti i processi di aria2, è consigliato controllare con task manager)", MsgBoxStyle.YesNo, "Exit?")
-                    : Interaction.MsgBox("Are you sure? This will stop all current downloads (sometimes it faills to kill all aria2 processes, checking manually with task manager is recommended)", MsgBoxStyle.YesNo, "Exit?");
+                    ? Interaction.MsgBox("Sei sicuro? Interromperà i download correnti (certe volte è possible che non interrompa tutti i processi di aria2 e node/poliwebex, è consigliato controllare con task manager)", MsgBoxStyle.YesNo, "Exit?")
+                    : Interaction.MsgBox("Are you sure? This will stop all current downloads (sometimes it faills to kill all aria2 and node/poliwebex processes, checking manually with task manager is recommended)", MsgBoxStyle.YesNo, "Exit?");
 
                 //bool? isSegmented = downloadForm.downloadPool.WeHaveSegmentedDownloadsCurrently();
 

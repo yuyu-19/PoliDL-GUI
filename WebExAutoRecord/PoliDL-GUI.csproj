@@ -168,7 +168,7 @@
       <DependentUpon>ResultsListForm.cs</DependentUpon>
     </Compile>
     <Compile Include="My Project\AssemblyInfo.cs" />
-    <Compile Include="PoliDLGUI\Enums\HowEnded.cs" />
+    <Compile Include="Enums\HowEnded.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Forms\ProgressTracker.Designer.cs">
       <DependentUpon>ProgressTracker.cs</DependentUpon>
@@ -220,12 +220,8 @@
       <Link>.editorconfig</Link>
     </None>
     <None Include="app.config" />
-    <None Include="bin\Debug\Data.zip" />
-    <None Include="bin\Release\Data.zip" />
     <None Include="My Project\app.manifest" />
     <None Include="packages.config" />
-    <None Include="WebExAutoRecord_1_TemporaryKey.pfx" />
-    <None Include="WebExAutoRecord_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.6">
@@ -238,33 +234,6 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="bin\Debug\Microsoft.WindowsAPICodePack.dll" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="bin\Debug\Microsoft.WindowsAPICodePack.Shell.dll" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="bin\Debug\System.IO.Compression.ZipFile.dll" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="bin\Debug\Microsoft.Win32.TaskScheduler.dll" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="bin\Release\System.Json.dll" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="bin\Release\Microsoft.WindowsAPICodePack.dll" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="bin\Release\Microsoft.WindowsAPICodePack.Shell.dll" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="bin\Release\System.IO.Compression.ZipFile.dll" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="bin\Release\Microsoft.Win32.TaskScheduler.dll" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
