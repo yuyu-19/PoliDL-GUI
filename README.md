@@ -15,14 +15,12 @@ PoliDown: https://github.com/sup3rgiu/PoliDown
 
 Richiede .NET framework v4.6
 
-Questo programma ha due funzionalità principali:
-  - Scaricare molteplici lezioni da Webex e Microsoft Stream (Download)
-  - Registrare lezioni in locale automaticamente (Locale)
+Questo programma permette di scaricare molteplici lezioni da Webex
  
 ### Download
-Se esiste già il file corrispondente ad un video, verrà riscaricato comunque, ondevitare download parziali, con un suffisso (.1, .2, etc). È quindi consigliato, nel caso siano falliti dei download, di reinserire solo i link il cui download è fallito. 
+Se esiste già il file corrispondente ad un video il download continuerà da dove è stato interrotto, saltandolo nel caso il file sia stato scaricato completamente.
 
-È possibile salvare i link ai video che non sono scaricati cliccando su "Ulteriori informazioni" di fianco al numero di download falliti, e cliccando su "Salva link in un .txt"
+Una volta che il programma ha cercato di scaricare tutti i link forniti verrà chiesto all'utente se vuole riprovare a scaricare quelli falliti.
 
 Il programma può estrarre link di webex da un paio di tipi di file:
   - .xlsx
@@ -49,23 +47,7 @@ Questo significa che, ad esempio, se un professore avesse una struttura di carte
 		- .docx/.xlsx file contenente un link
       
 
-Scaricare (cliccando "scarica cartella") e dare al programma il file zip di "Lezioni online" funzionerebbe.
-
-### Locale
-Questa funzionalità è un po' complessa:
-  1. Prende in input il calendario delle lezioni (servizi online > orario delle lezioni > tasto destro e scarica come solo HTML) come input.
-  2. Ti chiederà quindi di selezionare quali professori faranno quale lezione (può essere modificato successivamente)
-  3. Una volta fatto, imposterà delle task usando l'utilità di pianificazione di Windows.
-  4. Queste task verranno eseguite quando deve iniziare una lezione. Entreranno nella stanza ed inizieranno a registrare la lezione.
-  5. Le lezioni saranno salvate nella cartella che hai selezionato in precedenza, che conterrà una sottocartella per ogni corso.
-  
- Potrai modificare quale professore fa quale lezione ed eliminare le lezioni rientrando nella modalità locale dopo il setup iniziale.
- 
- Puoi anche:
-  - Disabilitare solo la prossima registrazione (Nel caso una lezione venga rimandata o cancellata)
-  - Aggiungere una registrazione temporanea, che verrà eseguita solo una volta.
-  
- Le task verranno cancellate una volta che è terminato il semestre.
+In questo esempio scaricare (cliccando "scarica cartella") e dare al programma il file zip di "Lezioni online" funzionerebbe.
 
 
 ## English
@@ -77,14 +59,12 @@ A huge thank you to @sup3rgiu for PoliWebex and PoliDown (on which the entire do
 PoliWebex: https://github.com/sup3rgiu/PoliWebex
 PoliDown: https://github.com/sup3rgiu/PoliDown
 
-This tool has two main functions:
-  - Downloading lessons from Webex and Microsoft Stream in bulk   (Download)
-  - Automatically recording lessons locally  (Local)
+This tool allows you to donwload lessons from Webex in bulk
 
 ### Download
-If the video file already exists, it's downloaded again and a suffix is added. Should some downloads have failed it's therefore suggested that you only redownload the failed ones.
+If the video file already exists, the download will be resumed from where it was interrupted, and skipped entirely if it was already completed.
 
-The links to all failed downloads can be saved by clicking on "More information" next to the number of failed downloads, and clicking "Save links to .txt".
+Once the program has attempted to download all the given videos, it will prompt the user and ask them if they would like to retry the failed ones.
 
 The program can extract webex links from a couple of filetypes:
   - .xlsx
@@ -107,18 +87,3 @@ The program can extract webex links from a couple of filetypes:
 		- .docx/.xlsx file containing a link
 
 Downloading (by clicking "download folder") and giving the program the zip file of "Online lessons" would work.
-
-### Local
-This functionality is a bit complex:
-  1. It takes the lesson calendar (online services > timetable > right click and download as HTML only) as input.
-  2. It will then prompt you to select which professors will be giving which lesson (can be edited later)
-  3. Once that's done, it will set up tasks using Windows' task scheduler.
-  4. These tasks will run when a lesson is supposed to start, join the room and begin recording.
-  5. The lessons will be saved to the folder you will have selected earlier, which will contain a subfolder for each course.
- 
- You can edit the professor that is giving a lesson and delete them by entering local mode after the first time setup.
- You are also able to:
-  - Disable the recording for the next time (In case a lesson is rescheduled).
-  - Add a "one time" recording, which will only run once.
- 
- Tasks will be deleted once the semester is over.
